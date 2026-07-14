@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="720.0" prefWidth="1024.0" style="-fx-background-color: #110707;" stylesheets="@CocinaPantallaEstilos.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uam.ayd.proyecto.presentacion.CocinaPantallaControlador">
+   
+   <!-- BARRA SUPERIOR (Header) -->
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #1A0B0B; -fx-border-color: #2D1414; -fx-border-width: 0 0 2 0;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets left="20.0" right="20.0" />
+         </padding>
+         <children>
+            <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label style="-fx-font-family: 'Arial'; -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #E57373;" text="KDS SUSHI" />
+                  <Label style="-fx-font-family: 'Arial'; -fx-font-size: 11px; -fx-text-fill: #8C7A7A;" text="KYUHO SUSHI" />
+               </children>
+            </VBox>
+            <HBox alignment="CENTER_RIGHT" spacing="15.0">
+               <children>
+                  <Label style="-fx-font-family: 'Courier New'; -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #E57373;" text="20:07:31" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </top>
+
+   <!-- BARRA LATERAL IZQUIERDA -->
+   <left>
+      <VBox alignment="TOP_CENTER" prefWidth="100.0" spacing="20.0" style="-fx-background-color: #1A0B0B; -fx-border-color: #2D1414; -fx-border-width: 0 2 0 0;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets top="20.0" />
+         </padding>
+         <children>
+            <VBox alignment="CENTER" style="-fx-border-color: #4A1A1A; -fx-border-width: 0 0 1 0; -fx-padding: 0 0 10 0;">
+               <children>
+                  <Label style="-fx-font-family: 'Arial'; -fx-font-size: 11px; -fx-text-fill: #8C7A7A;" text="ESTACIÓN" />
+                  <Label style="-fx-font-family: 'Arial'; -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;" text="01" />
+                  <Label style="-fx-font-family: 'Arial'; -fx-font-size: 10px; -fx-text-fill: #8C7A7A;" text="ROLLOS" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" prefHeight="60.0" style="-fx-background-color: #D32F2F;">
+               <children>
+                  <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: white;" text="PANEL" />
+                  <Label style="-fx-font-size: 10px; -fx-text-fill: white;" text="PRINCIPAL" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" prefHeight="60.0" opacity="0.4">
+               <children>
+                  <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: white;" text="HISTORIAL" />
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </left>
+
+   <!-- ÁREA CENTRAL DE COMANDAS -->
+   <center>
+      <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background: #110707; -fx-background-color: #110707; -fx-hbar-policy: AS_NEEDED; -fx-vbar-policy: NEVER;" BorderPane.alignment="CENTER">
+         <content>
+            <HBox fx:id="containerComandas" spacing="15.0" style="-fx-background-color: #110707;">
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+               <children>
+
+                  <!-- TARJETA 1: EN TIEMPO (VERDE) -->
+                  <VBox fx:id="card204" prefWidth="250.0" style="-fx-background-color: #0E4424; -fx-background-radius: 5; -fx-border-color: #1B5E20; -fx-border-width: 2; -fx-border-radius: 5;">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="50.0">
+                           <padding>
+                              <Insets left="12.0" right="12.0" />
+                           </padding>
+                           <children>
+                              <Label style="-fx-font-family: 'Arial'; -fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;" text="#204" HBox.hgrow="ALWAYS" />
+                              <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label style="-fx-font-size: 18px; -fx-text-fill: #FFFFFF;" text="⏱" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <Label style="-fx-font-family: 'Arial'; -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; -fx-padding: 0 12 10 12;" text="03:12" />
+                        
+                        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                           <padding>
+                              <Insets left="12.0" right="12.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <VBox spacing="2.0">
+                                 <children>
+                                    <CheckBox fx:id="chk_204_1" maxWidth="Infinity" minHeight="48.0" onAction="#verifyOrder204" styleClass="kds-checkbox" text="2x Philly Roll" wrapText="true" />
+                                    <Label style="-fx-font-family: 'Arial'; -fx-font-size: 13px; -fx-font-style: italic; -fx-text-fill: #B2DFDB; -fx-padding: 0 0 0 34;" text="Sin Wasabi" />
+                                 </children>
+                              </VBox>
+                              <CheckBox fx:id="chk_204_2" maxWidth="Infinity" minHeight="48.0" onAction="#verifyOrder204" styleClass="kds-checkbox" text="1x Dragon Roll" wrapText="true" />
+                           </children>
+                        </VBox>
+                        
+                        <VBox alignment="CENTER" style="-fx-padding: 12;">
+                           <children>
+                              <Button fx:id="btnFinish_204" disable="true" maxWidth="Infinity" minHeight="48.0" onAction="#handleFinishOrder204" styleClass="btn-finish-green" text="Marcar como Terminado" textAlignment="CENTER" wrapText="true" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+
+                  <!-- TARJETA 2: ADVERTENCIA (AMARILLO) -->
+                  <VBox fx:id="card205" prefWidth="250.0" style="-fx-background-color: #FBC02D; -fx-background-radius: 5; -fx-border-color: #F57F17; -fx-border-width: 2; -fx-border-radius: 5;">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="50.0">
+                           <padding>
+                              <Insets left="12.0" right="12.0" />
+                           </padding>
+                           <children>
+                              <Label style="-fx-font-family: 'Arial'; -fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #000000;" text="#205" HBox.hgrow="ALWAYS" />
+                              <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label style="-fx-font-size: 18px; -fx-text-fill: #000000;" text="⏱" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <Label style="-fx-font-family: 'Arial'; -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #000000; -fx-padding: 0 12 10 12;" text="08:45" />
+                        
+                        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                           <padding>
+                              <Insets left="12.0" right="12.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <CheckBox fx:id="chk_205_1" maxWidth="Infinity" minHeight="48.0" onAction="#verifyOrder205" styleClass="kds-checkbox-darktext" text="1x SASHIMI DE SALMÓN" wrapText="true" />
+                              <CheckBox fx:id="chk_205_2" maxWidth="Infinity" minHeight="48.0" onAction="#verifyOrder205" styleClass="kds-checkbox-darktext" text="2x ATÚN PICANTE" wrapText="true" />
+                              <CheckBox fx:id="chk_205_3" maxWidth="Infinity" minHeight="48.0" onAction="#verifyOrder205" styleClass="kds-checkbox-darktext" text="1x SOPA MISO" wrapText="true" />
+                           </children>
+                        </VBox>
+                        
+                        <VBox alignment="CENTER" style="-fx-padding: 12;">
+                           <children>
+                              <Button fx:id="btnFinish_205" disable="true" maxWidth="Infinity" minHeight="48.0" onAction="#handleFinishOrder205" styleClass="btn-finish-yellow" text="Marcar como Terminado" textAlignment="CENTER" wrapText="true" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+
+                  <!-- TARJETA 3: CRÍTICO (ROJO) -->
+                  <VBox fx:id="card198" prefWidth="250.0" style="-fx-background-color: #C62828; -fx-background-radius: 5; -fx-border-color: #B71C1C; -fx-border-width: 2; -fx-border-radius: 5;">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="50.0">
+                           <padding>
+                              <Insets left="12.0" right="12.0" />
+                           </padding>
+                           <children>
+                              <Label style="-fx-font-family: 'Arial'; -fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;" text="#198" HBox.hgrow="ALWAYS" />
+                              <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label style="-fx-font-size: 18px; -fx-text-fill: #FFFFFF; -fx-font-weight: bold;" text="⚠️" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <Label style="-fx-font-family: 'Arial'; -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; -fx-padding: 0 12 10 12; -fx-underline: true;" text="15:22" />
+                        
+                        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                           <padding>
+                              <Insets left="12.0" right="12.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <VBox spacing="4.0">
+                                 <children>
+                                    <CheckBox fx:id="chk_198_1" maxWidth="Infinity" minHeight="48.0" onAction="#verifyOrder198" styleClass="kds-checkbox" text="4x OMAKASE SET" wrapText="true" />
+                                    <VBox spacing="3.0" style="-fx-padding: 0 0 5 34;">
+                                       <children>
+                                          <Label style="-fx-background-color: #B71C1C; -fx-font-family: 'Arial'; -fx-font-size: 11px; -fx-text-fill: #FFCDD2; -fx-padding: 3; -fx-font-weight: bold;" text="EXTRA JENGIBRE" />
+                                          <Label style="-fx-background-color: #B71C1C; -fx-font-family: 'Arial'; -fx-font-size: 11px; -fx-text-fill: #FFCDD2; -fx-padding: 3; -fx-font-weight: bold;" text="SIN SALSA DE SOYA" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              <CheckBox fx:id="chk_198_2" maxWidth="Infinity" minHeight="48.0" onAction="#verifyOrder198" styleClass="kds-checkbox" text="1x Nigiri de Anguila" wrapText="true" />
+                           </children>
+                        </VBox>
+                        
+                        <VBox alignment="CENTER" style="-fx-padding: 12;">
+                           <children>
+                              <Button fx:id="btnFinish_198" disable="true" maxWidth="Infinity" minHeight="48.0" onAction="#handleFinishOrder198" styleClass="btn-finish-red" text="Marcar como Terminado" textAlignment="CENTER" wrapText="true" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+
+               </children>
+            </HBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
