@@ -1,7 +1,12 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
-//Entidad de negocio que representa a un Usuario(Empleado) en Ryuho Sushi.
-public class Usuario {
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
+
+public class Usuario { //Entidad de negocio que representa a un Usuario(Empleado) en Ryuho Sushi.
+    @Id
     private String idUsuario;
     private String rol;
     public String nombre; 
