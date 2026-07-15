@@ -2,7 +2,7 @@ package mx.uam.ayd.proyecto.datos;
 
 import mx.uam.ayd.proyecto.negocio.modelo.Usuario;
 import java.util.Optional;
-//Repositorio para gestionar el acceso a datos de los usuarios.
+//Repositorio para gestionar el acceso a datos de los usuarios(Empleados).
 public class UsuarioRepository {
 
 

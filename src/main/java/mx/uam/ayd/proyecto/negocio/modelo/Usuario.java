@@ -1,6 +1,6 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
-//Entidad de negocio que representa a un Usuario en Ryuho Sushi.
+//Entidad de negocio que representa a un Usuario(Empleado) en Ryuho Sushi.
 public class Usuario {
     private String idUsuario;
     private String rol;
