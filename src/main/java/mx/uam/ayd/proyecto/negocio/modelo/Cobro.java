@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.sql.Date;
 import java.sql.Time;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
 
 /**
  * Entidad de negocio Cobro
@@ -23,12 +25,12 @@ public class Cobro {
     private Date fecha;
     private int cambio;
 
-/*
+
     // --- RELACIONES DEL MODELO DE DOMINIO ---
     // Muchos Cobros pertenecen a 1 Pedido
     @ManyToOne(targetEntity = Pedido.class, fetch = FetchType.LAZY)
     private Pedido pedido;
-*/
+
 
     // --- GETTERS Y SETTERS ---
     public long getIdCobro() {

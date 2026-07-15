@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
 
 /**
  * Entidad de negocio DetallesPedido
@@ -19,7 +21,7 @@ public class DetallesPedido {
     private int subtotal;
     private String notas;
 
-/*
+
     // --- RELACIONES DEL MODELO DE DOMINIO ---
     // Muchos DetallesPedido pertenecen a 1 Pedido
     @ManyToOne(targetEntity = Pedido.class, fetch = FetchType.LAZY)
@@ -28,7 +30,7 @@ public class DetallesPedido {
     // 1 DetallePedido CORRESPONDE a 1 Platillo
     @ManyToOne(targetEntity = Platillo.class, fetch = FetchType.LAZY)
     private Platillo platillo;
-*/
+
 
     // --- GETTERS Y SETTERS ---
     public long getIdDetallePedido() {

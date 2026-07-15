@@ -4,6 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+
 
 /**
  * Entidad de negocio Cliente
@@ -19,13 +26,13 @@ public class Cliente {
     private String telefono;
     private String direccion;
 
-/* 
+ 
     // --- RELACIONES DEL MODELO DE DOMINIO ---
     // 1 Cliente REALIZA muchos Pedidos
     @OneToMany(targetEntity = Pedido.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_cliente")
     private final List<Pedido> pedidos = new ArrayList<>();
-*/
+
 
     // --- GETTERS Y SETTERS ---
     public long getIdCliente() {
