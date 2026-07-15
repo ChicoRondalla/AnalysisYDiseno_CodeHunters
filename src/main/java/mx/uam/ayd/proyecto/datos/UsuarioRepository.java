@@ -1,23 +1,19 @@
 package mx.uam.ayd.proyecto.datos;
 
-import java.util.List;
-
-import org.springframework.data.repository.CrudRepository;
-
 import mx.uam.ayd.proyecto.negocio.modelo.Usuario;
+import java.util.Optional;
+//Repositorio para gestionar el acceso a datos de los usuarios.
+public class UsuarioRepository {
 
-/**
- * 
- * Repositorio para usuarios
- * 
- * @author humbertocervantes
- *
- */
-public interface UsuarioRepository extends CrudRepository <Usuario, Long> {
-	
-	public Usuario findByNombreAndApellido(String nombre, String apellido);
-	
-	public List <Usuario> findByEdadBetween(int edad1, int edad2);
-	
 
+     //Recupera un usuario de la persistencia por su ID.
+    public Optional<Usuario> findById(String idUsuario) {
+        // Mock de prueba rápido:
+        if ("EMP01".equals(idUsuario)) {
+            return Optional.of(new Usuario("EMP01", "RECEPCIONISTAS", "Josué"));
+        } else if ("EMP02".equals(idUsuario)) {
+            return Optional.of(new Usuario("EMP02", "CHEF", "Chef Richard"));
+        }
+        return Optional.empty();
+    }
 }
