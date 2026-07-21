@@ -1,4 +1,4 @@
-package mx.uam.ayd.proyecto.presentacion.login;
+package mx.uam.ayd.proyecto.presentacion.principal;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import mx.uam.ayd.proyecto.negocio.ServicioUsuario;
 import mx.uam.ayd.proyecto.negocio.modelo.Usuario;
-import mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal;
 
 /**
  * Controlador de la vista de Login de Usuarios

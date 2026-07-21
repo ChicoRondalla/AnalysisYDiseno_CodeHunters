@@ -64,4 +64,14 @@ public class DetallesPedido {
     public void setNotas(String notas) {
         this.notas = notas;
     }
+
+    
+    // LO AGREGE PARA LA HU-03
+    public Platillo getPlatillo() {
+        return platillo;
+    }
+
+    public void setPlatillo(Platillo platillo) {
+        this.platillo = platillo;
+    }
 }
