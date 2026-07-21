@@ -79,12 +79,18 @@ public class ControlRegistroPedido {
         String telefono = txtTelefonoDomicilio.getText();
         String direccion = txtDireccionDomicilio.getText();
 
-        // Validamos usando la capa de negocio (RN-02)
+        // 1. Validamos usando la capa de negocio (RN-02)
         boolean datosValidos = servicioPedido.validarDatosDomicilio(nombre, telefono, direccion);
 
         if (datosValidos) {
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Datos correctos. Redirigiendo al menú...");
-            // TODO: Aquí llamaremos a la ventana del Menú en el futuro
+            // 2. Si los datos son válidos, GUARDAMOS en la base de datos
+            servicioPedido.crearPedidoDomicilio(nombre, telefono, direccion);
+            
+            // 3. Confirmamos al usuario, limpiamos el formulario y regresamos al inicio
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Pedido Registrado", "El pedido a domicilio se guardó correctamente en el sistema.");
+            limpiarCampos();
+            mostrarPantalla(paneSeleccion);
+            
         } else {
             // Cumpliendo el escenario 2 de la HU-01: Bloqueo por falta de datos
             mostrarAlerta(Alert.AlertType.ERROR, "Falta información", 
@@ -94,12 +100,19 @@ public class ControlRegistroPedido {
 
     @FXML
     void onContinuarRecogerAction(ActionEvent event) {
-        // Validación básica para recoger (Teléfono es opcional según HU-01)
         String nombre = txtNombreRecoger.getText();
+        String telefono = txtTelefonoRecoger.getText();
+
+        // Validación básica para recoger
         if (nombre == null || nombre.trim().isEmpty()) {
             mostrarAlerta(Alert.AlertType.ERROR, "Falta información", "El nombre del cliente es obligatorio.");
         } else {
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Datos correctos. Redirigiendo al menú...");
+            // GUARDAMOS en la base de datos
+            servicioPedido.crearPedidoRecoger(nombre, telefono);
+            
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Pedido Registrado", "El pedido para recoger se guardó correctamente en el sistema.");
+            limpiarCampos();
+            mostrarPantalla(paneSeleccion);
         }
     }
 
