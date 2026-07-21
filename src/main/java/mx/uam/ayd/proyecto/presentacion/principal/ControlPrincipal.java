@@ -7,7 +7,12 @@ import org.springframework.stereotype.Component;
 
 import mx.uam.ayd.proyecto.presentacion.agregarUsuario.ControlAgregarUsuario;
 import mx.uam.ayd.proyecto.presentacion.listarUsuarios.ControlListarUsuarios;
+import mx.uam.ayd.proyecto.presentacion.principal.VentanaPrincipal;
 import mx.uam.ayd.proyecto.presentacion.listarGrupos.ControlListarGrupos;
+
+import mx.uam.ayd.proyecto.presentacion.registrarPedido.ControlRegistroPedido;
+import mx.uam.ayd.proyecto.presentacion.registrarPedido.VistaRegistroPedido;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Esta clase lleva el flujo de control de la ventana principal
@@ -35,6 +40,20 @@ public class ControlPrincipal {
 		this.ventana = ventana;
 	}
 	
+	@Autowired
+    private VistaRegistroPedido vistaRegistroPedido;
+
+    @Autowired
+    private ControlRegistroPedido controlRegistroPedido;
+
+    /**
+     * Método para abrir la historia de usuario HU-01
+     */
+    public void registrarPedido() {
+        vistaRegistroPedido.muestra(controlRegistroPedido);
+    }
+
+
 	/**
 	 * Método que se ejecuta después de la construcción del bean
 	 * y realiza la conexión bidireccional entre el control principal y la ventana principal
@@ -49,7 +68,11 @@ public class ControlPrincipal {
 	 * 
 	 */
 	public void inicia() {
-		ventana.muestra();
+		//Comentamos esta parte para que no se abra la ventana que tenia de 'Mi Aplicacion' profesor, una disculpa
+		//ventana.muestra();
+
+		//Para que incie directamente con el menu de la HU-01 para seleccionar el tipo de pedido
+		registrarPedido();
 	}
 
 	/**
@@ -75,4 +98,6 @@ public class ControlPrincipal {
 	public void listarGrupos() {
 		controlListarGrupos.inicia();
 	}
+
+	
 }

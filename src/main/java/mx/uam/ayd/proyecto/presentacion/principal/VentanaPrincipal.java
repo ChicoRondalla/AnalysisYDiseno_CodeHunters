@@ -44,7 +44,7 @@ public class VentanaPrincipal {
 		
 		try {
 			stage = new Stage();
-			stage.setTitle("Mi Aplicación");
+			stage.setTitle("Ryuho Sushi - Menú Principal");
 			
 			// Load FXML
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-principal.fxml"));
@@ -100,4 +100,11 @@ public class VentanaPrincipal {
 			control.listarGrupos();
 		}
 	}
+
+	@FXML
+    private void handleRegistrarPedido() {
+        if (control != null) {
+            control.registrarPedido();
+        }
+    }
 }
