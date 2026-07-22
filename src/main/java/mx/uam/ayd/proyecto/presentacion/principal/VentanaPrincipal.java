@@ -79,28 +79,6 @@ public class VentanaPrincipal {
 	}
 	
 	// FXML Event Handlers
-	
-	@FXML
-	private void handleAgregarUsuario() {
-		if (control != null) {
-			control.agregarUsuario();
-		}
-	}
-	
-	@FXML
-	private void handleListarUsuarios() {
-		if (control != null) {
-			control.listarUsuarios();
-		}
-	}
-	
-	@FXML
-	private void handleListarGrupos() {
-		if (control != null) {
-			control.listarGrupos();
-		}
-	}
-
 	@FXML
     private void handleRegistrarPedido() {
         if (control != null) {

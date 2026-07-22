@@ -133,4 +133,44 @@ public class ControlRegistroPedido {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
+
+    // --- MÉTODOS PARA CONSUMO LOCAL (Mesas) ---
+
+    /**
+     * Método auxiliar para registrar la mesa seleccionada, 
+     * mostrar la alerta y regresar al menú.
+     */
+    private void registrarPedidoMesa(int numeroMesa) {
+        servicioPedido.crearPedidoLocal(numeroMesa);
+        
+        mostrarAlerta(Alert.AlertType.INFORMATION, "Mesa registrada", 
+            "La Mesa " + numeroMesa + " se ha seleccionado correctamente.");
+            
+        mostrarPantalla(paneSeleccion);
+    }
+
+    @FXML
+    void onMesa1Action(ActionEvent event) {
+        registrarPedidoMesa(1);
+    }
+
+    @FXML
+    void onMesa2Action(ActionEvent event) {
+        registrarPedidoMesa(2);
+    }
+
+    @FXML
+    void onMesa3Action(ActionEvent event) {
+        registrarPedidoMesa(3);
+    }
+
+    @FXML
+    void onMesa4Action(ActionEvent event) {
+        registrarPedidoMesa(4);
+    }
+
+    @FXML
+    void onMesa5Action(ActionEvent event) {
+        registrarPedidoMesa(5);
+    }
 }

@@ -9,8 +9,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
-import mx.uam.ayd.proyecto.datos.GrupoRepository;
-import mx.uam.ayd.proyecto.negocio.modelo.Grupo;
 import mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal;
 
 /**
@@ -26,13 +24,19 @@ import mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal;
 public class ProyectoApplication {
 
 	private final ControlPrincipal controlPrincipal;
-	private final GrupoRepository grupoRepository;
 	
 	@Autowired
-	public ProyectoApplication(ControlPrincipal controlPrincipal, GrupoRepository grupoRepository) {
+	public ProyectoApplication(ControlPrincipal controlPrincipal) {
 		this.controlPrincipal = controlPrincipal;
-		this.grupoRepository = grupoRepository;
 	}
+
+    /**
+     * Inicializa la interfaz gráfica principal de la aplicación
+     */
+    public void inicia() {
+        // Llamamos a controlPrincipal sin enviarle ningun argumento
+		controlPrincipal.inicia();
+    }
 
 	/**
 	 * Método principal
@@ -74,30 +78,5 @@ public class ProyectoApplication {
 		}
 	}
 	
-	/**
-	 * Metodo que arranca la aplicacion
-	 * inicializa la bd y arranca el controlador
-	 */
-	public void inicia() {
-		inicializaBD();
-		
-		// Make sure controllers are created on JavaFX thread
-		Platform.runLater(() -> {
-			controlPrincipal.inicia();
-		});
-	}
 	
-	/**
-	 * Inicializa la BD con datos
-	 */
-	public void inicializaBD() {
-		// Vamos a crear los dos grupos de usuarios
-		Grupo grupoAdmin = new Grupo();
-		grupoAdmin.setNombre("Administradores");
-		grupoRepository.save(grupoAdmin);
-		
-		Grupo grupoOps = new Grupo();
-		grupoOps.setNombre("Operadores");
-		grupoRepository.save(grupoOps);
-	}
 }

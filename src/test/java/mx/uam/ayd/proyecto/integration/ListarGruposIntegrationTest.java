@@ -51,12 +51,12 @@ public class ListarGruposIntegrationTest extends BaseIntegrationTest {
         // Add some users to groups
         Usuario usuario1 = new Usuario();
         usuario1.setNombre("User1");
-        usuario1.setApellido("Test");
+        //usuario1.setApellido("Test");
         grupo1.addUsuario(usuario1);
 
         Usuario usuario2 = new Usuario();
         usuario2.setNombre("User2");
-        usuario2.setApellido("Test");
+        //usuario2.setApellido("Test");
         grupo2.addUsuario(usuario2);
 
         grupoRepository.save(grupo1);
