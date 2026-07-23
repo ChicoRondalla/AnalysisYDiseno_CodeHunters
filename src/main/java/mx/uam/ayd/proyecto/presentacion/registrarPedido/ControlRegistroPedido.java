@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
+import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
+import mx.uam.ayd.proyecto.presentacion.armadoOrden.VistaArmadoOrden;
 
 /**
  * Controlador para la Historia de Usuario HU-01: Registrar Pedido.
@@ -33,6 +35,10 @@ public class ControlRegistroPedido {
     // Inyectamos la capa de negocio para las validaciones
     @Autowired
     private ServicioPedido servicioPedido;
+
+    // Inyectamos la nueva ventana de Armado de Orden
+    @Autowired
+    private VistaArmadoOrden vistaArmadoOrden;
 
     // --- MÉTODO AUXILIAR PARA NAVEGACIÓN ---
     /**
@@ -79,20 +85,20 @@ public class ControlRegistroPedido {
         String telefono = txtTelefonoDomicilio.getText();
         String direccion = txtDireccionDomicilio.getText();
 
-        // 1. Validamos usando la capa de negocio (RN-02)
         boolean datosValidos = servicioPedido.validarDatosDomicilio(nombre, telefono, direccion);
 
         if (datosValidos) {
-            // 2. Si los datos son válidos, GUARDAMOS en la base de datos
-            servicioPedido.crearPedidoDomicilio(nombre, telefono, direccion);
+            // Atrapamos el pedido recién creado
+            Pedido nuevoPedido = servicioPedido.crearPedidoDomicilio(nombre, telefono, direccion);
             
-            // 3. Confirmamos al usuario, limpiamos el formulario y regresamos al inicio
             mostrarAlerta(Alert.AlertType.INFORMATION, "Pedido Registrado", "El pedido a domicilio se guardó correctamente en el sistema.");
             limpiarCampos();
             mostrarPantalla(paneSeleccion);
             
+            // ¡Abrimos la pantalla del menú y le pasamos el ticket!
+            vistaArmadoOrden.muestra(nuevoPedido);
+            
         } else {
-            // Cumpliendo el escenario 2 de la HU-01: Bloqueo por falta de datos
             mostrarAlerta(Alert.AlertType.ERROR, "Falta información", 
                 "Verifica que ningún campo esté vacío y que el teléfono tenga exactamente 10 dígitos.");
         }
@@ -103,16 +109,18 @@ public class ControlRegistroPedido {
         String nombre = txtNombreRecoger.getText();
         String telefono = txtTelefonoRecoger.getText();
 
-        // Validación básica para recoger
         if (nombre == null || nombre.trim().isEmpty()) {
             mostrarAlerta(Alert.AlertType.ERROR, "Falta información", "El nombre del cliente es obligatorio.");
         } else {
-            // GUARDAMOS en la base de datos
-            servicioPedido.crearPedidoRecoger(nombre, telefono);
+            // Atrapamos el pedido recién creado
+            Pedido nuevoPedido = servicioPedido.crearPedidoRecoger(nombre, telefono);
             
             mostrarAlerta(Alert.AlertType.INFORMATION, "Pedido Registrado", "El pedido para recoger se guardó correctamente en el sistema.");
             limpiarCampos();
             mostrarPantalla(paneSeleccion);
+            
+            // ¡Abrimos la pantalla del menú y le pasamos el ticket!
+            vistaArmadoOrden.muestra(nuevoPedido);
         }
     }
 
@@ -141,12 +149,16 @@ public class ControlRegistroPedido {
      * mostrar la alerta y regresar al menú.
      */
     private void registrarPedidoMesa(int numeroMesa) {
-        servicioPedido.crearPedidoLocal(numeroMesa);
+        // Atrapamos el pedido recién creado (AQUÍ ESTABA EL DETALLE)
+        Pedido nuevoPedido = servicioPedido.crearPedidoLocal(numeroMesa);
         
         mostrarAlerta(Alert.AlertType.INFORMATION, "Mesa registrada", 
             "La Mesa " + numeroMesa + " se ha seleccionado correctamente.");
             
         mostrarPantalla(paneSeleccion);
+
+        // ¡Abrimos la pantalla del menú y le pasamos el ticket!
+        vistaArmadoOrden.muestra(nuevoPedido);
     }
 
     @FXML
