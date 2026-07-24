@@ -2,11 +2,13 @@ package mx.uam.ayd.proyecto.presentacion.registrarPedido;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
@@ -97,6 +99,7 @@ public class ControlRegistroPedido {
             
             // ¡Abrimos la pantalla del menú y le pasamos el ticket!
             vistaArmadoOrden.muestra(nuevoPedido);
+            cerrarVentana();
             
         } else {
             mostrarAlerta(Alert.AlertType.ERROR, "Falta información", 
@@ -121,6 +124,7 @@ public class ControlRegistroPedido {
             
             // ¡Abrimos la pantalla del menú y le pasamos el ticket!
             vistaArmadoOrden.muestra(nuevoPedido);
+            cerrarVentana();
         }
     }
 
@@ -158,7 +162,8 @@ public class ControlRegistroPedido {
         mostrarPantalla(paneSeleccion);
 
         // ¡Abrimos la pantalla del menú y le pasamos el ticket!
-        vistaArmadoOrden.muestra(nuevoPedido);
+            vistaArmadoOrden.muestra(nuevoPedido);
+            cerrarVentana();
     }
 
     @FXML
@@ -184,5 +189,13 @@ public class ControlRegistroPedido {
     @FXML
     void onMesa5Action(ActionEvent event) {
         registrarPedidoMesa(5);
+    }
+
+    /**
+     * Obtiene la ventana actual a través de uno de los paneles y la cierra.
+     */
+    private void cerrarVentana() {
+        Stage stage = (Stage) paneSeleccion.getScene().getWindow();
+        stage.close();
     }
 }
