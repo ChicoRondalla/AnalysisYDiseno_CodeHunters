@@ -1,0 +1,94 @@
+/* ==================================================
+   HOJA DE ESTILOS KDS - PROTOCOLO ACCESIBILIDAD TÁCTIL
+   ================================================== */
+
+/* Checkbox con Texto Blanco */
+.kds-checkbox {
+    -fx-font-family: 'Arial';
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 8px 4px 8px 4px; /* Incrementa verticalmente la hitbox táctil */
+    -fx-cursor: hand;
+}
+
+/* Checkbox con Texto Negro (Para la tarjeta amarilla #205) */
+.kds-checkbox-darktext {
+    -fx-font-family: 'Arial';
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+    -fx-padding: 8px 4px 8px 4px; /* Incrementa verticalmente la hitbox táctil */
+    -fx-cursor: hand;
+}
+
+/* Tamaño de casilla aumentado para evitar fallos de precisión en cocina */
+.kds-checkbox .box, .kds-checkbox-darktext .box {
+    -fx-min-width: 26px;
+    -fx-min-height: 26px;
+    -fx-background-color: #1A0B0B;
+    -fx-border-color: #4A1A1A;
+    -fx-border-width: 2px;
+    -fx-border-radius: 4px;
+}
+
+/* REQUERIMIENTO: Al seleccionar, el recuadro activa una PALOMITA VERDE */
+.kds-checkbox:selected .box, .kds-checkbox-darktext:selected .box {
+    -fx-background-color: #2E7D32; 
+    -fx-border-color: #4CAF50;
+}
+
+/* Dibujo SVG de la palomita */
+.kds-checkbox:selected .mark, .kds-checkbox-darktext:selected .mark {
+    -fx-background-color: #FFFFFF;
+    -fx-shape: "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
+}
+
+/* ==================================================
+   DISEÑO DE BOTONES "MARCAR COMO TERMINADO"
+   ================================================== */
+
+.btn-finish-green {
+    -fx-background-color: #082815;
+    -fx-text-fill: #A5D6A7;
+    -fx-font-family: 'Arial';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-color: #1B5E20;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-cursor: hand;
+}
+.btn-finish-green:disabled {
+    -fx-opacity: 0.4;
+}
+
+.btn-finish-yellow {
+    -fx-background-color: #F9A825;
+    -fx-text-fill: #000000;
+    -fx-font-family: 'Arial';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-color: #F57F17;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-cursor: hand;
+}
+.btn-finish-yellow:disabled {
+    -fx-opacity: 0.4;
+}
+
+.btn-finish-red {
+    -fx-background-color: #5C1D1D;
+    -fx-text-fill: #FFCDD2;
+    -fx-font-family: 'Arial';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-color: #B71C1C;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-cursor: hand;
+}
+.btn-finish-red:disabled {
+    -fx-opacity: 0.4;
+}
