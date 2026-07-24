@@ -1,7 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <!-- Aquí Scene Builder irá agregando todos tus botones y paneles -->
+<!-- Lienzo principal con fondo oscuro simulando el estilo de Ryuho Sushi -->
+<AnchorPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #1a1a1a;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      
+      <!-- PANTALLA 1: SELECCIÓN DE SERVICIO -->
+      <!-- visible="true" para que sea la primera en mostrarse -->
+      <Pane fx:id="paneSeleccion" prefHeight="600.0" prefWidth="800.0" visible="true">
+         <children>
+            <Label alignment="CENTER" layoutX="0.0" layoutY="80.0" prefWidth="800.0" text="S E L E C C I O N E   S E R V I C I O" textFill="#ff9999">
+               <font>
+                  <Font name="System Bold" size="28.0" />
+               </font>
+            </Label>
+            <Button layoutX="120.0" layoutY="200.0" mnemonicParsing="false" onAction="#onConsumoLocalAction" prefHeight="160.0" prefWidth="160.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white;" text="CONSUMO LOCAL" />
+            <Button layoutX="320.0" layoutY="200.0" mnemonicParsing="false" onAction="#onParaRecogerAction" prefHeight="160.0" prefWidth="160.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white;" text="PARA RECOGER" />
+            <Button layoutX="520.0" layoutY="200.0" mnemonicParsing="false" onAction="#onDomicilioAction" prefHeight="160.0" prefWidth="160.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white;" text="A DOMICILIO" />
+         </children>
+      </Pane>
+
+      <!-- PANTALLA 2: A DOMICILIO -->
+      <!-- visible="false" por defecto -->
+      <Pane fx:id="paneDomicilio" prefHeight="600.0" prefWidth="800.0" visible="false">
+         <children>
+            <Label layoutX="250.0" layoutY="80.0" text="Información de Entrega" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            
+            <Label layoutX="250.0" layoutY="150.0" text="Nombre Completo" textFill="#b3b3b3" />
+            <TextField fx:id="txtNombreDomicilio" layoutX="250.0" layoutY="170.0" prefHeight="35.0" prefWidth="300.0" promptText="Ej: Hiroshi Tanaka" style="-fx-background-color: #333333; -fx-text-fill: white;" />
+            
+            <Label layoutX="250.0" layoutY="220.0" text="Dirección de Entrega" textFill="#b3b3b3" />
+            <TextField fx:id="txtDireccionDomicilio" layoutX="250.0" layoutY="240.0" prefHeight="35.0" prefWidth="300.0" promptText="Calle, número, departamento..." style="-fx-background-color: #333333; -fx-text-fill: white;" />
+            
+            <Label layoutX="250.0" layoutY="290.0" text="Número de Teléfono" textFill="#b3b3b3" />
+            <TextField fx:id="txtTelefonoDomicilio" layoutX="250.0" layoutY="310.0" prefHeight="35.0" prefWidth="300.0" promptText="Ingresa los 10 dígitos" style="-fx-background-color: #333333; -fx-text-fill: white;" />
+            
+            <Button layoutX="250.0" layoutY="400.0" mnemonicParsing="false" onAction="#onRegresarAction" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 5; -fx-text-fill: white;" text="&lt; Regresar" />
+            <Button layoutX="410.0" layoutY="400.0" mnemonicParsing="false" onAction="#onContinuarDomicilioAction" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: #e63946; -fx-text-fill: white; -fx-background-radius: 5;" text="Continuar &gt;" />
+         </children>
+      </Pane>
+
+      <!-- PANTALLA 3: PARA RECOGER -->
+      <Pane fx:id="paneRecoger" prefHeight="600.0" prefWidth="800.0" visible="false">
+         <children>
+            <Label layoutX="300.0" layoutY="100.0" text="PARA RECOGER" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            
+            <Label layoutX="250.0" layoutY="180.0" text="Nombre del Cliente (Obligatorio)" textFill="#b3b3b3" />
+            <TextField fx:id="txtNombreRecoger" layoutX="250.0" layoutY="200.0" prefHeight="35.0" prefWidth="300.0" promptText="Ej: Takeshi Kitano" style="-fx-background-color: #333333; -fx-text-fill: white;" />
+            
+            <Label layoutX="250.0" layoutY="260.0" text="Teléfono de Contacto (Opcional)" textFill="#b3b3b3" />
+            <TextField fx:id="txtTelefonoRecoger" layoutX="250.0" layoutY="280.0" prefHeight="35.0" prefWidth="300.0" promptText="Ingresa los 10 dígitos" style="-fx-background-color: #333333; -fx-text-fill: white;" />
+            
+            <Button layoutX="250.0" layoutY="350.0" mnemonicParsing="false" onAction="#onContinuarRecogerAction" prefHeight="40.0" prefWidth="300.0" style="-fx-background-color: #e63946; -fx-text-fill: white; -fx-background-radius: 5;" text="CONTINUAR" />
+            <Button layoutX="250.0" layoutY="410.0" mnemonicParsing="false" onAction="#onRegresarAction" prefHeight="40.0" prefWidth="300.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 5; -fx-text-fill: white;" text="REGRESAR" />
+         </children>
+      </Pane>
+
+      <!-- PANTALLA 4: CONSUMO LOCAL -->
+      <Pane fx:id="paneLocal" prefHeight="600.0" prefWidth="800.0" visible="false">
+         <children>
+            <Label alignment="CENTER" layoutX="0.0" layoutY="80.0" prefWidth="800.0" text="PLANO DE SALA" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            
+            <Label alignment="CENTER" layoutX="0.0" layoutY="250.0" prefWidth="800.0" text="(Aquí agregaremos los botones de las mesas más adelante)" textFill="#888888" />
+            
+            <Button layoutX="350.0" layoutY="400.0" mnemonicParsing="false" onAction="#onRegresarAction" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 5; -fx-text-fill: white;" text="Regresar" />
+         </children>
+      </Pane>
+      
+   </children>
 </AnchorPane>

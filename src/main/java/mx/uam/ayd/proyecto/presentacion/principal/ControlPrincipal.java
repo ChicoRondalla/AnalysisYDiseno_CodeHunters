@@ -5,51 +5,67 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-// 1. IMPORTAMOS EL CONTROLADOR DE LA HISTORIA DE USUARIO HU-03
-import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina;
 
-/**
- * LLEVA EL CONTROL DE LA VENTANA PRINCIPAL Y ARRANCA LA HISTORIA DE USUARIO HU-03
- */
+// 1. CONTROLADOR DE LA HISTORIA DE USUARIO HU-03
+import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina;
+import mx.uam.ayd.proyecto.presentacion.registrarPedido.ControlRegistroPedido;
+import mx.uam.ayd.proyecto.presentacion.registrarPedido.VistaRegistroPedido;
+
+
+
 @Component
 public class ControlPrincipal {
 
-    // 2. DECLARAMOS EL CONTROLADOR DE LA HISTORIA DE USUARIO HU-03 COMO UNA DEPENDENCIA
-    private final ControlEnviarOrdenCocina controlEnviarOrdenCocina; 
-    private final VentanaPrincipal ventana;
-    
+
+	@Autowired
+	private VentanaPrincipal ventana;	
+	// HU-O1	
+	@Autowired
+    private VistaRegistroPedido vistaRegistroPedido;
+
     @Autowired
-    public ControlPrincipal(
-            // 3. LO INYECTAMOS EN EL CONSTRUCTOR
-            ControlEnviarOrdenCocina controlEnviarOrdenCocina, 
-            VentanaPrincipal ventana) {
-        
-        // 4. LO ASIGNAMOS 
-        this.controlEnviarOrdenCocina = controlEnviarOrdenCocina; 
-        this.ventana = ventana;
-    }
-    
+    private ControlRegistroPedido controlRegistroPedido;
+
+    // HU-03
+    @Autowired
+    private ControlEnviarOrdenCocina controlEnviarOrdenCocina;
+
     /**
-     * METODO QUE CONECTA EL CONTROLADOR DE LA HISTORIA DE USUARIO HU-03 CON EL BOTON DE LA VENTANA PRINCIPAL
+     * Método para abrir la historia de usuario HU-01
      */
-    @PostConstruct
-    public void init() {
-        ventana.setControlPrincipal(this);
-    }
-    
-    /**
-     * INICIA EL CONTROL PRINCIPAL Y MUESTRA LA VENTANA PRINCIPAL
-     */
-    public void inicia() {
-        ventana.muestra();
+    public void registrarPedido() {
+        vistaRegistroPedido.muestra(controlRegistroPedido);
     }
 
-    // ---------------------------------------------------------
+
+	/**
+	 * Método que se ejecuta después de la construcción del bean
+	 * y realiza la conexión bidireccional entre el control principal y la ventana principal
+	 */
+	@PostConstruct
+	public void init() {
+		ventana.setControlPrincipal(this);
+	}
+	
+	/**
+	 * Inicia el flujo de control de la ventana principal
+	 * 
+	 */
+	public void inicia() {
+		//Comentamos esta parte para que no se abra la ventana que tenia de 'Mi Aplicacion' profesor, una disculpa
+		//ventana.muestra();
+
+		//Para que incie directamente con el menu de la HU-01 para seleccionar el tipo de pedido
+		registrarPedido();
+	}
+
     // 5. MÉTODO QUE ARRANCA LA HISTORIA DE USUARIO "ENVIAR ORDEN A COCINA" (HU-03)
-    // ---------------------------------------------------------
-    
+        
     public void enviarOrdenCocina() {
         // ID DE PEDIDO SIMULADO PARA PRUEBAS
         controlEnviarOrdenCocina.inicia(1L); 
     }
 }
+
+
+

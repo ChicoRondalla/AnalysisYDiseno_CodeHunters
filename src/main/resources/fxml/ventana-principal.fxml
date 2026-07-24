@@ -7,10 +7,16 @@
 <VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" 
       spacing="10" style="-fx-padding: 15px;">
     
-    <Label text="Mi Aplicación" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
     
-    <!-- Este es TU botón, el único que sobrevive -->
+    <Label text="Ryuho Sushi - Menú Principal" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    
+    <!-- Aquí está tu nuevo botón conectado a tu controlador -->
+    <Button text="Registrar Pedido" onAction="#handleRegistrarPedido" 
+            style="-fx-min-width: 200px; -fx-min-height: 30px; -fx-background-color: #e63946; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    
     <Button text="Enviar Orden a Cocina" onAction="#handleEnviarOrdenCocina"
         style="-fx-min-width: 200px; -fx-min-height: 30px;"/>        
-    
+
 </VBox>
+
+    

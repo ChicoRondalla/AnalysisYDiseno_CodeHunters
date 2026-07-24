@@ -3,18 +3,20 @@ package mx.uam.ayd.proyecto.presentacion.registrarPedido;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import mx.uam.ayd.proyecto.negocio.ServicioPedido;
+
 /**
- * Controlador para la Historia de Usuario HU-01: Registrar Pedido (Selección y captura de datos).
+ * Controlador para la Historia de Usuario HU-01: Registrar Pedido.
  */
 @Component
 public class ControlRegistroPedido {
 
-    // --- PANES (Las diferentes "pantallas" que se mostrarán/ocultarán) ---
+    // --- PANES (Las diferentes "pantallas") ---
     @FXML private Pane paneSeleccion;
     @FXML private Pane paneDomicilio;
     @FXML private Pane paneLocal;
@@ -28,26 +30,45 @@ public class ControlRegistroPedido {
     @FXML private TextField txtNombreRecoger;
     @FXML private TextField txtTelefonoRecoger;
 
+    // Inyectamos la capa de negocio para las validaciones
+    @Autowired
+    private ServicioPedido servicioPedido;
+
+    // --- MÉTODO AUXILIAR PARA NAVEGACIÓN ---
+    /**
+     * Oculta todos los paneles y muestra únicamente el que se pasa por parámetro.
+     */
+    private void mostrarPantalla(Pane pantallaActiva) {
+        paneSeleccion.setVisible(false);
+        paneDomicilio.setVisible(false);
+        paneLocal.setVisible(false);
+        paneRecoger.setVisible(false);
+        
+        pantallaActiva.setVisible(true);
+    }
+
     // --- MÉTODOS DE NAVEGACIÓN (Botones principales) ---
 
     @FXML
     void onConsumoLocalAction(ActionEvent event) {
-        // Ocultar selección, mostrar plano de mesas
+        mostrarPantalla(paneLocal);
     }
 
     @FXML
     void onParaRecogerAction(ActionEvent event) {
-        // Ocultar selección, mostrar formulario de recoger
+        mostrarPantalla(paneRecoger);
     }
 
     @FXML
     void onDomicilioAction(ActionEvent event) {
-        // Ocultar selección, mostrar formulario de domicilio
+        mostrarPantalla(paneDomicilio);
     }
 
     @FXML
     void onRegresarAction(ActionEvent event) {
-        // Ocultar cualquier formulario activo y volver a mostrar paneSeleccion
+        // Al regresar, limpiamos los campos por si el usuario había escrito algo
+        limpiarCampos();
+        mostrarPantalla(paneSeleccion);
     }
 
     // --- MÉTODOS DE VALIDACIÓN Y CONTINUACIÓN ---
@@ -58,12 +79,58 @@ public class ControlRegistroPedido {
         String telefono = txtTelefonoDomicilio.getText();
         String direccion = txtDireccionDomicilio.getText();
 
-        // TODO: Validar que no estén vacíos, que teléfono sea de 10 dígitos (RN-02)
-        // TODO: Enviar datos a ServicioPedido
+        // 1. Validamos usando la capa de negocio (RN-02)
+        boolean datosValidos = servicioPedido.validarDatosDomicilio(nombre, telefono, direccion);
+
+        if (datosValidos) {
+            // 2. Si los datos son válidos, GUARDAMOS en la base de datos
+            servicioPedido.crearPedidoDomicilio(nombre, telefono, direccion);
+            
+            // 3. Confirmamos al usuario, limpiamos el formulario y regresamos al inicio
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Pedido Registrado", "El pedido a domicilio se guardó correctamente en el sistema.");
+            limpiarCampos();
+            mostrarPantalla(paneSeleccion);
+            
+        } else {
+            // Cumpliendo el escenario 2 de la HU-01: Bloqueo por falta de datos
+            mostrarAlerta(Alert.AlertType.ERROR, "Falta información", 
+                "Verifica que ningún campo esté vacío y que el teléfono tenga exactamente 10 dígitos.");
+        }
     }
 
     @FXML
     void onContinuarRecogerAction(ActionEvent event) {
-        // Lógica similar para recoger (Recordando que teléfono es opcional según HU-01)
+        String nombre = txtNombreRecoger.getText();
+        String telefono = txtTelefonoRecoger.getText();
+
+        // Validación básica para recoger
+        if (nombre == null || nombre.trim().isEmpty()) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Falta información", "El nombre del cliente es obligatorio.");
+        } else {
+            // GUARDAMOS en la base de datos
+            servicioPedido.crearPedidoRecoger(nombre, telefono);
+            
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Pedido Registrado", "El pedido para recoger se guardó correctamente en el sistema.");
+            limpiarCampos();
+            mostrarPantalla(paneSeleccion);
+        }
+    }
+
+    // --- MÉTODOS UTILITARIOS ---
+
+    private void limpiarCampos() {
+        txtNombreDomicilio.clear();
+        txtTelefonoDomicilio.clear();
+        txtDireccionDomicilio.clear();
+        txtNombreRecoger.clear();
+        txtTelefonoRecoger.clear();
+    }
+
+    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
+        Alert alerta = new Alert(tipo);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 }

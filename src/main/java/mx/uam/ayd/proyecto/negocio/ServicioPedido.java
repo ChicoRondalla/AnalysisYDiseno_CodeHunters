@@ -1,5 +1,6 @@
 package mx.uam.ayd.proyecto.negocio;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -10,41 +11,83 @@ import org.springframework.stereotype.Service;
 import mx.uam.ayd.proyecto.datos.PedidoRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
+import mx.uam.ayd.proyecto.datos.ClienteRepository;
+import mx.uam.ayd.proyecto.negocio.modelo.Cliente;
 
+
+/**
+ * Lógica de negocio para la gestión de Pedidos
+ */
 @Service
 public class ServicioPedido {
 // INJECTA EL REPOSITORIO DE PEDIDO PARA USAR SUS MÉTODOS
     @Autowired
     private PedidoRepository pedidoRepository;
 
+    @Autowired
+    private ClienteRepository clienteRepository;
+
     /**
-     * Valida los datos de un pedido a domicilio según la RN-02.
-     * 
-     * @param nombre El nombre del cliente.
-     * @param telefono El teléfono del cliente (debe tener exactamente 10 dígitos).
-     * @param direccion La dirección de entrega (no puede estar vacía).
-     * @return true si los datos son válidos, false si rompen alguna regla de negocio.
+     * Valida que los datos del formulario a domicilio no estén vacíos
+     * y que el teléfono tenga la longitud correcta (RN-02).
      */
     public boolean validarDatosDomicilio(String nombre, String telefono, String direccion) {
-        // Validación de campos vacíos
         if (nombre == null || nombre.trim().isEmpty()) return false;
+        if (telefono == null || telefono.trim().length() != 10) return false;
         if (direccion == null || direccion.trim().isEmpty()) return false;
-        if (telefono == null || telefono.trim().isEmpty()) return false;
-
-        // Validación estricta de 10 dígitos numéricos para el teléfono
-        if (!telefono.matches("\\d{10}")) {
-            return false;
-        }
-
-        // Si pasa todas las validaciones
+        
         return true;
     }
+    /**
+     * Crea un nuevo cliente y su pedido asociado para entrega a domicilio.
+     */
+    public Pedido crearPedidoDomicilio(String nombre, String telefono, String direccion) {
+        // 1. Creamos y guardamos al Cliente en la base de datos
+        Cliente cliente = new Cliente();
+        cliente.setNombre(nombre);
+        cliente.setTelefono(telefono);
+        cliente.setDireccion(direccion);
+        cliente = clienteRepository.save(cliente);
 
+        // 2. Creamos el Pedido y le asignamos sus valores iniciales
+        Pedido pedido = new Pedido();
+        pedido.setTipoOrden("Domicilio");
+        pedido.setEstado("Pendiente");
+        
+        // Generamos un número de orden temporal (pueden cambiar esta lógica después)
+        pedido.setNumeroOrden((int) (Math.random() * 10000)); 
+        
+        // 3. Vinculamos el cliente al pedido y guardamos el pedido
+        pedido.setCliente(cliente);
+        return pedidoRepository.save(pedido);
+    }
 
-    
+    /**
+     * Crea un nuevo cliente y su pedido asociado para recoger en sucursal.
+     */
+    public Pedido crearPedidoRecoger(String nombre, String telefono) {
+        Cliente cliente = new Cliente();
+        cliente.setNombre(nombre);
+        
+        // El teléfono es opcional para recoger
+        if (telefono != null && !telefono.trim().isEmpty()) {
+            cliente.setTelefono(telefono);
+        }
+        cliente = clienteRepository.save(cliente);
+
+        Pedido pedido = new Pedido();
+        pedido.setTipoOrden("Recoger");
+        pedido.setEstado("Pendiente");
+        pedido.setNumeroOrden((int) (Math.random() * 10000));
+        pedido.setCliente(cliente);
+
+        return pedidoRepository.save(pedido);
+    }
+    // TERMINA HU
+
     /**
      * INICIA HU-03
-     * ENVIO A COSINA  (HU-03).
+     * ENVIO A COCINA  (HU-03).
      * @param idPedido IDENTIFICADOR DEL PEDIDO.
      * @return TRUE SI PROCESA CORRECTAMENTE.
      */
@@ -70,7 +113,7 @@ public class ServicioPedido {
         List<DetallesPedido> paraPlancha = new ArrayList<>();
         List<DetallesPedido> paraRollos = new ArrayList<>();
 
-        // RN-04: DIVICION DE COMANDAS
+        // RN-04: DIVISION DE COMANDAS
         for (DetallesPedido detalle : detalles) {
             String area = detalle.getPlatillo().getTipoArea();
             
@@ -111,4 +154,3 @@ public class ServicioPedido {
     }
     // TERMINA HU-03
 }
-
