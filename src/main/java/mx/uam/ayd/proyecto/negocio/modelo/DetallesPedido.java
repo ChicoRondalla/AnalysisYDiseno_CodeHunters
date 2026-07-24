@@ -28,7 +28,7 @@ public class DetallesPedido {
     private Pedido pedido;
 
     // 1 DetallePedido CORRESPONDE a 1 Platillo
-    @ManyToOne(targetEntity = Platillo.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Platillo.class, fetch = FetchType.EAGER)
     private Platillo platillo;
 
 
@@ -39,6 +39,14 @@ public class DetallesPedido {
 
     public void setIdDetallePedido(long idDetallePedido) {
         this.idDetallePedido = idDetallePedido;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
     }
 
     public int getCantidad() {
@@ -65,6 +73,7 @@ public class DetallesPedido {
         this.notas = notas;
     }
 
+    
     
     // LO AGREGE PARA LA HU-03
     public Platillo getPlatillo() {
