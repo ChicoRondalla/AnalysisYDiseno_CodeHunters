@@ -1,5 +1,6 @@
 package mx.uam.ayd.proyecto.presentacion.registrarPedido;
 
+import java.util.List;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -7,6 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
+import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
+import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +29,8 @@ public class CocinaPantallaControlador {
     @FXML
     private Label txtOrdenInput;
 
+    private String estacionActual = "ROLLOS";
+
     private final ControlRegistroPedido controlRegistroPedido;
 
     @Autowired
@@ -36,6 +42,32 @@ public class CocinaPantallaControlador {
     public void initialize() {
         if (txtOrdenInput != null) {
             txtOrdenInput.setText(TXT_ORDEN_PREFIX);
+        }
+        actualizarVistaEstacion();
+    }
+
+    // --- ACCIONES DE NAVEGACIÓN Y ESTACIÓN ---
+
+    @FXML
+    private void handleCambiarEstacionRollos() {
+        this.estacionActual = "ROLLOS";
+        actualizarVistaEstacion();
+    }
+
+    @FXML
+    private void handleCambiarEstacionPlancha() {
+        this.estacionActual = "PLANCHA";
+        actualizarVistaEstacion();
+    }
+
+    @FXML
+    private void handleMostrarCompletados() {
+        LOGGER.info("Mostrando ventana / filtro de pedidos completados.");
+    }
+
+    private void actualizarVistaEstacion() {
+        if (lblEstacion != null) {
+            lblEstacion.setText("ESTACIÓN: " + estacionActual);
         }
     }
 
@@ -69,33 +101,59 @@ public class CocinaPantallaControlador {
                 finalizarOrden(idOrden);
                 handleKeypadClear();
             } catch (NumberFormatException e) {
-                LOGGER.warning("Número de orden inválido: " + texto);
+                LOGGER.warning(() -> "Número de orden inválido: " + texto);
             }
         }
     }
 
-    // --- MÉTODOS DE NEGOCIO ---
+    // --- MÉTODOS PARA RENDERIZAR Y FINALIZAR PEDIDOS ---
 
     public void finalizarOrden(Long idOrden) {
-        // Ejemplo de uso para eliminar el warning de "Unused field controlRegistroPedido"
+        LOGGER.info(() -> "Cambiando estado de la orden #" + idOrden + " a COMPLETADO.");
+        
         if (controlRegistroPedido != null) {
-            LOGGER.info(() -> "Finalizando orden #" + idOrden + " mediante ControlRegistroPedido.");
+            actualizarVistaEstacion();
         }
     }
 
-    public void agregarTarjetaOrden(String numeroOrden, String detallesPlatillo) {
-        VBox card = new VBox();
-        card.setPrefWidth(300);
-        card.setStyle("-fx-border-color: black; -fx-background-color: white; -fx-padding: 10px;");
+    public void mostrarPedidosPendientes(List<Pedido> pedidos) {
+        containerPendientes.getChildren().clear();
+
+        for (Pedido pedido : pedidos) {
+            StringBuilder detallesTexto = new StringBuilder();
+
+            for (DetallesPedido detalle : pedido.getDetallesPedido()) {
+                Platillo platillo = detalle.getPlatillo();
+                
+                if (platillo != null && estacionActual.equalsIgnoreCase(platillo.getTipoArea())) {
+                    detallesTexto.append(detalle.getCantidad())
+                                 .append("x ")
+                                 .append(platillo.getNombre())
+                                 .append("\n");
+                }
+            }
+
+            if (!detallesTexto.isEmpty()) {
+                crearTarjetaOrden(pedido.getIdPedido(), String.valueOf(pedido.getNumeroOrden()), detallesTexto.toString().trim());
+            }
+        }
+    }
+
+    private void crearTarjetaOrden(Long idPedido, String numeroOrden, String detallesPlatillo) {
+        VBox card = new VBox(8);
+        card.setPrefWidth(220);
+        card.setStyle("-fx-background-color: #2D1F21; -fx-background-radius: 8; -fx-border-color: #7B7374; -fx-border-radius: 8; -fx-border-width: 1; -fx-padding: 12px;");
 
         Label lblNum = new Label("#" + numeroOrden);
-        lblNum.setStyle("-fx-font-size: 26px; -fx-font-weight: bold;");
+        lblNum.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
 
         Label lblDetalles = new Label(detallesPlatillo);
+        lblDetalles.setWrapText(true);
+        lblDetalles.setStyle("-fx-font-size: 14px; -fx-text-fill: #FFFFFF;");
 
         Button btnFinalizar = new Button("FINALIZAR");
-        btnFinalizar.setStyle("-fx-background-color: #912634; -fx-text-fill: white;");
-        btnFinalizar.setOnAction(e -> containerPendientes.getChildren().remove(card));
+        btnFinalizar.setStyle("-fx-background-color: #E13131; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+        btnFinalizar.setOnAction(e -> finalizarOrden(idPedido));
 
         card.getChildren().addAll(lblNum, lblDetalles, btnFinalizar);
         containerPendientes.getChildren().add(card);

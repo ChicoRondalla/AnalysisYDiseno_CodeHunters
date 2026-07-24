@@ -35,9 +35,10 @@
                </font>
             </Label>
             <Separator prefWidth="200.0" />
-            <Button mnemonicParsing="false" style="-fx-background-color: #912634; -fx-text-fill: white;" text="PENDIENTES" />
-            <Button mnemonicParsing="false" style="-fx-background-color: #912634; -fx-text-fill: white;" text="COMPLETADOS" />
-            <Button style="-fx-background-color: #912634; -fx-text-fill: white;" text="CERRAR TURNO" />
+            <!-- Botón de consulta de órdenes completadas -->
+            <Button mnemonicParsing="false" onAction="#handleMostrarCompletados" style="-fx-background-color: #912634; -fx-text-fill: white;" text="COMPLETADOS" />
+            <!-- Botón para finalizar la jornada / turno -->
+            <Button mnemonicParsing="false" onAction="#handleCerrarTurno" style="-fx-background-color: #912634; -fx-text-fill: white;" text="CERRAR TURNO" />
          </children>
       </VBox>
    </left>
