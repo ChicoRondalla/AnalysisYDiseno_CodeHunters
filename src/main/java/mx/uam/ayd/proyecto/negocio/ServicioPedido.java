@@ -33,7 +33,10 @@ public class ServicioPedido {
      */
     public boolean validarDatosDomicilio(String nombre, String telefono, String direccion) {
         if (nombre == null || nombre.trim().isEmpty()) return false;
-        if (telefono == null || telefono.trim().length() != 10) return false;
+        
+        // Verificamos que no sea nulo y contenga EXACTAMENTE 10 números (cero letras)
+        if (telefono == null || !telefono.matches("\\d{10}")) return false;
+        
         if (direccion == null || direccion.trim().isEmpty()) return false;
         
         return true;
@@ -83,6 +86,25 @@ public class ServicioPedido {
 
         return pedidoRepository.save(pedido);
     }
+     /**
+     * Crea un pedido para consumo local asignado a una mesa específica.
+     */
+    public Pedido crearPedidoLocal(int numeroMesa) {
+        // Creamos un "cliente" genérico que representará la mesa en la base de datos
+        Cliente cliente = new Cliente();
+        cliente.setNombre("Mesa " + numeroMesa);
+        // Teléfono y dirección se quedan vacíos porque es consumo local
+        cliente = clienteRepository.save(cliente);
+
+        Pedido pedido = new Pedido();
+        pedido.setTipoOrden("Local");
+        pedido.setEstado("Pendiente");
+        pedido.setNumeroOrden((int) (Math.random() * 10000));
+        pedido.setCliente(cliente);
+
+        return pedidoRepository.save(pedido);
+    }
+
     // TERMINA HU
 
     /**
@@ -154,3 +176,4 @@ public class ServicioPedido {
     }
     // TERMINA HU-03
 }
+

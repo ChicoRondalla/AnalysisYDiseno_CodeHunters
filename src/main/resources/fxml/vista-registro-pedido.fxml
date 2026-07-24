@@ -79,9 +79,30 @@
                </font>
             </Label>
             
-            <Label alignment="CENTER" layoutX="0.0" layoutY="250.0" prefWidth="800.0" text="(Aquí agregaremos los botones de las mesas más adelante)" textFill="#888888" />
+            <Label alignment="CENTER" layoutX="0.0" layoutY="140.0" prefWidth="800.0" text="Seleccione la mesa a ocupar" textFill="#b3b3b3" />
             
-            <Button layoutX="350.0" layoutY="400.0" mnemonicParsing="false" onAction="#onRegresarAction" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 5; -fx-text-fill: white;" text="Regresar" />
+            <!-- Botones simulando la distribución de mesas -->
+            <Button layoutX="150.0" layoutY="220.0" mnemonicParsing="false" onAction="#onMesa1Action" prefHeight="120.0" prefWidth="120.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-background-radius: 10;" text="MESA 1">
+               <font><Font name="System Bold" size="16.0" /></font>
+            </Button>
+            
+            <Button layoutX="340.0" layoutY="220.0" mnemonicParsing="false" onAction="#onMesa2Action" prefHeight="120.0" prefWidth="120.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-background-radius: 10;" text="MESA 2">
+               <font><Font name="System Bold" size="16.0" /></font>
+            </Button>
+            
+            <Button layoutX="530.0" layoutY="220.0" mnemonicParsing="false" onAction="#onMesa3Action" prefHeight="120.0" prefWidth="120.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-background-radius: 10;" text="MESA 3">
+               <font><Font name="System Bold" size="16.0" /></font>
+            </Button>
+
+            <Button layoutX="245.0" layoutY="370.0" mnemonicParsing="false" onAction="#onMesa4Action" prefHeight="120.0" prefWidth="120.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-background-radius: 10;" text="MESA 4">
+               <font><Font name="System Bold" size="16.0" /></font>
+            </Button>
+            
+            <Button layoutX="435.0" layoutY="370.0" mnemonicParsing="false" onAction="#onMesa5Action" prefHeight="120.0" prefWidth="120.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-background-radius: 10;" text="MESA 5">
+               <font><Font name="System Bold" size="16.0" /></font>
+            </Button>
+            
+            <Button layoutX="350.0" layoutY="520.0" mnemonicParsing="false" onAction="#onRegresarAction" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 5; -fx-text-fill: white;" text="Regresar" />
          </children>
       </Pane>
       

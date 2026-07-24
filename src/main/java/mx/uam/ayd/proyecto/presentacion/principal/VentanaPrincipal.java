@@ -79,8 +79,6 @@ public class VentanaPrincipal {
 	}
 	
 	// FXML Event Handlers
-	
-
 	@FXML
     private void handleRegistrarPedido() {
         if (control != null) {

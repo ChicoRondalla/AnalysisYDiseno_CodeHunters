@@ -5,9 +5,10 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import mx.uam.ayd.proyecto.presentacion.principal.VentanaPrincipal;
 
-// 1. CONTROLADOR DE LA HISTORIA DE USUARIO HU-03
 import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina;
+
 import mx.uam.ayd.proyecto.presentacion.registrarPedido.ControlRegistroPedido;
 import mx.uam.ayd.proyecto.presentacion.registrarPedido.VistaRegistroPedido;
 
@@ -16,10 +17,14 @@ import mx.uam.ayd.proyecto.presentacion.registrarPedido.VistaRegistroPedido;
 @Component
 public class ControlPrincipal {
 
-
+	private final VentanaPrincipal ventana;
+	
 	@Autowired
-	private VentanaPrincipal ventana;	
-	// HU-O1	
+	public ControlPrincipal(
+			VentanaPrincipal ventana) {
+		this.ventana = ventana;
+	}
+	
 	@Autowired
     private VistaRegistroPedido vistaRegistroPedido;
 
@@ -37,7 +42,6 @@ public class ControlPrincipal {
         vistaRegistroPedido.muestra(controlRegistroPedido);
     }
 
-
 	/**
 	 * Método que se ejecuta después de la construcción del bean
 	 * y realiza la conexión bidireccional entre el control principal y la ventana principal
@@ -52,9 +56,6 @@ public class ControlPrincipal {
 	 * 
 	 */
 	public void inicia() {
-		//Comentamos esta parte para que no se abra la ventana que tenia de 'Mi Aplicacion' profesor, una disculpa
-		//ventana.muestra();
-
 		//Para que incie directamente con el menu de la HU-01 para seleccionar el tipo de pedido
 		registrarPedido();
 	}
@@ -65,6 +66,7 @@ public class ControlPrincipal {
         // ID DE PEDIDO SIMULADO PARA PRUEBAS
         controlEnviarOrdenCocina.inicia(1L); 
     }
+
 }
 
 

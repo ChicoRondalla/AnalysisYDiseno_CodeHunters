@@ -44,10 +44,6 @@ public class Pedido {
     @JoinColumn(name = "id_pedido")
     private final List<Cobro> cobros = new ArrayList<>();
 
-    // Muchos pedidos pueden ser de 1 usuario
-    @ManyToOne(targetEntity = Usuario.class, fetch = FetchType.LAZY)
-    private Usuario usuario;
-
     // Muchos pedidos pueden ser de 1 cliente
     @ManyToOne(targetEntity = Cliente.class, fetch = FetchType.LAZY)
     private Cliente cliente;
@@ -127,13 +123,6 @@ public class Pedido {
     }
 
     // --- RELACIONES DEL MODELO DE DOMINIO GETTERS Y SETTERS ---
-    public Usuario getUsuario() {
-         return usuario; 
-        }
-    public void setUsuario(Usuario usuario) {
-         this.usuario = usuario; 
-        }
-
     public Cliente getCliente() { 
         return cliente; 
     }
