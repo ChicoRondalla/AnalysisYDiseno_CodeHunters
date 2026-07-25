@@ -7,11 +7,10 @@ import org.springframework.stereotype.Component;
 
 import mx.uam.ayd.proyecto.presentacion.principal.VentanaPrincipal;
 
-import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina;
-
 import mx.uam.ayd.proyecto.presentacion.registrarPedido.ControlRegistroPedido;
 import mx.uam.ayd.proyecto.presentacion.registrarPedido.VistaRegistroPedido;
-
+import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina;
+import mx.uam.ayd.proyecto.presentacion.cancelarOrden.ControlCancelarOrden;
 
 
 @Component
@@ -34,6 +33,10 @@ public class ControlPrincipal {
     // HU-03
     @Autowired
     private ControlEnviarOrdenCocina controlEnviarOrdenCocina;
+
+	// HU-04
+	@Autowired
+	private ControlCancelarOrden controlCancelarOrden;
 
     /**
      * Método para abrir la historia de usuario HU-01
@@ -67,6 +70,13 @@ public class ControlPrincipal {
         controlEnviarOrdenCocina.inicia(1L); 
     }
 
+	// 6. MÉTODO QUE ARRANCA LA HISTORIA DE USUARIO "CANCELAR ORDEN" (HU-04)
+	
+    public void cancelarOrden() {
+        // ID DE PEDIDO SIMULADO PARA PRUEBAS
+        controlCancelarOrden.inicia(1L);
+
+}
 }
 
 

@@ -175,5 +175,52 @@ public class ServicioPedido {
         }
     }
     // TERMINA HU-03
+
+
+    /**
+     *INICIA HU-04 
+     * CANCELA UN PEDIDO (HU-04).
+     * @param idPedido IDENTIFICADOR DEL PEDIDO.
+     * @param motivoCancelacion MOTIVO DE CANCELACIÓN DEL PEDIDO.
+     * @param  idUsuario DEL USUARIO QUE CANCELA EL PEDIDO.
+     * @return TRUE SI EL PEDIDO SE CANCELA CORRECTAMENTE.
+     */
+    public boolean cancelarPedido(long idPedido, String motivoCancelacion, String idUsuario) {
+        
+        // 1. RN-06: MOTIVO DE CANCELACIÓN OBLIGATORIO
+        if (motivoCancelacion == null || motivoCancelacion.trim().isEmpty()) {
+            throw new IllegalArgumentException("El motivo de cancelación es obligatorio.");
+        }
+
+        // 2. RECUPERA EL PEDIDO POR ID
+        Optional<Pedido> pedidoOpt = pedidoRepository.findById(idPedido);
+        
+        if (pedidoOpt.isEmpty()) {
+            throw new IllegalArgumentException("No se encontró el pedido con ID: " + idPedido);
+        }
+        
+        Pedido pedido = pedidoOpt.get();
+
+        // 3. CAMBIAR ESTADO A "Cancelada"
+        pedido.setEstado("Cancelada");
+        
+        // 4. RN-06: GUARDAR MOTIVO Y QUIEN LO HIZO 
+        String detalleCancelacion = motivoCancelacion.trim() + " (Cancelado por: " + idUsuario + ")";
+        pedido.setMotivoCancelacion(detalleCancelacion);
+
+        // 5. RN-07: NOTIFICAR A COCINA 
+        notificarCancelacionCocina(pedido.getIdPedido());
+
+        // 6. ACTUALIZAR EL PEDIDO EN LA BASE DE DATOS
+        pedidoRepository.save(pedido);
+
+        return true; 
+    }
+    private void notificarCancelacionCocina(long idPedido) {
+        System.err.println("-> [ALERTA COCINA - STOP] DETENER PREPARACIÓN: El pedido ID " + idPedido + " ha sido CANCELADO.");
+    }
+
+    // TERMINA HU-04
+
 }
 

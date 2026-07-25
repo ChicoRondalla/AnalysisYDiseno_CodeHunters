@@ -15,7 +15,10 @@
             style="-fx-min-width: 200px; -fx-min-height: 30px; -fx-background-color: #e63946; -fx-text-fill: white; -fx-font-weight: bold;"/>
     
     <Button text="Enviar Orden a Cocina" onAction="#handleEnviarOrdenCocina"
-        style="-fx-min-width: 200px; -fx-min-height: 30px;"/>        
+        style="-fx-min-width: 200px; -fx-min-height: 30px;"/> 
+        
+    <Button text="Cancelar Pedido" onAction="#handleCancelarPedido"
+        style="-fx-min-width: 200px; -fx-min-height: 30px;"/>           
 
 </VBox>
 
