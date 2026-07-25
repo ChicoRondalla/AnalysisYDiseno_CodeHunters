@@ -140,6 +140,26 @@ public class ServicioPedido {
     }
 
     /**
+     * RECUPERA PEDIDOS COMPLETADOS / DESPACHADOS DE COCINA.
+     */
+    @Transactional(readOnly = true)
+    public List<Pedido> recuperaPedidosCompletados() {
+        List<Pedido> completados = new ArrayList<>();
+        Iterable<Pedido> todosLosPedidos = pedidoRepository.findAll();
+        
+        for (Pedido pedido : todosLosPedidos) {
+            if ("Completado".equalsIgnoreCase(pedido.getEstado())) {
+                if (pedido.getDetallesPedido() != null) {
+                    pedido.getDetallesPedido().size(); // Carga Lazy
+                }
+                completados.add(pedido);
+            }
+        }
+        
+        return completados;
+    }
+
+    /**
      * HU-03: ENVIO A COCINA.
      */
     @Transactional

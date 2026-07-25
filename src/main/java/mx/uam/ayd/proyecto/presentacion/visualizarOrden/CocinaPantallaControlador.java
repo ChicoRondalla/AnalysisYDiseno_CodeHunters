@@ -4,10 +4,17 @@ import java.util.List;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
@@ -32,6 +39,9 @@ public class CocinaPantallaControlador {
     private Label txtOrdenInput;
 
     private String estacionActual = "ROLLOS";
+
+    @Autowired
+    private ServicioPedido servicioPedido;
 
     @Autowired
     @Lazy
@@ -65,9 +75,75 @@ public class CocinaPantallaControlador {
         }
     }
 
+    /**
+     * Muestra la ventana modal con las órdenes completadas.
+     */
     @FXML
     private void handleMostrarCompletados() {
-        LOGGER.info("Mostrando ventana / filtro de pedidos completados.");
+        Stage modalStage = new Stage();
+        modalStage.initModality(Modality.APPLICATION_MODAL);
+        modalStage.setTitle("Órdenes Completadas - Cocina");
+
+        VBox rootLayout = new VBox(15);
+        rootLayout.setPadding(new Insets(20));
+        rootLayout.setStyle("-fx-background-color: #1E1E1E;");
+
+        Label titulo = new Label("ÓRDENES COMPLETADAS");
+        titulo.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #00FF87;");
+
+        TilePane containerCompletados = new TilePane();
+        containerCompletados.setHgap(15);
+        containerCompletados.setVgap(15);
+        containerCompletados.setPrefColumns(3);
+
+        List<Pedido> completados = servicioPedido.recuperaPedidosCompletados();
+
+        if (completados == null || completados.isEmpty()) {
+            Label lblVacio = new Label("No hay órdenes completadas recientemente.");
+            lblVacio.setStyle("-fx-text-fill: #AAAAAA; -fx-font-size: 14px;");
+            rootLayout.getChildren().addAll(titulo, lblVacio);
+        } else {
+            for (Pedido p : completados) {
+                VBox card = new VBox(6);
+                card.setPrefWidth(200);
+                card.setStyle("-fx-background-color: #2D2D2D; -fx-background-radius: 8; -fx-padding: 10px; -fx-border-color: #00FF87; -fx-border-radius: 8;");
+
+                Label lblNum = new Label("Orden #" + p.getNumeroOrden());
+                lblNum.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
+
+                StringBuilder sb = new StringBuilder();
+                if (p.getDetallesPedido() != null) {
+                    for (DetallesPedido d : p.getDetallesPedido()) {
+                        if (d.getPlatillo() != null) {
+                            sb.append("• ").append(d.getCantidad()).append("x ").append(d.getPlatillo().getNombre()).append("\n");
+                        }
+                    }
+                }
+
+                Label lblItems = new Label(sb.toString().trim());
+                lblItems.setWrapText(true);
+                lblItems.setStyle("-fx-text-fill: #DDDDDD; -fx-font-size: 12px;");
+
+                card.getChildren().addAll(lblNum, lblItems);
+                containerCompletados.getChildren().add(card);
+            }
+
+            ScrollPane scrollPane = new ScrollPane(containerCompletados);
+            scrollPane.setFitToWidth(true);
+            scrollPane.setStyle("-fx-background: #1E1E1E; -fx-background-color: transparent;");
+
+            rootLayout.getChildren().addAll(titulo, scrollPane);
+        }
+
+        Button btnCerrar = new Button("Cerrar");
+        btnCerrar.setStyle("-fx-background-color: #E13131; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+        btnCerrar.setOnAction(e -> modalStage.close());
+
+        rootLayout.getChildren().add(btnCerrar);
+
+        Scene scene = new Scene(rootLayout, 680, 480);
+        modalStage.setScene(scene);
+        modalStage.showAndWait();
     }
 
     private void actualizarVistaEstacion() {
@@ -113,10 +189,18 @@ public class CocinaPantallaControlador {
 
     // --- MÉTODOS PARA RENDERIZAR Y FINALIZAR PEDIDOS ---
 
-    public void finalizarOrden(Long idOrden) {
-        LOGGER.info(() -> "Cambiando estado de la orden #" + idOrden + " a COMPLETADO.");
-        if (controlVisualizarOrden != null) {
-            controlVisualizarOrden.cargarPedidosPendientes();
+    public void finalizarOrden(Long idPedido) {
+        try {
+            Pedido pedido = servicioPedido.recuperaPedido(idPedido);
+            if (pedido != null) {
+                pedido.setEstado("Completado");
+                // Guarda el estado completado
+                if (controlVisualizarOrden != null) {
+                    controlVisualizarOrden.cargarPedidosPendientes();
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.severe(() -> "Error al finalizar la orden: " + e.getMessage());
         }
     }
 
