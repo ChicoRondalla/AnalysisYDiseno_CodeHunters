@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #1A1112;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uam.ayd.proyecto.presentacion.registrarPedido.CocinaPantallaControlador">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #1A1112;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uam.ayd.proyecto.presentacion.visualizarOrden.CocinaPantallaControlador">
    <top>
       <BorderPane prefHeight="66.0" prefWidth="600.0" style="-fx-background-color: #2D1F21;" BorderPane.alignment="CENTER">
          <center>
@@ -30,19 +30,15 @@
    <left>
       <VBox prefHeight="654.0" prefWidth="145.0" spacing="12.0" style="-fx-background-color: #1A1112; -fx-border-color: #2D1F21; -fx-border-width: 0 1 0 0;" BorderPane.alignment="CENTER">
          <padding>
-            <!-- Offset de 150px en top para dejar la distancia de ~4 cm desde arriba -->
             <Insets bottom="15.0" left="10.0" right="10.0" top="150.0" />
          </padding>
          <children>
-            <!-- Botones de Cambio de Estación -->
             <Label style="-fx-font-weight: bold; -fx-font-size: 13; -fx-text-fill: #7B7374;" text="ESTACIONES" />
             <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleCambiarEstacionRollos" style="-fx-background-color: #E13131; -fx-text-fill: white; -fx-font-weight: BOLD; -fx-cursor: hand;" text="ROLLOS" />
             <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleCambiarEstacionPlancha" style="-fx-background-color: #E13131; -fx-text-fill: white; -fx-font-weight: BOLD; -fx-cursor: hand;" text="PLANCHA" />
             
-            <!-- Espaciador que empuja COMPLETADOS al fondo -->
             <Pane VBox.vgrow="ALWAYS" />
             
-            <!-- Botón de consulta de órdenes completadas -->
             <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleMostrarCompletados" style="-fx-background-color: #E13131; -fx-text-fill: white; -fx-font-weight: BOLD; -fx-cursor: hand;" text="COMPLETADOS" />
          </children>
       </VBox>
@@ -55,7 +51,6 @@
                   <Insets bottom="15" left="15" right="15" top="15" />
                </padding>
                <children>
-                  <!-- Área contenedora de las tarjetas de pedidos -->
                   <ScrollPane fitToWidth="true" prefHeight="623.0" prefWidth="819.0" style="-fx-background-color: #1A1112; -fx-background: #1A1112;" HBox.hgrow="ALWAYS">
                      <content>
                         <TilePane fx:id="containerPendientes" hgap="15" prefColumns="3" prefHeight="622.0" prefWidth="708.0" style="-fx-background-color: #1A1112;" vgap="15">
@@ -66,7 +61,6 @@
                      </content>
                   </ScrollPane>
                   
-                  <!-- Panel lateral derecho: Teclado Numérico -->
                   <VBox prefHeight="623.0" prefWidth="188.0" spacing="10" style="-fx-background-color: #2D1F21; -fx-background-radius: 8;">
                      <padding>
                         <Insets bottom="10" left="10" right="10" top="10" />

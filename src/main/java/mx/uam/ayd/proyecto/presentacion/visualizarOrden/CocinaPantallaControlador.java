@@ -1,4 +1,4 @@
-package mx.uam.ayd.proyecto.presentacion.registrarPedido;
+package mx.uam.ayd.proyecto.presentacion.visualizarOrden;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,11 +32,11 @@ public class CocinaPantallaControlador {
 
     private String estacionActual = "ROLLOS";
 
-    private final ControlRegistroPedido controlRegistroPedido;
+    private final ControlVisualizarOrden controlVisualizarOrden;
 
     @Autowired
-    public CocinaPantallaControlador(ControlRegistroPedido controlRegistroPedido) {
-        this.controlRegistroPedido = controlRegistroPedido;
+    public CocinaPantallaControlador(ControlVisualizarOrden controlVisualizarOrden) {
+        this.controlVisualizarOrden = controlVisualizarOrden;
     }
 
     @FXML
@@ -111,12 +112,13 @@ public class CocinaPantallaControlador {
     public void finalizarOrden(Long idOrden) {
         LOGGER.info(() -> "Cambiando estado de la orden #" + idOrden + " a COMPLETADO.");
         
-        if (controlRegistroPedido != null) {
+        if (controlVisualizarOrden != null) {
             actualizarVistaEstacion();
         }
     }
 
     public void mostrarPedidosPendientes(List<Pedido> pedidos) {
+        if (containerPendientes == null) return;
         containerPendientes.getChildren().clear();
 
         for (Pedido pedido : pedidos) {
