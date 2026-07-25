@@ -10,24 +10,21 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 @Component
-
 public class VentanaEnviarOrdenCocina {
 
-    // Inyectamos el contexto de Spring para que pueda fabricar los controladores
     @Autowired
     private ApplicationContext applicationContext;
 
     private Stage stage;
 
     /**
-     * Muestra la ventana en la pantalla.
+     * Muestra la ventana reocupando la instancia administrada por Spring Boot.
      */
     public void muestra() {
         try {
-            // Buscamos tu archivo visual en la carpeta resources
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Ventana-enviar-orden-cocina.fxml"));
             
-            // Magia de Spring Boot: le decimos que él controle las inyecciones (@Autowired) en el controlador
+            // Le indicamos a JavaFX que obtenga los controladores desde el contenedor de Spring
             fxmlLoader.setControllerFactory(applicationContext::getBean);
             
             Parent root = fxmlLoader.load();
@@ -46,5 +43,4 @@ public class VentanaEnviarOrdenCocina {
             e.printStackTrace();
         }
     }
-
 }

@@ -1,26 +1,25 @@
 package mx.uam.ayd.proyecto.negocio;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import mx.uam.ayd.proyecto.datos.ClienteRepository;
 import mx.uam.ayd.proyecto.datos.PedidoRepository;
+import mx.uam.ayd.proyecto.negocio.modelo.Cliente;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
-import mx.uam.ayd.proyecto.datos.ClienteRepository;
-import mx.uam.ayd.proyecto.negocio.modelo.Cliente;
-
 
 /**
  * Lógica de negocio para la gestión de Pedidos
  */
 @Service
 public class ServicioPedido {
-// INJECTA EL REPOSITORIO DE PEDIDO PARA USAR SUS MÉTODOS
+
     @Autowired
     private PedidoRepository pedidoRepository;
 
@@ -41,27 +40,23 @@ public class ServicioPedido {
         
         return true;
     }
+
     /**
      * Crea un nuevo cliente y su pedido asociado para entrega a domicilio.
      */
     public Pedido crearPedidoDomicilio(String nombre, String telefono, String direccion) {
-        // 1. Creamos y guardamos al Cliente en la base de datos
         Cliente cliente = new Cliente();
         cliente.setNombre(nombre);
         cliente.setTelefono(telefono);
         cliente.setDireccion(direccion);
         cliente = clienteRepository.save(cliente);
 
-        // 2. Creamos el Pedido y le asignamos sus valores iniciales
         Pedido pedido = new Pedido();
         pedido.setTipoOrden("Domicilio");
         pedido.setEstado("Pendiente");
-        
-        // Generamos un número de orden temporal (pueden cambiar esta lógica después)
         pedido.setNumeroOrden((int) (Math.random() * 10000)); 
-        
-        // 3. Vinculamos el cliente al pedido y guardamos el pedido
         pedido.setCliente(cliente);
+        
         return pedidoRepository.save(pedido);
     }
 
@@ -72,7 +67,6 @@ public class ServicioPedido {
         Cliente cliente = new Cliente();
         cliente.setNombre(nombre);
         
-        // El teléfono es opcional para recoger
         if (telefono != null && !telefono.trim().isEmpty()) {
             cliente.setTelefono(telefono);
         }
@@ -86,14 +80,13 @@ public class ServicioPedido {
 
         return pedidoRepository.save(pedido);
     }
-     /**
+
+    /**
      * Crea un pedido para consumo local asignado a una mesa específica.
      */
     public Pedido crearPedidoLocal(int numeroMesa) {
-        // Creamos un "cliente" genérico que representará la mesa en la base de datos
         Cliente cliente = new Cliente();
         cliente.setNombre("Mesa " + numeroMesa);
-        // Teléfono y dirección se quedan vacíos porque es consumo local
         cliente = clienteRepository.save(cliente);
 
         Pedido pedido = new Pedido();
@@ -105,16 +98,52 @@ public class ServicioPedido {
         return pedidoRepository.save(pedido);
     }
 
-    // TERMINA HU
+    /**
+     * Recupera un pedido por su ID cargando sus datos y detalles.
+     */
+    @Transactional(readOnly = true)
+    public Pedido recuperaPedido(long idPedido) {
+        Optional<Pedido> pedidoOpt = pedidoRepository.findById(idPedido);
+        if (pedidoOpt.isPresent()) {
+            Pedido pedido = pedidoOpt.get();
+            // Carga forzada de la colección Lazy de detalles
+            if (pedido.getDetallesPedido() != null) {
+                pedido.getDetallesPedido().size(); 
+            }
+            return pedido;
+        }
+        return null;
+    }
 
     /**
-     * INICIA HU-03
-     * ENVIO A COCINA  (HU-03).
-     * @param idPedido IDENTIFICADOR DEL PEDIDO.
-     * @return TRUE SI PROCESA CORRECTAMENTE.
+     * RECUPERA PEDIDOS PENDIENTES / EN PREPARACIÓN PARA LA COMANDA DE COCINA.
      */
+    @Transactional(readOnly = true)
+    public List<Pedido> recuperaPedidosPendientes() {
+        List<Pedido> pedidosPendientes = new ArrayList<>();
+        
+        // Recuperamos los pedidos activos desde el repositorio
+        Iterable<Pedido> todosLosPedidos = pedidoRepository.findAll();
+        
+        for (Pedido pedido : todosLosPedidos) {
+            // Filtramos aquellos cuya orden esté en preparación o pendiente
+            if ("En Preparación".equalsIgnoreCase(pedido.getEstado()) || "Pendiente".equalsIgnoreCase(pedido.getEstado())) {
+                // Forzamos la carga de la lista Lazy de detalles dentro de la transacción
+                if (pedido.getDetallesPedido() != null) {
+                    pedido.getDetallesPedido().size();
+                }
+                pedidosPendientes.add(pedido);
+            }
+        }
+        
+        return pedidosPendientes;
+    }
+
+    /**
+     * HU-03: ENVIO A COCINA.
+     */
+    @Transactional
     public boolean procesarEnvioCocina(long idPedido) {
-        // 1. RECUPERAR PEDIDO POR ID
         Optional<Pedido> pedidoOpt = pedidoRepository.findById(idPedido);
         
         if (pedidoOpt.isEmpty()) {
@@ -123,76 +152,59 @@ public class ServicioPedido {
         
         Pedido pedido = pedidoOpt.get();
 
-        // 2. RN-05: VALIDAR ESTADO DEL PEDIDO ANTES DE ENVIAR A COCINA
         if ("En Preparación".equals(pedido.getEstado())) {
             throw new IllegalStateException("La orden ya fue enviada a cocina y no puede ser modificada.");
         }
 
-        // 3. OBTENEMOS LOS DETALLES DEL PEDIDO
         List<DetallesPedido> detalles = pedido.getDetallesPedido();
         
-        // SEPARAN LOS DETALLES POR ÁREA DE COCINA
         List<DetallesPedido> paraPlancha = new ArrayList<>();
         List<DetallesPedido> paraRollos = new ArrayList<>();
 
-        // RN-04: DIVISION DE COMANDAS
-        for (DetallesPedido detalle : detalles) {
-            String area = detalle.getPlatillo().getTipoArea();
-            
-            if ("Plancha".equalsIgnoreCase(area)) {
-                paraPlancha.add(detalle);
-            } else if ("Rollos".equalsIgnoreCase(area)) {
-                paraRollos.add(detalle);
+        if (detalles != null) {
+            for (DetallesPedido detalle : detalles) {
+                if (detalle.getPlatillo() != null) {
+                    String area = detalle.getPlatillo().getTipoArea();
+                    
+                    if ("Plancha".equalsIgnoreCase(area)) {
+                        paraPlancha.add(detalle);
+                    } else if ("Rollos".equalsIgnoreCase(area)) {
+                        paraRollos.add(detalle);
+                    }
+                }
             }
         }
 
-        // 4. ENVIAR A ESTACIONES DE COCINA 
         enviarAPlancha(paraPlancha);
         enviarARollos(paraRollos);
 
-        // 5. CAMBIAR ESTADO DEL PEDIDO A "En Preparación" 
         pedido.setEstado("En Preparación");
-
-        // 6. ACTUALIZAR EL PEDIDO EN LA BASE DE DATOS
         pedidoRepository.save(pedido);
 
         return true; 
     }
 
-     //ENVIA DETALLES A PLANCHA 
-     
     private void enviarAPlancha(List<DetallesPedido> detalles) {
         if (!detalles.isEmpty()) {
             System.out.println("-> Enviando " + detalles.size() + " platillos a PLANCHA.");
         }
     }
 
-     //ENVIA DETALLES A ROLLOS 
-
     private void enviarARollos(List<DetallesPedido> detalles) {
         if (!detalles.isEmpty()) {
             System.out.println("-> Enviando " + detalles.size() + " platillos a ROLLOS.");
         }
     }
-    // TERMINA HU-03
-
 
     /**
-     *INICIA HU-04 
-     * CANCELA UN PEDIDO (HU-04).
-     * @param idPedido IDENTIFICADOR DEL PEDIDO.
-     * @param motivoCancelacion MOTIVO DE CANCELACIÓN DEL PEDIDO.
-     * @param  idUsuario DEL USUARIO QUE CANCELA EL PEDIDO.
-     * @return TRUE SI EL PEDIDO SE CANCELA CORRECTAMENTE.
+     * HU-04: CANCELA UN PEDIDO.
      */
+    @Transactional
     public boolean cancelarPedido(long idPedido, String motivoCancelacion, String idUsuario) {
-        
-        // 1. RN-06: MOTIVO DE CANCELACIÓN OBLIGATORIO
         if (motivoCancelacion == null || motivoCancelacion.trim().isEmpty()) {
             throw new IllegalArgumentException("El motivo de cancelación es obligatorio.");
         }
 
-        // 2. RECUPERA EL PEDIDO POR ID
         Optional<Pedido> pedidoOpt = pedidoRepository.findById(idPedido);
         
         if (pedidoOpt.isEmpty()) {
@@ -201,26 +213,17 @@ public class ServicioPedido {
         
         Pedido pedido = pedidoOpt.get();
 
-        // 3. CAMBIAR ESTADO A "Cancelada"
         pedido.setEstado("Cancelada");
-        
-        // 4. RN-06: GUARDAR MOTIVO Y QUIEN LO HIZO 
         String detalleCancelacion = motivoCancelacion.trim() + " (Cancelado por: " + idUsuario + ")";
         pedido.setMotivoCancelacion(detalleCancelacion);
 
-        // 5. RN-07: NOTIFICAR A COCINA 
         notificarCancelacionCocina(pedido.getIdPedido());
-
-        // 6. ACTUALIZAR EL PEDIDO EN LA BASE DE DATOS
         pedidoRepository.save(pedido);
 
         return true; 
     }
+
     private void notificarCancelacionCocina(long idPedido) {
         System.err.println("-> [ALERTA COCINA - STOP] DETENER PREPARACIÓN: El pedido ID " + idPedido + " ha sido CANCELADO.");
     }
-
-    // TERMINA HU-04
-
 }
-

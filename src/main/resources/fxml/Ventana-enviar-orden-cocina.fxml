@@ -15,20 +15,15 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:controller="mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina"
-            prefHeight="700.0"
-            prefWidth="1000.0"
-            xmlns="http://javafx.com/javafx/26"
-            xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina">
 
     <top>
         <HBox spacing="10" style="-fx-background-color:#1f2937;">
             <padding>
-                <Insets bottom="15" left="20" right="20" top="15"/>
+                <Insets bottom="15" left="20" right="20" top="15" />
             </padding>
             <children>
-                <Label text="Resumen de la Orden"
-                       style="-fx-text-fill:white;-fx-font-size:22px;-fx-font-weight:bold;"/>
+                <Label style="-fx-text-fill:white;-fx-font-size:22px;-fx-font-weight:bold;" text="Resumen de la Orden" />
             </children>
         </HBox>
     </top>
@@ -36,7 +31,7 @@
     <center>
         <HBox spacing="20">
             <padding>
-                <Insets bottom="20" left="20" right="20" top="20"/>
+                <Insets bottom="20" left="20" right="20" top="20" />
             </padding>
 
             <children>
@@ -45,7 +40,7 @@
 
                     <children>
 
-                        <TitledPane text="Datos de la Orden" expanded="true">
+                        <TitledPane expanded="true" text="Datos de la Orden">
 
                             <content>
 
@@ -53,34 +48,26 @@
 
                                     <children>
 
-                                        <Label text="Cliente:"/>
-                                        <Label fx:id="lblCliente"
-                                               GridPane.columnIndex="1"/>
+                                        <Label text="Cliente:" />
+                                        <Label fx:id="lblCliente" GridPane.columnIndex="1" />
 
-                                        <Label text="Mesa:"
-                                               GridPane.rowIndex="1"/>
-                                        <Label fx:id="lblMesa"
-                                               GridPane.columnIndex="1"
-                                               GridPane.rowIndex="1"/>
+                                        <Label text="Mesa:" GridPane.rowIndex="1" />
+                                        <Label fx:id="lblMesa" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                                        <Label text="Estado:"
-                                               GridPane.rowIndex="2"/>
-                                        <Label fx:id="lblEstado"
-                                               text="Pendiente de envío"
-                                               GridPane.columnIndex="1"
-                                               GridPane.rowIndex="2"/>
+                                        <Label text="Estado:" GridPane.rowIndex="2" />
+                                        <Label fx:id="lblEstado" text="Pendiente de envío" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                                     </children>
 
                                     <columnConstraints>
-                                        <ColumnConstraints/>
-                                        <ColumnConstraints/>
+                                        <ColumnConstraints />
+                                        <ColumnConstraints />
                                     </columnConstraints>
 
                                     <rowConstraints>
-                                        <RowConstraints/>
-                                        <RowConstraints/>
-                                        <RowConstraints/>
+                                        <RowConstraints />
+                                        <RowConstraints />
+                                        <RowConstraints />
                                     </rowConstraints>
 
                                 </GridPane>
@@ -89,24 +76,18 @@
 
                         </TitledPane>
 
-                        <TableView fx:id="tablaDetalle"
-                                   VBox.vgrow="ALWAYS">
+                        <TableView fx:id="tablaDetalle" VBox.vgrow="ALWAYS">
 
                             <columns>
-                                <TableColumn fx:id="colCategoria" prefWidth="120"
-                                             text="Categoría"/>
+                                <TableColumn fx:id="colCategoria" prefWidth="120" text="Categoría" />
 
-                                <TableColumn fx:id="colProducto" prefWidth="220"
-                                             text="Producto"/>
+                                <TableColumn fx:id="colProducto" prefWidth="220" text="Producto" />
 
-                                <TableColumn fx:id="colCantidad" prefWidth="90"
-                                             text="Cantidad"/>
+                                <TableColumn fx:id="colCantidad" prefWidth="90" text="Cantidad" />
 
-                                <TableColumn fx:id="colPrecio" prefWidth="100"
-                                             text="Precio"/>
+                                <TableColumn fx:id="colPrecio" prefWidth="100" text="Precio" />
 
-                                <TableColumn fx:id="colSubtotal" prefWidth="120"
-                                             text="Subtotal"/>
+                                <TableColumn fx:id="colSubtotal" prefWidth="120" text="Subtotal" />
 
                             </columns>
 
@@ -120,22 +101,20 @@
 
                     <children>
 
-                        <TitledPane text="Resumen"
-                                    expanded="true">
+                        <TitledPane expanded="true" text="Resumen">
 
                             <content>
 
                                 <VBox spacing="8">
 
                                     <children>
-                                        <Label fx:id="lblSubtotalNum" text="Subtotal: $0.00"/>
+                                        <Label fx:id="lblSubtotal" text="Subtotal: $0.00" />
 
-                                        <Label fx:id="lblIvaNum" text="IVA: $0.00"/>
+                                        <Label fx:id="lblIva" text="IVA: $0.00" />
 
-                                        <Separator/>
+                                        <Separator />
 
-                                        <Label fx:id="lblTotalNum" text="TOTAL: $0.00"
-                                               style="-fx-font-size:18px;-fx-font-weight:bold;"/>
+                                        <Label fx:id="lblTotal" style="-fx-font-size:18px;-fx-font-weight:bold;" text="TOTAL: $0.00" />
 
                                     </children>
 
@@ -144,12 +123,7 @@
                             </content>
 
                         </TitledPane>
-                        <Button
-                                fx:id="btnEnviarCocina"
-                                onAction="#clickBotonEnviar"
-                                text="Enviar a Cocina"
-                                prefHeight="45"
-                                maxWidth="1.7976931348623157E308"/>
+                        <Button fx:id="btnEnviarCocina" maxWidth="1.7976931348623157E308" onAction="#clickBotonEnviar" prefHeight="45" text="Enviar a Cocina" />
 
                     </children>
 
@@ -166,17 +140,14 @@
         <HBox spacing="10">
 
             <padding>
-                <Insets bottom="15"
-                        left="20"
-                        right="20"
-                        top="10"/>
+                <Insets bottom="15" left="20" right="20" top="10" />
             </padding>
 
             <children>
 
-                <Button fx:id="btnVolver" onAction="#clickBotonVolver" text="Volver"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="btnCancelarOrden" onAction="#clickBotonCancelarOrden" text="Cancelar Orden" style="-fx-background-color: #c53030; -fx-text-fill: white;"/>
+                <Button fx:id="btnVolver" onAction="#clickBotonVolver" text="Volver" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnCancelarOrden" onAction="#clickBotonCancelarOrden" style="-fx-background-color: #c53030; -fx-text-fill: white;" text="Cancelar Orden" />
 
             </children>
 

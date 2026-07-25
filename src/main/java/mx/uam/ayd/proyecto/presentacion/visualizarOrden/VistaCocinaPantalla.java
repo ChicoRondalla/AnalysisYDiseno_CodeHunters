@@ -28,12 +28,7 @@ public class VistaCocinaPantalla {
     }
 
     private void initializeUI() {
-        if (initialized) {
-            return;
-        }
-
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(this::initializeUI);
+        if (initialized && stage != null) {
             return;
         }
 
@@ -41,7 +36,8 @@ public class VistaCocinaPantalla {
             stage = new Stage();
             stage.setTitle("Ryuho Sushi - Comanda de Cocina");
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CocinaPantalla.fxml"));
+            // AQUÍ ESTABA EL ERROR: El archivo se llama 'CocinaPantallaVista.fxml'
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CocinaPantallaVista.fxml"));
             loader.setControllerFactory(context::getBean);
 
             Scene scene = new Scene(loader.load(), 1080, 720);
@@ -54,14 +50,18 @@ public class VistaCocinaPantalla {
     }
 
     public void muestra(ControlVisualizarOrden control) {
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(() -> this.muestra(control));
-            return;
-        }
+        Runnable showTask = () -> {
+            initializeUI();
+            if (stage != null) {
+                stage.show();
+                stage.toFront();
+            }
+        };
 
-        initializeUI();
-        if (stage != null) {
-            stage.show();
+        if (Platform.isFxApplicationThread()) {
+            showTask.run();
+        } else {
+            Platform.runLater(showTask);
         }
     }
 }

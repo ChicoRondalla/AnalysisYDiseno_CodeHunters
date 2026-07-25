@@ -27,7 +27,7 @@ import mx.uam.ayd.proyecto.negocio.ServicioOrden;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
-import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.VentanaEnviarOrdenCocina;
+import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina;
 
 @Controller
 public class ControlArmadoOrden {
@@ -46,7 +46,7 @@ public class ControlArmadoOrden {
     private ServicioOrden servicioOrden;
 
     @Autowired
-    private VentanaEnviarOrdenCocina ventanaCocina;
+    private ControlEnviarOrdenCocina controlEnviarOrdenCocina;
 
     private Pedido pedidoActual;
 
@@ -164,7 +164,7 @@ public class ControlArmadoOrden {
         TextField txtNota = new TextField();
         txtNota.setPromptText("Nota (ej. sin aderezo)");
         txtNota.setPrefWidth(120);
-        txtNota.setText(notaGuardada); // <-- AHORA SÍ: Mostramos la nota guardada
+        txtNota.setText(notaGuardada); // <-- Mostramos la nota guardada
         txtNota.setOnAction(e -> agregarNota(idDetalleStr, txtNota.getText()));
 
         Region espacio2 = new Region();
@@ -213,7 +213,7 @@ public class ControlArmadoOrden {
     public void modificarCantidad(String idDetalleStr, int operacion) {
         long idDetalle = Long.parseLong(idDetalleStr);
         servicioOrden.procesarCambioCantidad(idDetalle, operacion);
-        actualizarVistaCarrito(); // Refresca la pantalla (suma, resta o elimina visualmente)
+        actualizarVistaCarrito(); // Refresca la pantalla
     }
 
     public void agregarNota(String idDetalleStr, String nota) {
@@ -223,7 +223,6 @@ public class ControlArmadoOrden {
 
     @FXML
     public void mostrarTodoElMenu() {
-        // Al pasar 'null', nuestro método ya sabe que debe cargar todo el catálogo
         cargarPlatillosMenu(null); 
     }
 
@@ -244,41 +243,35 @@ public class ControlArmadoOrden {
 
     /**
      * Filtra los platillos en pantalla dependiendo de lo que el usuario escriba.
-     * Si escribe números busca por precio, si escribe letras busca por nombre.
      */
     private void buscarPlatillo(String textoBuscado) {
         flowPanePlatillos.getChildren().clear();
         List<Platillo> resultados;
 
-        // Si la barra está vacía, mostramos todo el catálogo
         if (textoBuscado == null || textoBuscado.trim().isEmpty()) {
             resultados = (List<Platillo>) platilloRepository.findAll();
         } else {
             try {
-                // Intentamos convertir el texto a número. Si funciona, es que busca por precio.
                 int precioBuscado = Integer.parseInt(textoBuscado.trim());
                 resultados = platilloRepository.findByPrecio(precioBuscado);
             } catch (NumberFormatException e) {
-                // Si la conversión falla (da error), significa que escribió letras. Buscamos por nombre.
                 resultados = platilloRepository.findByNombreContainingIgnoreCase(textoBuscado.trim());
             }
         }
 
-        // Dibujamos las tarjetas que coincidieron con la búsqueda
         for (Platillo platillo : resultados) {
             VBox tarjeta = crearTarjetaPlatillo(platillo);
             flowPanePlatillos.getChildren().add(tarjeta);
         }
     }
 
-    // fui yo BERNARDO
     @FXML
     public void confirmarOrdenAction() {
-        ventanaCocina.muestra(); 
-        
+        if (pedidoActual != null) {
+            controlEnviarOrdenCocina.inicia(pedidoActual.getIdPedido());
+        }
     }
 
-    
     @FXML
     public void initialize() {}
 }
