@@ -96,6 +96,8 @@ public class VentanaPrincipal {
         }
     }
 
+	// BOTON DE CANCELAR HU-04
+
 	@FXML
     private void handleCancelarPedido(){
 		if (control != null) {

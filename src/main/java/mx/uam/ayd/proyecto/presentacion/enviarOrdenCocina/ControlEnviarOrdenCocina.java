@@ -1,6 +1,7 @@
 package mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javafx.event.ActionEvent;
@@ -11,17 +12,32 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
+import mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal;
 
 @Component
-
 public class ControlEnviarOrdenCocina {
 
     // INYECTA EL SERVICIO DE PEDIDO PARA USAR SUS MÉTODOS
     @Autowired
     private ServicioPedido servicioPedido;
 
+    // INYECCIÓN CORREGIDA 
+    @Autowired
+    @Lazy
+    private ControlPrincipal controlPrincipal; 
+
+    // INYECTA LA VENTANA 
+    @Autowired
+    private VentanaEnviarOrdenCocina ventana;
+
     // --- ENLACES CON EL ARCHIVO FXML ---
     
+    @FXML
+    private Button btnCancelarOrden;
+
+    @FXML
+    private Button btnVolver;
+
     @FXML
     private Label lblCliente;
 
@@ -39,10 +55,6 @@ public class ControlEnviarOrdenCocina {
 
     // VARIABLE PARA GUARDAR EL ID DEL PEDIDO ACTUAL 
     private long idPedidoActual;
-
-    // INYECTA LA VENTANA 
-    @Autowired
-    private VentanaEnviarOrdenCocina ventana;
 
     /**
      * METODO QUE INICIA EL CONTROLADOR CON EL ID DEL PEDIDO 
@@ -76,9 +88,7 @@ public class ControlEnviarOrdenCocina {
             }
             // SI NO ENCUENTRA EL PEDIDO MUESTRA UN MENSAJE DE ERROR
         }  catch (IllegalArgumentException e) {
-
-                mostrarMensajeError("No se encontró el pedido", e.getMessage());
-
+            mostrarMensajeError("No se encontró el pedido", e.getMessage());
             
         } catch (IllegalStateException e) {
             // POR SI EL PEDIDO YA ESTÁ EN PREPARACIÓN, SE MUESTRA UN MENSAJE DE ERROR
@@ -86,7 +96,7 @@ public class ControlEnviarOrdenCocina {
         }
     }
     
-     // MUESTRA QUE LA ORDEN SE ENVIO CORRECTAMENTE 
+    // MUESTRA QUE LA ORDEN SE ENVIO CORRECTAMENTE 
     private void mostrarMensajeExito() {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Éxito");
@@ -95,7 +105,7 @@ public class ControlEnviarOrdenCocina {
         alert.showAndWait();
     }
 
-     // MUESTRA UN MENSAJE DE ERROR
+    // MUESTRA UN MENSAJE DE ERROR
     private void mostrarMensajeError(String titulo, String mensaje) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle(titulo);
@@ -104,4 +114,19 @@ public class ControlEnviarOrdenCocina {
         alert.showAndWait();
     }
 
+    // PERMITE CANCELAR LA ORDEN Y ABRIR LA VENTANA DE CANCELAR ORDEN
+    @FXML
+    public void clickBotonCancelarOrden(ActionEvent event) {
+    
+        controlPrincipal.iniciaVentanaCancelarOrden();
+    }
+    
+    // REGRESA A LA VENTANA ANTERIOR (HU-02) 
+    @FXML
+    public void clickBotonVolver(javafx.event.ActionEvent event) {
+        if (btnVolver != null && btnVolver.getScene() != null) {
+            javafx.stage.Stage stage = (javafx.stage.Stage) btnVolver.getScene().getWindow();
+            stage.close();
+        }
+    }
 }

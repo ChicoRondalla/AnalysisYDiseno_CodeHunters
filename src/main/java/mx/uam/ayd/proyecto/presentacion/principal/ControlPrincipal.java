@@ -1,7 +1,11 @@
 package mx.uam.ayd.proyecto.presentacion.principal;
 
 import jakarta.annotation.PostConstruct;
-
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.scene.Parent;
+import org.springframework.context.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,12 +15,16 @@ import mx.uam.ayd.proyecto.presentacion.registrarPedido.ControlRegistroPedido;
 import mx.uam.ayd.proyecto.presentacion.registrarPedido.VistaRegistroPedido;
 import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina;
 import mx.uam.ayd.proyecto.presentacion.cancelarOrden.ControlCancelarOrden;
+import mx.uam.ayd.proyecto.presentacion.cancelarOrden.VistaCancelarOrden;
 
 
 @Component
 public class ControlPrincipal {
 
 	private final VentanaPrincipal ventana;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 	
 	@Autowired
 	public ControlPrincipal(
@@ -77,7 +85,29 @@ public class ControlPrincipal {
         controlCancelarOrden.inicia(1L);
 
 }
+
+@Autowired
+    private VistaCancelarOrden vistaCancelarOrden; // Tu controlador de la HU-04
+
+    // ARRANCA LA VENTANA PARA LA HU-04
+    public void iniciaVentanaCancelarOrden() {
+
+        try {
+           
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Ventana-cancelar-Orden.fxml"));
+            loader.setControllerFactory(applicationContext::getBean); 
+            
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Cancelar Orden");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
+
 
 
 
