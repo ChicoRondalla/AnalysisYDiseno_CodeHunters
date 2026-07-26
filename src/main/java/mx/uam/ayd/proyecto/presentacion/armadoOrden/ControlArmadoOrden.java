@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javafx.fxml.FXML;
-import javafx.stage.Stage;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -58,7 +57,6 @@ public class ControlArmadoOrden {
         flowPanePlatillos.getChildren().clear();
         listResumenOrden.getItems().clear();
         
-        // --- NUEVO: Detector de escritura en tiempo real ---
         txtBusqueda.textProperty().addListener((observable, oldValue, newValue) -> {
             buscarPlatillo(newValue);
         });
@@ -66,7 +64,6 @@ public class ControlArmadoOrden {
         cargarPlatillosMenu(null);
     }
     
-    // Modificamos el cargador para que acepte una categoría o cargue todo si es null
     private void cargarPlatillosMenu(String categoria) {
         flowPanePlatillos.getChildren().clear();
         List<Platillo> catalogo;
@@ -86,7 +83,7 @@ public class ControlArmadoOrden {
     private VBox crearTarjetaPlatillo(Platillo platillo) {
         VBox tarjeta = new VBox();
         tarjeta.setPrefSize(150, 160);
-        tarjeta.setPadding(new Insets(10, 15, 15, 15)); // Arriba, Derecha, Abajo, Izquierda
+        tarjeta.setPadding(new Insets(10, 15, 15, 15));
         tarjeta.setCursor(Cursor.HAND);
         
         String estiloNormal = "-fx-background-color: #2b1c1c; -fx-background-radius: 12; -fx-border-color: #4a3333; -fx-border-radius: 12; -fx-border-width: 1;";
@@ -100,32 +97,25 @@ public class ControlArmadoOrden {
             agregarPlatillo(String.valueOf(platillo.getIdPlatillo())); 
         });
 
-        // 1. PRECIO (Esquina superior derecha)
         Label lblPrecio = new Label("$" + platillo.getPrecio());
         lblPrecio.setTextFill(Color.web("#e8b1b1"));
         lblPrecio.setFont(Font.font("System", FontWeight.BOLD, 13));
         
         HBox filaSuperior = new HBox(lblPrecio);
-        filaSuperior.setAlignment(Pos.TOP_RIGHT); // Empuja el precio a la esquina
+        filaSuperior.setAlignment(Pos.TOP_RIGHT);
         
-        // 2. ESPACIADOR (Empuja el nombre hacia abajo)
         Region espaciador = new Region();
         VBox.setVgrow(espaciador, Priority.ALWAYS);
 
-        // 3. NOMBRE DEL PLATILLO (Lado izquierdo)
         Label lblNombre = new Label(platillo.getNombre());
         lblNombre.setTextFill(Color.WHITE);
         lblNombre.setFont(Font.font("System", FontWeight.BOLD, 14));
-        lblNombre.setWrapText(true); // Permite múltiples líneas
-        
-        // EL TRUCO PARA ELIMINAR LOS 3 PUNTOS:
-        // Le dice a JavaFX que expanda la altura del Label en lugar de truncar el texto
+        lblNombre.setWrapText(true);
         lblNombre.setMinHeight(Region.USE_PREF_SIZE); 
         
         HBox filaInferior = new HBox(lblNombre);
-        filaInferior.setAlignment(Pos.BOTTOM_LEFT); // Ancla el nombre a la izquierda
+        filaInferior.setAlignment(Pos.BOTTOM_LEFT);
 
-        // Armamos la tarjeta en orden: Precio arriba, espacio al centro, Nombre abajo
         tarjeta.getChildren().addAll(filaSuperior, espaciador, filaInferior);
 
         return tarjeta;
@@ -164,7 +154,7 @@ public class ControlArmadoOrden {
         TextField txtNota = new TextField();
         txtNota.setPromptText("Nota (ej. sin aderezo)");
         txtNota.setPrefWidth(120);
-        txtNota.setText(notaGuardada); // <-- Mostramos la nota guardada
+        txtNota.setText(notaGuardada);
         txtNota.setOnAction(e -> agregarNota(idDetalleStr, txtNota.getText()));
 
         Region espacio2 = new Region();
@@ -178,15 +168,11 @@ public class ControlArmadoOrden {
         return celda;
     }
 
-    /**
-     * Método clave: Borra la lista visual y la vuelve a pintar leyendo H2.
-     */
     private void actualizarVistaCarrito() {
         listResumenOrden.getItems().clear();
         List<DetallesPedido> detalles = servicioOrden.obtenerDetallesDePedido(pedidoActual.getIdPedido());
         
         for(DetallesPedido detalle : detalles) {
-             // Inyectamos la nota guardada si es que existe
              String notaGuardada = detalle.getNotas() == null ? "" : detalle.getNotas();
              
              VBox celda = crearCeldaDetalleCarrito(
@@ -194,12 +180,11 @@ public class ControlArmadoOrden {
                 detalle.getPlatillo().getNombre(), 
                 detalle.getCantidad(), 
                 detalle.getPlatillo().getPrecio(),
-                notaGuardada // <-- Ahora pasamos la nota al creador de celdas
+                notaGuardada
              );
              listResumenOrden.getItems().add(celda);
         }
         
-        // Actualizamos el Label del Subtotal en pantalla
         double total = servicioOrden.calcularSubtotalTotal(pedidoActual.getIdPedido());
         lblSubtotal.setText("$" + total);
     }
@@ -207,13 +192,13 @@ public class ControlArmadoOrden {
     public void agregarPlatillo(String idPlatilloStr) {
         long idPlatillo = Long.parseLong(idPlatilloStr);
         servicioOrden.procesarNuevoPlatillo(idPlatillo, pedidoActual.getIdPedido());
-        actualizarVistaCarrito(); // Refresca la pantalla
+        actualizarVistaCarrito();
     }
 
     public void modificarCantidad(String idDetalleStr, int operacion) {
         long idDetalle = Long.parseLong(idDetalleStr);
         servicioOrden.procesarCambioCantidad(idDetalle, operacion);
-        actualizarVistaCarrito(); // Refresca la pantalla
+        actualizarVistaCarrito();
     }
 
     public void agregarNota(String idDetalleStr, String nota) {
@@ -241,9 +226,6 @@ public class ControlArmadoOrden {
         cargarPlatillosMenu("Bebidas");
     }
 
-    /**
-     * Filtra los platillos en pantalla dependiendo de lo que el usuario escriba.
-     */
     private void buscarPlatillo(String textoBuscado) {
         flowPanePlatillos.getChildren().clear();
         List<Platillo> resultados;
@@ -268,7 +250,8 @@ public class ControlArmadoOrden {
     @FXML
     public void confirmarOrdenAction() {
         if (pedidoActual != null) {
-            controlEnviarOrdenCocina.inicia(pedidoActual.getIdPedido());
+            // Pasamos el objeto pedido completo al controlador de resumen
+            controlEnviarOrdenCocina.inicia(pedidoActual);
         }
     }
 

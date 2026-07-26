@@ -1,5 +1,7 @@
 package mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import mx.uam.ayd.proyecto.negocio.ServicioOrden;
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
@@ -26,6 +29,9 @@ public class ControlEnviarOrdenCocina {
 
     @Autowired
     private ServicioPedido servicioPedido;
+
+    @Autowired
+    private ServicioOrden servicioOrden;
 
     @Autowired
     @Lazy
@@ -85,6 +91,7 @@ public class ControlEnviarOrdenCocina {
     private Button btnEnviarCocina;
 
     private long idPedidoActual;
+    private Pedido pedidoActual;
 
     @FXML
     public void initialize() {
@@ -118,58 +125,70 @@ public class ControlEnviarOrdenCocina {
     }
 
     /**
-     * Inicia la ventana recuperando y cargando el pedido recibido.
+     * Inicia la ventana pasando el objeto Pedido cargado desde el Armado de Orden.
+     */
+    public void inicia(Pedido pedido) {
+        System.out.println(">>> [CONTROL ENVIAR COCINA] Iniciando con objeto Pedido ID: " + (pedido != null ? pedido.getIdPedido() : "null"));
+        this.pedidoActual = pedido;
+        if (pedido != null) {
+            this.idPedidoActual = pedido.getIdPedido();
+        }
+
+        ventana.muestra();
+        poblarDatosPedido();
+    }
+
+    /**
+     * Inicia la ventana recuperando y cargando el pedido por ID desde la BD.
      */
     public void inicia(long idPedido) {
         System.out.println(">>> [CONTROL ENVIAR COCINA] Iniciando con ID de Pedido: " + idPedido);
         this.idPedidoActual = idPedido;
 
-        // 1. Desplegamos la ventana
         ventana.muestra();
 
-        // 2. Cargamos los datos del pedido en las etiquetas y tabla
-        cargarDatosPedido();
+        try {
+            this.pedidoActual = servicioPedido.recuperaPedido(idPedidoActual);
+            poblarDatosPedido();
+        } catch (Exception e) {
+            System.err.println(">>> [EXCEPCION] Error al recuperar pedido por ID: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
-     * Obtiene el Pedido desde la base de datos y llena los componentes gráficos.
+     * Llena las etiquetas y la tabla consultando los detalles directamente desde el ServicioOrden.
      */
-    private void cargarDatosPedido() {
-        try {
-            Pedido pedido = servicioPedido.recuperaPedido(idPedidoActual);
+    private void poblarDatosPedido() {
+        if (pedidoActual != null) {
+            List<DetallesPedido> detalles = servicioOrden.obtenerDetallesDePedido(pedidoActual.getIdPedido());
 
-            if (pedido != null) {
-                System.out.println(">>> [CONTROL ENVIAR COCINA] Pedido cargado con exito. Total detalles: " + 
-                    (pedido.getDetallesPedido() != null ? pedido.getDetallesPedido().size() : 0));
+            System.out.println(">>> [CONTROL ENVIAR COCINA] Detalles recuperados para la tabla: " + (detalles != null ? detalles.size() : 0));
 
-                if (lblCliente != null) {
-                    lblCliente.setText(pedido.getCliente() != null ? pedido.getCliente().getNombre() : "Cliente General");
-                }
-                if (lblMesa != null) {
-                    lblMesa.setText(String.valueOf(pedido.getNumeroOrden()));
-                }
-                if (lblEstado != null) {
-                    lblEstado.setText(pedido.getEstado() != null ? pedido.getEstado() : "Pendiente de envío");
-                }
-
-                double total = pedido.getTotal();
-                double subtotal = total / 1.16;
-                double iva = total - subtotal;
-
-                if (lblSubtotal != null) lblSubtotal.setText(String.format("Subtotal: $%.2f", subtotal));
-                if (lblIva != null) lblIva.setText(String.format("IVA: $%.2f", iva));
-                if (lblTotal != null) lblTotal.setText(String.format("TOTAL: $%.2f", total));
-
-                if (tablaDetalle != null && pedido.getDetallesPedido() != null) {
-                    tablaDetalle.setItems(FXCollections.observableArrayList(pedido.getDetallesPedido()));
-                    tablaDetalle.refresh();
-                }
-            } else {
-                System.err.println(">>> [ERROR] El pedido con ID " + idPedidoActual + " devolvió NULL desde ServicioPedido.");
+            if (lblCliente != null) {
+                lblCliente.setText(pedidoActual.getCliente() != null ? pedidoActual.getCliente().getNombre() : "Cliente General");
             }
-        } catch (Exception e) {
-            System.err.println(">>> [EXCEPCION] Error al cargar la información de la orden: " + e.getMessage());
-            e.printStackTrace();
+            if (lblMesa != null) {
+                lblMesa.setText(String.valueOf(pedidoActual.getNumeroOrden()));
+            }
+            if (lblEstado != null) {
+                lblEstado.setText(pedidoActual.getEstado() != null ? pedidoActual.getEstado() : "Pendiente de envío");
+            }
+
+            double total = servicioOrden.calcularSubtotalTotal(pedidoActual.getIdPedido());
+            double subtotal = total / 1.16;
+            double iva = total - subtotal;
+
+            if (lblSubtotal != null) lblSubtotal.setText(String.format("Subtotal: $%.2f", subtotal));
+            if (lblIva != null) lblIva.setText(String.format("IVA: $%.2f", iva));
+            if (lblTotal != null) lblTotal.setText(String.format("TOTAL: $%.2f", total));
+
+            if (tablaDetalle != null && detalles != null) {
+                tablaDetalle.setItems(FXCollections.observableArrayList(detalles));
+                tablaDetalle.refresh();
+            }
+        } else {
+            System.err.println(">>> [ERROR] Objeto Pedido es NULL en ControlEnviarOrdenCocina.");
         }
     }
 
@@ -184,12 +203,10 @@ public class ControlEnviarOrdenCocina {
                 }
                 mostrarMensajeExito();
 
-                // 1. Iniciar el controlador de la cocina (pantalla rojiza)
                 if (controlVisualizarOrden != null) {
                     controlVisualizarOrden.inicia();
                 }
 
-                // 2. Cerrar la ventana del resumen actual
                 if (btnEnviarCocina != null && btnEnviarCocina.getScene() != null) {
                     javafx.stage.Stage stage = (javafx.stage.Stage) btnEnviarCocina.getScene().getWindow();
                     stage.close();
