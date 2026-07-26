@@ -2,6 +2,11 @@ package mx.uam.ayd.proyecto.presentacion.visualizarOrden;
 
 import java.util.List;
 import java.util.logging.Logger;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -13,15 +18,12 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
+import mx.uam.ayd.proyecto.datos.PedidoRepository;
+import mx.uam.ayd.proyecto.negocio.ServicioOrden;
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 @Component
 public class CocinaPantallaControlador {
@@ -42,6 +44,12 @@ public class CocinaPantallaControlador {
 
     @Autowired
     private ServicioPedido servicioPedido;
+
+    @Autowired
+    private ServicioOrden servicioOrden;
+
+    @Autowired
+    private PedidoRepository pedidoRepository;
 
     @Autowired
     @Lazy
@@ -112,8 +120,9 @@ public class CocinaPantallaControlador {
                 lblNum.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
 
                 StringBuilder sb = new StringBuilder();
-                if (p.getDetallesPedido() != null) {
-                    for (DetallesPedido d : p.getDetallesPedido()) {
+                List<DetallesPedido> detalles = servicioOrden.obtenerDetallesDePedido(p.getIdPedido());
+                if (detalles != null) {
+                    for (DetallesPedido d : detalles) {
                         if (d.getPlatillo() != null) {
                             sb.append("• ").append(d.getCantidad()).append("x ").append(d.getPlatillo().getNombre()).append("\n");
                         }
@@ -194,7 +203,10 @@ public class CocinaPantallaControlador {
             Pedido pedido = servicioPedido.recuperaPedido(idPedido);
             if (pedido != null) {
                 pedido.setEstado("Completado");
-                // Guarda el estado completado
+                
+                // Persistencia directa mediante PedidoRepository
+                pedidoRepository.save(pedido);
+                
                 if (controlVisualizarOrden != null) {
                     controlVisualizarOrden.cargarPedidosPendientes();
                 }
@@ -211,20 +223,29 @@ public class CocinaPantallaControlador {
         for (Pedido pedido : pedidos) {
             StringBuilder detallesTexto = new StringBuilder();
 
-            if (pedido.getDetallesPedido() != null) {
-                for (DetallesPedido detalle : pedido.getDetallesPedido()) {
+            List<DetallesPedido> detalles = servicioOrden.obtenerDetallesDePedido(pedido.getIdPedido());
+
+            if (detalles != null) {
+                for (DetallesPedido detalle : detalles) {
                     Platillo platillo = detalle.getPlatillo();
                     
-                    if (platillo != null && estacionActual.equalsIgnoreCase(platillo.getTipoArea())) {
+                    if (platillo != null && platillo.getTipoArea() != null && 
+                        estacionActual.equalsIgnoreCase(platillo.getTipoArea())) {
+                        
                         detallesTexto.append(detalle.getCantidad())
                                      .append("x ")
-                                     .append(platillo.getNombre())
-                                     .append("\n");
+                                     .append(platillo.getNombre());
+                        
+                        if (detalle.getNotas() != null && !detalle.getNotas().trim().isEmpty()) {
+                            detallesTexto.append(" (").append(detalle.getNotas()).append(")");
+                        }
+                        
+                        detallesTexto.append("\n");
                     }
                 }
             }
 
-            if (!detallesTexto.toString().isEmpty()) {
+            if (!detallesTexto.toString().trim().isEmpty()) {
                 crearTarjetaOrden(pedido.getIdPedido(), String.valueOf(pedido.getNumeroOrden()), detallesTexto.toString().trim());
             }
         }

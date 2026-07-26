@@ -41,54 +41,28 @@ public class ControlEnviarOrdenCocina {
     private VentanaEnviarOrdenCocina ventana;
 
     @Autowired
+    @Lazy
     private ControlVisualizarOrden controlVisualizarOrden;
 
     // --- ENLACES FXML ---
     
-    @FXML
-    private Button btnCancelarOrden;
+    @FXML private Button btnCancelarOrden;
+    @FXML private Button btnVolver;
+    @FXML private Label lblCliente;
+    @FXML private Label lblMesa;
+    @FXML private Label lblEstado;
+    @FXML private Label lblSubtotal;
+    @FXML private Label lblIva;
+    @FXML private Label lblTotal;
 
-    @FXML
-    private Button btnVolver;
+    @FXML private TableView<DetallesPedido> tablaDetalle;
+    @FXML private TableColumn<DetallesPedido, String> colCategoria;
+    @FXML private TableColumn<DetallesPedido, String> colProducto;
+    @FXML private TableColumn<DetallesPedido, Integer> colCantidad;
+    @FXML private TableColumn<DetallesPedido, Integer> colPrecio;
+    @FXML private TableColumn<DetallesPedido, Integer> colSubtotal;
 
-    @FXML
-    private Label lblCliente;
-
-    @FXML
-    private Label lblMesa;
-
-    @FXML
-    private Label lblEstado;
-
-    @FXML
-    private Label lblSubtotal;
-
-    @FXML
-    private Label lblIva;
-
-    @FXML
-    private Label lblTotal;
-
-    @FXML
-    private TableView<DetallesPedido> tablaDetalle;
-
-    @FXML
-    private TableColumn<DetallesPedido, String> colCategoria;
-
-    @FXML
-    private TableColumn<DetallesPedido, String> colProducto;
-
-    @FXML
-    private TableColumn<DetallesPedido, Integer> colCantidad;
-
-    @FXML
-    private TableColumn<DetallesPedido, Integer> colPrecio;
-
-    @FXML
-    private TableColumn<DetallesPedido, Integer> colSubtotal;
-
-    @FXML
-    private Button btnEnviarCocina;
+    @FXML private Button btnEnviarCocina;
 
     private long idPedidoActual;
     private Pedido pedidoActual;
@@ -124,11 +98,7 @@ public class ControlEnviarOrdenCocina {
         }
     }
 
-    /**
-     * Inicia la ventana pasando el objeto Pedido cargado desde el Armado de Orden.
-     */
     public void inicia(Pedido pedido) {
-        System.out.println(">>> [CONTROL ENVIAR COCINA] Iniciando con objeto Pedido ID: " + (pedido != null ? pedido.getIdPedido() : "null"));
         this.pedidoActual = pedido;
         if (pedido != null) {
             this.idPedidoActual = pedido.getIdPedido();
@@ -138,11 +108,7 @@ public class ControlEnviarOrdenCocina {
         poblarDatosPedido();
     }
 
-    /**
-     * Inicia la ventana recuperando y cargando el pedido por ID desde la BD.
-     */
     public void inicia(long idPedido) {
-        System.out.println(">>> [CONTROL ENVIAR COCINA] Iniciando con ID de Pedido: " + idPedido);
         this.idPedidoActual = idPedido;
 
         ventana.muestra();
@@ -151,19 +117,13 @@ public class ControlEnviarOrdenCocina {
             this.pedidoActual = servicioPedido.recuperaPedido(idPedidoActual);
             poblarDatosPedido();
         } catch (Exception e) {
-            System.err.println(">>> [EXCEPCION] Error al recuperar pedido por ID: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    /**
-     * Llena las etiquetas y la tabla consultando los detalles directamente desde el ServicioOrden.
-     */
     private void poblarDatosPedido() {
         if (pedidoActual != null) {
             List<DetallesPedido> detalles = servicioOrden.obtenerDetallesDePedido(pedidoActual.getIdPedido());
-
-            System.out.println(">>> [CONTROL ENVIAR COCINA] Detalles recuperados para la tabla: " + (detalles != null ? detalles.size() : 0));
 
             if (lblCliente != null) {
                 lblCliente.setText(pedidoActual.getCliente() != null ? pedidoActual.getCliente().getNombre() : "Cliente General");
@@ -187,8 +147,6 @@ public class ControlEnviarOrdenCocina {
                 tablaDetalle.setItems(FXCollections.observableArrayList(detalles));
                 tablaDetalle.refresh();
             }
-        } else {
-            System.err.println(">>> [ERROR] Objeto Pedido es NULL en ControlEnviarOrdenCocina.");
         }
     }
 
@@ -201,11 +159,13 @@ public class ControlEnviarOrdenCocina {
                 if (lblEstado != null) {
                     lblEstado.setText("En Preparación");
                 }
-                mostrarMensajeExito();
-
+                
+                // ABRE Y ACTUALIZA LA VISTA DE COCINA
                 if (controlVisualizarOrden != null) {
                     controlVisualizarOrden.inicia();
                 }
+
+                mostrarMensajeExito();
 
                 if (btnEnviarCocina != null && btnEnviarCocina.getScene() != null) {
                     javafx.stage.Stage stage = (javafx.stage.Stage) btnEnviarCocina.getScene().getWindow();

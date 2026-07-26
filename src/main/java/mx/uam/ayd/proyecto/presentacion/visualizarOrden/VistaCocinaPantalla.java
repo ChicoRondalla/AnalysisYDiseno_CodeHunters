@@ -1,6 +1,7 @@
 package mx.uam.ayd.proyecto.presentacion.visualizarOrden;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,8 +37,19 @@ public class VistaCocinaPantalla {
             stage = new Stage();
             stage.setTitle("Ryuho Sushi - Comanda de Cocina");
 
-            // AQUÍ ESTABA EL ERROR: El archivo se llama 'CocinaPantallaVista.fxml'
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CocinaPantallaVista.fxml"));
+            // Intento 1: Buscar usando el ClassLoader desde la raíz de resources
+            URL fxmlUrl = getClass().getClassLoader().getResource("fxml/CocinaPantallaVista.fxml");
+            
+            // Intento 2: Si no lo encuentra, buscar de forma relativa junto al paquete del controlador
+            if (fxmlUrl == null) {
+                fxmlUrl = getClass().getResource("CocinaPantallaVista.fxml");
+            }
+
+            if (fxmlUrl == null) {
+                throw new IOException("No se pudo encontrar el archivo CocinaPantallaVista.fxml en ninguna ruta conocida.");
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             loader.setControllerFactory(context::getBean);
 
             Scene scene = new Scene(loader.load(), 1080, 720);
@@ -46,6 +58,7 @@ public class VistaCocinaPantalla {
             initialized = true;
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error al cargar el FXML de pantalla de cocina", e);
+            e.printStackTrace();
         }
     }
 
@@ -54,7 +67,8 @@ public class VistaCocinaPantalla {
             initializeUI();
             if (stage != null) {
                 stage.show();
-                stage.toFront();
+                stage.toFront();      // Trae la ventana al frente
+                stage.requestFocus(); // Asegura que reciba el foco inmediatamente
             }
         };
 
