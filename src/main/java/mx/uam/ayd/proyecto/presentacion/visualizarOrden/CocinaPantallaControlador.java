@@ -187,11 +187,20 @@ public class CocinaPantallaControlador {
         String texto = txtOrdenInput.getText();
         if (!TXT_ORDEN_PREFIX.equals(texto) && !texto.isEmpty()) {
             try {
-                Long idOrden = Long.parseLong(texto);
-                finalizarOrden(idOrden);
+                int numeroOrden = Integer.parseInt(texto);
+                boolean encontrado = servicioPedido.finalizarOrdenPorNumero(numeroOrden);
+                
+                if (encontrado) {
+                    if (controlVisualizarOrden != null) {
+                        controlVisualizarOrden.cargarPedidosPendientes();
+                    }
+                } else {
+                    LOGGER.warning(() -> "No se encontró ningún pedido pendiente con el número de orden: " + numeroOrden);
+                }
+                
                 handleKeypadClear();
             } catch (NumberFormatException e) {
-                LOGGER.warning(() -> "Número de orden inválido: " + texto);
+                LOGGER.warning(() -> "Número de orden inválido en el pad: " + texto);
             }
         }
     }
