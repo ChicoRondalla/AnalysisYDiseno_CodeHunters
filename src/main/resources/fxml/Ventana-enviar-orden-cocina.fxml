@@ -51,7 +51,7 @@
                                         <Label text="Cliente:" />
                                         <Label fx:id="lblCliente" GridPane.columnIndex="1" />
 
-                                        <Label text="Mesa:" GridPane.rowIndex="1" />
+                                        <Label text="Id:" GridPane.rowIndex="1" />
                                         <Label fx:id="lblMesa" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                                         <Label text="Estado:" GridPane.rowIndex="2" />
