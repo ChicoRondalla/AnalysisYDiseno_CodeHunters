@@ -175,8 +175,15 @@ public class ServicioPedido {
         if ("En Preparación".equals(pedido.getEstado())) {
             throw new IllegalStateException("La orden ya fue enviada a cocina y no puede ser modificada.");
         }
+        
+        // ---> AGREGA ESTA NUEVA VALIDACIÓN <---
+        if ("Cancelada".equalsIgnoreCase(pedido.getEstado())) {
+            throw new IllegalStateException("Esta orden ha sido cancelada y no puede enviarse a cocina.");
+        }
 
         List<DetallesPedido> detalles = pedido.getDetallesPedido();
+        
+        // ... (El resto de tu código se queda igual) ...
         
         List<DetallesPedido> paraPlancha = new ArrayList<>();
         List<DetallesPedido> paraRollos = new ArrayList<>();

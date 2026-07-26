@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina">
+<BorderPane prefHeight="720.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina">
 
     <top>
         <HBox spacing="10" style="-fx-background-color:#1f2937;">
@@ -145,9 +145,23 @@
 
             <children>
 
-                <Button fx:id="btnVolver" onAction="#clickBotonVolver" text="Volver" />
+                <!-- Botón Volver Agrandado -->
+                <Button fx:id="btnVolver" 
+                        onAction="#clickBotonVolver" 
+                        prefHeight="40.0" 
+                        prefWidth="120.0" 
+                        style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand;" 
+                        text="Volver" />
+
                 <Region HBox.hgrow="ALWAYS" />
-                <Button fx:id="btnCancelarOrden" onAction="#clickBotonCancelarOrden" style="-fx-background-color: #c53030; -fx-text-fill: white;" text="Cancelar Orden" />
+
+                <!-- Botón Cancelar Orden Agrandado -->
+                <Button fx:id="btnCancelarOrden" 
+                        onAction="#clickBotonCancelarOrden" 
+                        prefHeight="40.0" 
+                        prefWidth="160.0" 
+                        style="-fx-background-color: #c53030; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand;" 
+                        text="Cancelar Orden" />
 
             </children>
 
