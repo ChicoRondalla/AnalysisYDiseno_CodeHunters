@@ -1,9 +1,11 @@
 package mx.uam.ayd.proyecto.presentacion.cancelarOrden;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
+import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina;
 
 @Component
 public class ControlCancelarOrden {
@@ -13,6 +15,11 @@ public class ControlCancelarOrden {
 
     @Autowired
     private VistaCancelarOrden ventana;
+
+    // ---> INYECTAMOS TU PANTALLA PRINCIPAL <---
+    @Autowired
+    @Lazy
+    private ControlEnviarOrdenCocina controlEnviarOrdenCocina;
 
     /**
      * Inicia el flujo de cancelar orden, abriendo la ventana.
@@ -40,6 +47,10 @@ public class ControlCancelarOrden {
             
             if (exito) {
                 ventana.muestraMensajeExito("El pedido #" + idPedido + " ha sido cancelado exitosamente.");
+                
+                // ---> ¡LA MAGIA! LIMPIAMOS LA TABLA Y CAMBIAMOS EL TEXTO <---
+                controlEnviarOrdenCocina.limpiarVistaDespuesDeCancelar();
+                
                 ventana.cierra();
             }
             

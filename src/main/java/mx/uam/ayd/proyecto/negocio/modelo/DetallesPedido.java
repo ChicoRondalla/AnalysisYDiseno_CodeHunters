@@ -4,49 +4,43 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 
 /**
  * Entidad de negocio DetallesPedido
+ * 
+ * @author CodeHunters 
  */
 @Entity
 public class DetallesPedido {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idDetallePedido;
+    private long idDetallesPedido;
 
     private int cantidad;
-    private int subtotal;
     private String notas;
+    private int subtotal;
+    private boolean completado = false; // Campo para control de HU-06
 
-
-    // --- RELACIONES DEL MODELO DE DOMINIO ---
-    // Muchos DetallesPedido pertenecen a 1 Pedido
-    @ManyToOne(targetEntity = Pedido.class, fetch = FetchType.LAZY)
-    private Pedido pedido;
-
-    // 1 DetallePedido CORRESPONDE a 1 Platillo
-    @ManyToOne(targetEntity = Platillo.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Platillo.class)
     private Platillo platillo;
 
+    @ManyToOne(targetEntity = Pedido.class)
+    private Pedido pedido;
 
     // --- GETTERS Y SETTERS ---
-    public long getIdDetallePedido() {
-        return idDetallePedido;
+
+    public long getIdDetallesPedido() {
+        return idDetallesPedido;
     }
 
-    public void setIdDetallePedido(long idDetallePedido) {
-        this.idDetallePedido = idDetallePedido;
+    public long getIdDetallePedido() { // Método alias para compatibilidad
+        return idDetallesPedido;
     }
 
-    public Pedido getPedido() {
-        return pedido;
-    }
-
-    public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
+    public void setIdDetallesPedido(long idDetallesPedido) {
+        this.idDetallesPedido = idDetallesPedido;
     }
 
     public int getCantidad() {
@@ -57,14 +51,6 @@ public class DetallesPedido {
         this.cantidad = cantidad;
     }
 
-    public int getSubtotal() {
-        return subtotal;
-    }
-
-    public void setSubtotal(int subtotal) {
-        this.subtotal = subtotal;
-    }
-
     public String getNotas() {
         return notas;
     }
@@ -73,14 +59,35 @@ public class DetallesPedido {
         this.notas = notas;
     }
 
-    
-    
-    // LO AGREGE PARA LA HU-03
+    public int getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(int subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public boolean isCompletado() {
+        return completado;
+    }
+
+    public void setCompletado(boolean completado) {
+        this.completado = completado;
+    }
+
     public Platillo getPlatillo() {
         return platillo;
     }
 
     public void setPlatillo(Platillo platillo) {
         this.platillo = platillo;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
     }
 }

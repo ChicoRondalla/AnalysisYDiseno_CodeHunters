@@ -23,6 +23,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import mx.uam.ayd.proyecto.datos.PlatilloRepository;
 import mx.uam.ayd.proyecto.negocio.ServicioOrden;
+import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
@@ -45,13 +46,19 @@ public class ControlArmadoOrden {
     private ServicioOrden servicioOrden;
 
     @Autowired
+    private ServicioPedido servicioPedido;
+
+    @Autowired
     private ControlEnviarOrdenCocina controlEnviarOrdenCocina;
 
     private Pedido pedidoActual;
 
     public void inicia(Pedido pedido) {
         this.pedidoActual = pedido;
-        lblMesaTicket.setText("TICKET #" + pedidoActual.getIdPedido());
+        
+        int numTicket = pedidoActual.getNumeroOrden() > 0 ? pedidoActual.getNumeroOrden() : 1;
+        lblMesaTicket.setText("TICKET #" + numTicket);
+        
         lblSubtotal.setText("$0.00");
         
         flowPanePlatillos.getChildren().clear();
@@ -250,8 +257,23 @@ public class ControlArmadoOrden {
     @FXML
     public void confirmarOrdenAction() {
         if (pedidoActual != null) {
-            // Pasamos el objeto pedido completo al controlador de resumen
-            controlEnviarOrdenCocina.inicia(pedidoActual);
+            try {
+                // 1. PRIMERO abrimos la ventana de resumen con el pedido actual intacto (Estado: Pendiente)
+                controlEnviarOrdenCocina.inicia(pedidoActual);
+
+                // 2. SEGUNDO generamos automáticamente el nuevo ticket vacío para la pantalla principal (Pasa a Ticket #2, #3...)
+                this.pedidoActual = servicioPedido.crearPedidoLocal(1); 
+
+                // 3. Refrescamos la interfaz actual con el nuevo número y vaciamos el carrito
+                int siguienteNumero = pedidoActual.getNumeroOrden();
+                lblMesaTicket.setText("TICKET #" + siguienteNumero);
+                listResumenOrden.getItems().clear();
+                lblSubtotal.setText("$0.00");
+
+            } catch (Exception e) {
+                System.err.println("Error al preparar la orden y avanzar el ticket: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 

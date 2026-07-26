@@ -21,6 +21,7 @@ import mx.uam.ayd.proyecto.negocio.ServicioOrden;
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
+import mx.uam.ayd.proyecto.presentacion.cancelarOrden.ControlCancelarOrden;
 import mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal;
 import mx.uam.ayd.proyecto.presentacion.visualizarOrden.ControlVisualizarOrden;
 
@@ -43,6 +44,10 @@ public class ControlEnviarOrdenCocina {
     @Autowired
     @Lazy
     private ControlVisualizarOrden controlVisualizarOrden;
+
+    @Autowired
+    @Lazy
+    private ControlCancelarOrden controlCancelarOrden;
 
     // --- ENLACES FXML ---
     
@@ -195,10 +200,38 @@ public class ControlEnviarOrdenCocina {
         alert.showAndWait();
     }
 
+    /**
+     * Método para limpiar la vista visualmente después de una cancelación exitosa
+     */
+    public void limpiarVistaDespuesDeCancelar() {
+        if (lblEstado != null) {
+            lblEstado.setText("Cancelada");
+        }
+        
+        if (tablaDetalle != null) {
+            tablaDetalle.getItems().clear();
+            tablaDetalle.refresh();
+        }
+        
+        if (btnEnviarCocina != null) {
+            btnEnviarCocina.setDisable(true);
+        }
+        if (btnCancelarOrden != null) {
+            btnCancelarOrden.setDisable(true);
+        }
+    }
+
     @FXML
     public void clickBotonCancelarOrden(ActionEvent event) {
+        // 1. Le decimos al sistema que DIBUJE y abra la ventanita roja (como funcionaba antes)
         controlPrincipal.iniciaVentanaCancelarOrden();
+        
+        // 2. Inmediatamente después, le inyectamos el ID real de la orden actual
+        controlCancelarOrden.inicia(idPedidoActual);
     }
+
+
+
     
     @FXML
     public void clickBotonVolver(ActionEvent event) {

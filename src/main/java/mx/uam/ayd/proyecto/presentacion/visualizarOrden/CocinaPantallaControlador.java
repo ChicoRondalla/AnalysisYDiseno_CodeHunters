@@ -1,5 +1,6 @@
 package mx.uam.ayd.proyecto.presentacion.visualizarOrden;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -12,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.TilePane;
@@ -187,11 +189,20 @@ public class CocinaPantallaControlador {
         String texto = txtOrdenInput.getText();
         if (!TXT_ORDEN_PREFIX.equals(texto) && !texto.isEmpty()) {
             try {
-                Long idOrden = Long.parseLong(texto);
-                finalizarOrden(idOrden);
+                int numeroOrden = Integer.parseInt(texto);
+                boolean encontrado = servicioPedido.finalizarOrdenPorNumero(numeroOrden);
+                
+                if (encontrado) {
+                    if (controlVisualizarOrden != null) {
+                        controlVisualizarOrden.cargarPedidosPendientes();
+                    }
+                } else {
+                    LOGGER.warning(() -> "No se encontró ningún pedido pendiente con el número de orden: " + numeroOrden);
+                }
+                
                 handleKeypadClear();
             } catch (NumberFormatException e) {
-                LOGGER.warning(() -> "Número de orden inválido: " + texto);
+                LOGGER.warning(() -> "Número de orden inválido en el pad: " + texto);
             }
         }
     }
@@ -203,8 +214,6 @@ public class CocinaPantallaControlador {
             Pedido pedido = servicioPedido.recuperaPedido(idPedido);
             if (pedido != null) {
                 pedido.setEstado("Completado");
-                
-                // Persistencia directa mediante PedidoRepository
                 pedidoRepository.save(pedido);
                 
                 if (controlVisualizarOrden != null) {
@@ -221,53 +230,81 @@ public class CocinaPantallaControlador {
         containerPendientes.getChildren().clear();
 
         for (Pedido pedido : pedidos) {
-            StringBuilder detallesTexto = new StringBuilder();
-
             List<DetallesPedido> detalles = servicioOrden.obtenerDetallesDePedido(pedido.getIdPedido());
-
+            
+            // Filtramos únicamente los detalles que corresponden a la estación actual
+            List<DetallesPedido> detallesEstacion = new ArrayList<>();
             if (detalles != null) {
                 for (DetallesPedido detalle : detalles) {
                     Platillo platillo = detalle.getPlatillo();
-                    
                     if (platillo != null && platillo.getTipoArea() != null && 
                         estacionActual.equalsIgnoreCase(platillo.getTipoArea())) {
-                        
-                        detallesTexto.append(detalle.getCantidad())
-                                     .append("x ")
-                                     .append(platillo.getNombre());
-                        
-                        if (detalle.getNotas() != null && !detalle.getNotas().trim().isEmpty()) {
-                            detallesTexto.append(" (").append(detalle.getNotas()).append(")");
-                        }
-                        
-                        detallesTexto.append("\n");
+                        detallesEstacion.add(detalle);
                     }
                 }
             }
 
-            if (!detallesTexto.toString().trim().isEmpty()) {
-                crearTarjetaOrden(pedido.getIdPedido(), String.valueOf(pedido.getNumeroOrden()), detallesTexto.toString().trim());
+            // Si la estación actual tiene platillos en este pedido, creamos la tarjeta interactiva
+            if (!detallesEstacion.isEmpty()) {
+                crearTarjetaOrdenConCheckboxes(pedido.getIdPedido(), String.valueOf(pedido.getNumeroOrden()), detallesEstacion);
             }
         }
     }
 
-    private void crearTarjetaOrden(Long idPedido, String numeroOrden, String detallesPlatillo) {
+    private void crearTarjetaOrdenConCheckboxes(Long idPedido, String numeroOrden, List<DetallesPedido> detallesEstacion) {
         VBox card = new VBox(8);
-        card.setPrefWidth(220);
+        card.setPrefWidth(240);
         card.setStyle("-fx-background-color: #2D1F21; -fx-background-radius: 8; -fx-border-color: #7B7374; -fx-border-radius: 8; -fx-border-width: 1; -fx-padding: 12px;");
 
         Label lblNum = new Label("#" + numeroOrden);
         lblNum.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
 
-        Label lblDetalles = new Label(detallesPlatillo);
-        lblDetalles.setWrapText(true);
-        lblDetalles.setStyle("-fx-font-size: 14px; -fx-text-fill: #FFFFFF;");
+        card.getChildren().add(lblNum);
 
-        Button btnFinalizar = new Button("FINALIZAR");
-        btnFinalizar.setStyle("-fx-background-color: #E13131; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+        // Botón Marcar como Terminado (Inicialmente deshabilitado por HU-06)
+        Button btnFinalizar = new Button("MARCAR COMO TERMINADO");
+        btnFinalizar.setDisable(true);
+        btnFinalizar.setStyle("-fx-background-color: #E13131; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-font-size: 11px;");
+
+        // Creamos un CheckBox interactivo por cada platillo de la estación
+        for (DetallesPedido detalle : detallesEstacion) {
+            StringBuilder textoItem = new StringBuilder();
+            textoItem.append(detalle.getCantidad()).append("x ").append(detalle.getPlatillo().getNombre());
+            
+            if (detalle.getNotas() != null && !detalle.getNotas().trim().isEmpty()) {
+                textoItem.append(" (").append(detalle.getNotas()).append(")");
+            }
+
+            CheckBox checkBox = new CheckBox(textoItem.toString());
+            checkBox.setWrapText(true);
+            checkBox.setStyle("-fx-text-fill: #FFFFFF; -fx-font-size: 13px;");
+            checkBox.setMinHeight(35); // Mejora la zona táctil para pantallas de cocina
+
+            // Sincronizamos estado
+            checkBox.setSelected(detalle.isCompletado());
+
+            // Evento al hacer clic en el checkbox
+            checkBox.setOnAction(e -> {
+                detalle.setCompletado(checkBox.isSelected());
+                
+                // Evaluamos si todos los checkboxes de esta tarjeta están seleccionados
+                boolean todosListos = detallesEstacion.stream().allMatch(DetallesPedido::isCompletado);
+                
+                // Habilita o deshabilita el botón automáticamente
+                btnFinalizar.setDisable(!todosListos);
+            });
+
+            card.getChildren().add(checkBox);
+        }
+
+        // Evaluar estado inicial por si la tarjeta se recarga con elementos listos
+        boolean todosListosInicial = detallesEstacion.stream().allMatch(DetallesPedido::isCompletado);
+        btnFinalizar.setDisable(!todosListosInicial);
+
+        // Acción al presionar finalizar
         btnFinalizar.setOnAction(e -> finalizarOrden(idPedido));
 
-        card.getChildren().addAll(lblNum, lblDetalles, btnFinalizar);
+        card.getChildren().add(btnFinalizar);
         containerPendientes.getChildren().add(card);
     }
 }

@@ -1,20 +1,38 @@
 package mx.uam.ayd.proyecto.negocio;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
+import mx.uam.ayd.proyecto.datos.PedidoRepository;
 /**
  * Pruebas unitarias para validar las reglas de negocio de ServicioPedido.
  */
 class ServicioPedidoTest {
 
+    @InjectMocks
     private ServicioPedido servicioPedido;
+
+    // repositorio falso con @Mock
+    @Mock
+    private PedidoRepository pedidoRepository;
 
     @BeforeEach
     void setUp() {
-        servicioPedido = new ServicioPedido();
+        // Inicializamos Mockito para que reconozca el repositorio
+        MockitoAnnotations.openMocks(this);
     }
+
 
     @Test
     void testValidarDatosDomicilio_Exitoso() {
@@ -40,4 +58,84 @@ class ServicioPedidoTest {
         boolean resultadoLetras = servicioPedido.validarDatosDomicilio("Hiroshi Tanaka", "55ABC45678", "Calle 123");
         assertFalse(resultadoLetras, "El sistema debería rechazar el pedido si el teléfono contiene letras.");
     }
+
+    
+    // PRUEBAS (HU-03: Envio a Cocina)
+
+    @Test
+    void testProcesarEnvioCocina_FallaCuandoPedidoEstaCancelado() {
+        long idPedido = 1L;
+        Pedido pedidoCancelado = new Pedido();
+        pedidoCancelado.setEstado("Cancelada");
+        
+        when(pedidoRepository.findById(idPedido)).thenReturn(Optional.of(pedidoCancelado));
+
+        Exception excepcion = assertThrows(IllegalStateException.class, () -> {
+            servicioPedido.procesarEnvioCocina(idPedido);
+        });
+
+        assertEquals("Esta orden ha sido cancelada y no puede enviarse a cocina.", excepcion.getMessage());
+    }
+
+    @Test
+    void testProcesarEnvioCocina_ExitoYCambioDeEstado() {
+        long idPedido = 2L;
+        Pedido pedidoValido = new Pedido();
+        pedidoValido.setEstado("Pendiente"); 
+
+        when(pedidoRepository.findById(idPedido)).thenReturn(Optional.of(pedidoValido));
+
+        boolean resultado = servicioPedido.procesarEnvioCocina(idPedido);
+
+        assertTrue(resultado, "El método debe devolver true si el envío fue exitoso.");
+        assertEquals("En Preparación", pedidoValido.getEstado(), "El estado del pedido debió cambiar.");
+        verify(pedidoRepository, times(1)).save(pedidoValido);
+    }
+
+    // PRUEBAS (HU-04: Cancela un Pedido)
+
+    @Test
+    void testCancelarPedido_FallaCuandoMotivoEstaVacio() {
+        long idPedido = 1L;
+        String motivoVacio = "   "; 
+        String idUsuario = "Cajero01";
+        
+        Exception excepcion = assertThrows(IllegalArgumentException.class, () -> {
+            servicioPedido.cancelarPedido(idPedido, motivoVacio, idUsuario);
+        });
+
+        assertEquals("El motivo de cancelación es obligatorio.", excepcion.getMessage());
+    }
+
+    @Test
+    void testCancelarPedido_FallaCuandoPedidoNoExiste() {
+        long idFalso = 99L;
+        when(pedidoRepository.findById(idFalso)).thenReturn(Optional.empty());
+
+        Exception excepcion = assertThrows(IllegalArgumentException.class, () -> {
+            servicioPedido.cancelarPedido(idFalso, "Ya no lo quiere", "Cajero01");
+        });
+
+        assertEquals("No se encontró el pedido con ID: " + idFalso, excepcion.getMessage());
+    }
+
+    @Test
+    void testCancelarPedido_ExitoYGuardaMotivoCorrectamente() {
+        long idPedido = 2L;
+        Pedido pedidoValido = new Pedido();
+        pedidoValido.setIdPedido(idPedido);
+        pedidoValido.setEstado("Pendiente"); 
+        
+        when(pedidoRepository.findById(idPedido)).thenReturn(Optional.of(pedidoValido));
+
+        boolean resultado = servicioPedido.cancelarPedido(idPedido, "Cliente se arrepintió", "Admin123");
+
+        assertTrue(resultado, "El método debe devolver true tras cancelar con éxito.");
+        assertEquals("Cancelada", pedidoValido.getEstado(), "El estado debió cambiar a Cancelada.");
+        assertEquals("Cliente se arrepintió (Cancelado por: Admin123)", pedidoValido.getMotivoCancelacion(), 
+            "El motivo de cancelación no se guardó con el formato esperado.");
+        verify(pedidoRepository, times(1)).save(pedidoValido);
+    }
+
 }
+
