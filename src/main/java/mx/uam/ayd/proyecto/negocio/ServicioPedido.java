@@ -106,9 +106,9 @@ public class ServicioPedido {
         return pedidoRepository.save(pedido);
     }
 
-    /**
-     * Recupera un pedido por su ID cargando sus datos y detalles.
-     */
+
+    // HU-O3 ENVIAR ORDEN COSINA 
+    // RECUPERA EL PEDIDO PO ID Y LOS DETALLES
     @Transactional(readOnly = true)
     public Pedido recuperaPedido(long idPedido) {
         Optional<Pedido> pedidoOpt = pedidoRepository.findById(idPedido);
@@ -122,6 +122,97 @@ public class ServicioPedido {
         return null;
     }
 
+    // PROCESA EL ENVIO A COSINA Y DIVIDE COMANDAS 
+    @Transactional
+    public boolean procesarEnvioCocina(long idPedido) {
+        Optional<Pedido> pedidoOpt = pedidoRepository.findById(idPedido);
+        
+        if (pedidoOpt.isEmpty()) {
+            throw new IllegalArgumentException("No se encontró el pedido con ID: " + idPedido);
+        }
+        
+        Pedido pedido = pedidoOpt.get();
+        // RN-05: VALIDA QUE LA ORDEN NO HAYA SIDO ENVIADA PREVIAMENTE
+        if ("En Preparación".equals(pedido.getEstado())) {
+            throw new IllegalStateException("La orden ya fue enviada a cocina y no puede ser modificada.");
+        }
+        
+        // RN-05: VALIDA QUE SI YA ESTA CANCELADA NO SE PUEDA ENVIAR
+        if ("Cancelada".equalsIgnoreCase(pedido.getEstado())) {
+            throw new IllegalStateException("Esta orden ha sido cancelada y no puede enviarse a cocina.");
+        }
+
+        List<DetallesPedido> detalles = pedido.getDetallesPedido();
+        
+        // LISTAS PARA SEPARAR LOS PLATILLOS SEGUN EL AREA 
+        List<DetallesPedido> paraPlancha = new ArrayList<>();
+        List<DetallesPedido> paraRollos = new ArrayList<>();
+        // RN-04: DIVIDE LA ORDEN POR AREA 
+        if (detalles != null) {
+            for (DetallesPedido detalle : detalles) {
+                if (detalle.getPlatillo() != null) {
+                    String area = detalle.getPlatillo().getTipoArea();
+                    
+                    if ("Plancha".equalsIgnoreCase(area)) {
+                        paraPlancha.add(detalle);
+                    } else if ("Rollos".equalsIgnoreCase(area)) {
+                        paraRollos.add(detalle);
+                    }
+                }
+            }
+        }
+        // ENVIO DE LAS LISTAS FILTRADAS 
+        enviarAPlancha(paraPlancha);
+        enviarARollos(paraRollos);
+        //ACTUALIZA EL ESTADO
+        pedido.setEstado("En Preparación");
+        pedidoRepository.save(pedido);
+
+        return true; 
+    }
+    // SIMULA EL ENVIO DE PLATILLOS A PLANCHA 
+    private void enviarAPlancha(List<DetallesPedido> detalles) {
+        if (detalles != null && !detalles.isEmpty()) {
+            System.out.println("-> Enviando " + detalles.size() + " platillos a PLANCHA.");
+        }
+    }
+
+
+    // SIMULA EL ENVIO DE PLATILLOS A ROLLOS 
+    private void enviarARollos(List<DetallesPedido> detalles) {
+        if (detalles != null && !detalles.isEmpty()) {
+            System.out.println("-> Enviando " + detalles.size() + " platillos a ROLLOS.");       }
+    }
+
+    // HU-04 CANCELAR ORDEN
+
+    @Transactional
+    public boolean cancelarPedido(long idPedido, String motivoCancelacion, String idUsuario) {
+        // PIDE MOTIVO OBLIGATORIO 
+        if (motivoCancelacion == null || motivoCancelacion.trim().isEmpty()) {
+            throw new IllegalArgumentException("El motivo de cancelación es obligatorio.");
+        }
+        // RECUPERA EL PEDIDO DE LA BD
+        Optional<Pedido> pedidoOpt = pedidoRepository.findById(idPedido);
+        
+        if (pedidoOpt.isEmpty()) {
+            throw new IllegalArgumentException("No se encontró el pedido con ID: " + idPedido);
+        }
+        
+        Pedido pedido = pedidoOpt.get();
+        // CAMBIA EL ESTADO A CANCELADA 
+        pedido.setEstado("Cancelada");
+        // GUARDA EL REGISTRO DE CANCELACIONES 
+        String detalleCancelacion = motivoCancelacion.trim() + " (Cancelado por: " + idUsuario + ")";
+        pedido.setMotivoCancelacion(detalleCancelacion);
+        // GUARDA CAMBIOS EN LA BD
+        pedidoRepository.save(pedido);
+
+        return true; 
+    }
+
+
+    // HU-05
     /**
      * Recupera pedidos pendientes / en preparación para la comanda de cocina.
      */
@@ -179,99 +270,4 @@ public class ServicioPedido {
         return false;
     }
 
-    /**
-     * Procesa el envío a cocina cambiando el estado.
-     */
-    @Transactional
-    public boolean procesarEnvioCocina(long idPedido) {
-        Optional<Pedido> pedidoOpt = pedidoRepository.findById(idPedido);
-        
-        if (pedidoOpt.isEmpty()) {
-            throw new IllegalArgumentException("No se encontró el pedido con ID: " + idPedido);
-        }
-        
-        Pedido pedido = pedidoOpt.get();
-
-        if ("En Preparación".equals(pedido.getEstado())) {
-            throw new IllegalStateException("La orden ya fue enviada a cocina y no puede ser modificada.");
-        }
-        
-        // ---> AGREGA ESTA NUEVA VALIDACIÓN <---
-        if ("Cancelada".equalsIgnoreCase(pedido.getEstado())) {
-            throw new IllegalStateException("Esta orden ha sido cancelada y no puede enviarse a cocina.");
-        }
-
-        List<DetallesPedido> detalles = pedido.getDetallesPedido();
-        
-        // ... (El resto de tu código se queda igual) ...
-        
-        List<DetallesPedido> paraPlancha = new ArrayList<>();
-        List<DetallesPedido> paraRollos = new ArrayList<>();
-
-        if (detalles != null) {
-            for (DetallesPedido detalle : detalles) {
-                if (detalle.getPlatillo() != null) {
-                    String area = detalle.getPlatillo().getTipoArea();
-                    
-                    if ("Plancha".equalsIgnoreCase(area)) {
-                        paraPlancha.add(detalle);
-                    } else if ("Rollos".equalsIgnoreCase(area)) {
-                        paraRollos.add(detalle);
-                    }
-                }
-            }
-        }
-
-        
-
-        enviarAPlancha(paraPlancha);
-        enviarARollos(paraRollos);
-
-        pedido.setEstado("En Preparación");
-        pedidoRepository.save(pedido);
-
-        return true; 
-    }
-
-    private void enviarAPlancha(List<DetallesPedido> detalles) {
-        if (detalles != null && !detalles.isEmpty()) {
-            System.out.println("-> Enviando " + detalles.size() + " platillos a PLANCHA.");
-            // Aquí en el futuro puedes agregar la lógica real para mandar a la pantalla de cocina
-        }
-    }
-
-    private void enviarARollos(List<DetallesPedido> detalles) {
-        if (detalles != null && !detalles.isEmpty()) {
-            System.out.println("-> Enviando " + detalles.size() + " platillos a ROLLOS.");
-            // Aquí en el futuro puedes agregar la lógica real para mandar a la pantalla de cocina
-        }
-    }
-
-    
-
-    /**
-     * Cancela un pedido.
-     */
-    @Transactional
-    public boolean cancelarPedido(long idPedido, String motivoCancelacion, String idUsuario) {
-        if (motivoCancelacion == null || motivoCancelacion.trim().isEmpty()) {
-            throw new IllegalArgumentException("El motivo de cancelación es obligatorio.");
-        }
-
-        Optional<Pedido> pedidoOpt = pedidoRepository.findById(idPedido);
-        
-        if (pedidoOpt.isEmpty()) {
-            throw new IllegalArgumentException("No se encontró el pedido con ID: " + idPedido);
-        }
-        
-        Pedido pedido = pedidoOpt.get();
-
-        pedido.setEstado("Cancelada");
-        String detalleCancelacion = motivoCancelacion.trim() + " (Cancelado por: " + idUsuario + ")";
-        pedido.setMotivoCancelacion(detalleCancelacion);
-
-        pedidoRepository.save(pedido);
-
-        return true; 
-    }
 }

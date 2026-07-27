@@ -32,23 +32,23 @@ public class VistaCancelarOrden {
 
     @FXML
     public void initialize() {
-        // Botón Volver
+        // BOTON VOLVER
         volverBtn.setOnAction(event -> cierra());
 
-        // Botón Confirmar
+        // BOTON CONFIRMAR
         confirmarBtn.setOnAction(event -> {
             String motivo = motivoArea.getText();
             
             System.out.println("¡Botón presionado!");
             System.out.println("Motivo escrito: " + motivo);
             
-            // Validación por si no escriben nada
+            // VALIDA POR SI NO ESCRIBEN NADA
             if(motivo == null || motivo.trim().isEmpty()) {
                 muestraMensajeError("Debes escribir un motivo para cancelar la orden.");
                 return;
             }
 
-            // Llamamos a el controlador
+            // LLAMA AL CONTROLADOR 
             if(control != null) {
                 System.out.println("Enviando orden de cancelación al controlador...");
                 control.cancelarPedido(idPedidoActual, motivo);
@@ -61,16 +61,16 @@ public class VistaCancelarOrden {
     public void muestra(ControlCancelarOrden control, long idPedido) {
         this.control = control;
         this.idPedidoActual = idPedido;
-
+        // ADVERTENCIA CON EL ID ACTUAL
         if (mensajeOrdenLabel != null) {
             mensajeOrdenLabel.setText("Estás a punto de cancelar la orden #" + idPedido + ".");
         }
-        
+        // LIMPIA AREA DE TEXTO
         if (motivoArea != null) {
             motivoArea.clear();
         }
     }
-
+    // MENSAJE DE EXITO AL CANCELAR
     public void muestraMensajeExito(String mensaje) {
         Alert alerta = new Alert(AlertType.INFORMATION);
         alerta.setTitle("Cancelación Exitosa");
@@ -78,10 +78,10 @@ public class VistaCancelarOrden {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
         
-        // Cerramos la ventana después de cancelar 
+        // CIERRA LA VENTANA
         cierra();
     }
-
+    // MENSAJE DE ERROR AL NO PODER CANCELAR 
     public void muestraMensajeError(String mensaje) {
         Alert alerta = new Alert(AlertType.ERROR);
         alerta.setTitle("Error al cancelar");
@@ -89,7 +89,7 @@ public class VistaCancelarOrden {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
-
+    // CIERRA LA VENTANA DE CANCELACION
     public void cierra() {
         if (volverBtn != null && volverBtn.getScene() != null) {
             Stage stage = (Stage) volverBtn.getScene().getWindow();

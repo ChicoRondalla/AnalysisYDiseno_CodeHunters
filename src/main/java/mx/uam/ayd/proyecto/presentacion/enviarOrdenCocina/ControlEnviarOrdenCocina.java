@@ -25,17 +25,17 @@ import mx.uam.ayd.proyecto.presentacion.cancelarOrden.ControlCancelarOrden;
 import mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal;
 import mx.uam.ayd.proyecto.presentacion.visualizarOrden.ControlVisualizarOrden;
 
-@Component
+@Component  // EVITA HACER EL NEW
 public class ControlEnviarOrdenCocina {
 
-    @Autowired
+    @Autowired // AUTOCABLEADO
     private ServicioPedido servicioPedido;
 
     @Autowired
     private ServicioOrden servicioOrden;
 
     @Autowired
-    @Lazy
+    @Lazy // CREA EL CONTROLADOR HASTA QUE ES NECESARIO
     private ControlPrincipal controlPrincipal; 
 
     @Autowired
@@ -49,7 +49,7 @@ public class ControlEnviarOrdenCocina {
     @Lazy
     private ControlCancelarOrden controlCancelarOrden;
 
-    // --- ENLACES FXML ---
+    // --- ENLACES FXML ESTA ENLAZADO DIRECTAMENTE CON LO VISUAL
     
     @FXML private Button btnCancelarOrden;
     @FXML private Button btnVolver;
@@ -77,6 +77,8 @@ public class ControlEnviarOrdenCocina {
         configurarColumnas();
     }
 
+    // EL METODO DICE COMO LEER LOS DATOS DE LA ENTIDAD DETALLESPEDIDO
+    // DE DETALLESPEDIDO A PLATILLO
     private void configurarColumnas() {
         if (colCategoria != null) {
             colCategoria.setCellValueFactory(cellData -> 
@@ -102,7 +104,7 @@ public class ControlEnviarOrdenCocina {
                 new SimpleIntegerProperty(cellData.getValue().getSubtotal()).asObject());
         }
     }
-
+    
     public void inicia(Pedido pedido) {
         this.pedidoActual = pedido;
         if (pedido != null) {
@@ -112,7 +114,7 @@ public class ControlEnviarOrdenCocina {
         ventana.muestra();
         poblarDatosPedido();
     }
-
+    // AQUI LLEGA EL ID 
     public void inicia(long idPedido) {
         this.idPedidoActual = idPedido;
 
@@ -126,10 +128,12 @@ public class ControlEnviarOrdenCocina {
         }
     }
 
+    // ESTE LLENA LA PANTALLA
     private void poblarDatosPedido() {
+        // TRAE LA LISTA DE PLATILLOS
         if (pedidoActual != null) {
             List<DetallesPedido> detalles = servicioOrden.obtenerDetallesDePedido(pedidoActual.getIdPedido());
-
+            // SET TEX PARA PONER EL NOMBRE ,MESA ETC
             if (lblCliente != null) {
                 lblCliente.setText(pedidoActual.getCliente() != null ? pedidoActual.getCliente().getNombre() : "Cliente General");
             }
@@ -139,15 +143,15 @@ public class ControlEnviarOrdenCocina {
             if (lblEstado != null) {
                 lblEstado.setText(pedidoActual.getEstado() != null ? pedidoActual.getEstado() : "Pendiente de envío");
             }
-
+            // CALCULA EL IVA
             double total = servicioOrden.calcularSubtotalTotal(pedidoActual.getIdPedido());
             double subtotal = total / 1.16;
             double iva = total - subtotal;
-
+            
             if (lblSubtotal != null) lblSubtotal.setText(String.format("Subtotal: $%.2f", subtotal));
             if (lblIva != null) lblIva.setText(String.format("IVA: $%.2f", iva));
             if (lblTotal != null) lblTotal.setText(String.format("TOTAL: $%.2f", total));
-
+            // SE INYECTA LA LISTA DE PLATILLOS ALA TABLA
             if (tablaDetalle != null && detalles != null) {
                 tablaDetalle.setItems(FXCollections.observableArrayList(detalles));
                 tablaDetalle.refresh();
@@ -159,13 +163,13 @@ public class ControlEnviarOrdenCocina {
     void clickBotonEnviar(ActionEvent event) {
         try {
             boolean exito = servicioPedido.procesarEnvioCocina(idPedidoActual);
-            
+            // CAMINO FELIZ
             if (exito) {
                 if (lblEstado != null) {
                     lblEstado.setText("En Preparación");
                 }
                 
-                // ABRE Y ACTUALIZA LA VISTA DE COCINA
+                // ABRE Y ACTUALIZA LA VISTA DE COCINA 
                 if (controlVisualizarOrden != null) {
                     controlVisualizarOrden.inicia();
                 }
@@ -177,13 +181,14 @@ public class ControlEnviarOrdenCocina {
                     stage.close();
                 }
             }
+            // SI EL PEDIDO NO EXISTE O YA ESTA EN PREPARACION
         } catch (IllegalArgumentException e) {
             mostrarMensajeError("No se encontró el pedido", e.getMessage());
         } catch (IllegalStateException e) {
             mostrarMensajeError("La orden ya está en preparación y no puede ser modificada", e.getMessage());
         }
     }
-    
+    // VENTANAS DE ALAERTA LAS CHICAS
     private void mostrarMensajeExito() {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Éxito");
@@ -200,9 +205,7 @@ public class ControlEnviarOrdenCocina {
         alert.showAndWait();
     }
 
-    /**
-     * Método para limpiar la vista visualmente después de una cancelación exitosa
-     */
+     //LIMPIA LA INERFAZ , CAMBIA ESTADO Y LIMPIA TABLA     
     public void limpiarVistaDespuesDeCancelar() {
         if (lblEstado != null) {
             lblEstado.setText("Cancelada");
@@ -220,19 +223,15 @@ public class ControlEnviarOrdenCocina {
             btnCancelarOrden.setDisable(true);
         }
     }
-
+    // ABRE LA NETANA DE CANCELAR
     @FXML
     public void clickBotonCancelarOrden(ActionEvent event) {
-        // 1. Le decimos al sistema que DIBUJE y abra la ventanita roja (como funcionaba antes)
-        controlPrincipal.iniciaVentanaCancelarOrden();
         
-        // 2. Inmediatamente después, le inyectamos el ID real de la orden actual
+        controlPrincipal.iniciaVentanaCancelarOrden();
         controlCancelarOrden.inicia(idPedidoActual);
     }
 
-
-
-    
+    // REGRESA ALA VENTANA ANTERIOR 
     @FXML
     public void clickBotonVolver(ActionEvent event) {
         if (btnVolver != null && btnVolver.getScene() != null) {

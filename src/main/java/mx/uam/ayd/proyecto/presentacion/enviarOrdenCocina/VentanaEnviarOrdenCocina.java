@@ -9,35 +9,39 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-@Component
+
+@Component  // EVITA HACER EL NEW 
 public class VentanaEnviarOrdenCocina {
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    private Stage stage;
+    @Autowired // AUTOCABLEADO
+    
+    private ApplicationContext applicationContext;  // ES EL QUE TIENE EL CONTEXTO DE LA APP SERVICIOS Y CONTROLADORES
+    
+    private Stage stage;  // MARCO DE LA VENTANA
 
     /**
-     * Muestra la ventana reocupando la instancia administrada por Spring Boot.
+     * MUESTRA LA VENTANA 
      */
     public void muestra() {
         try {
+            // TRADUCE EL FXML A CODIGO
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Ventana-enviar-orden-cocina.fxml"));
             
-            // Le indicamos a JavaFX que obtenga los controladores desde el contenedor de Spring
+            // DA EL CONTROLADOR CON SUS SERVICIOS
             fxmlLoader.setControllerFactory(applicationContext::getBean);
             
-            Parent root = fxmlLoader.load();
-            
+            Parent root = fxmlLoader.load(); // PROCESA EL ARCHIVO
+            // AHORRA MEMORIA 
             if (stage == null) {
                 stage = new Stage();
             }
             
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(root); // CONTENIDO VISUAL
             stage.setScene(scene);
             stage.setTitle("Resumen de la Orden - Enviar a Cocina");
             stage.show();
             
+            // MENSAJE DE ERROR POR SI HAY ALGUN PROBLEMA CON EL FXML
         } catch (Exception e) {
             System.err.println("Error al cargar la ventana de Enviar a Cocina:");
             e.printStackTrace();
