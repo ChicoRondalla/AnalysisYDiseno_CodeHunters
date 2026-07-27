@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -20,6 +22,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import mx.uam.ayd.proyecto.datos.PedidoRepository;
 import mx.uam.ayd.proyecto.negocio.ServicioOrden;
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
@@ -27,23 +30,35 @@ import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
 
+/**
+ * CocinaPantallaControlador: El corazón visual de la cocina.
+ * Este controlador maneja todo lo que el cocinero ve y hace en la pantalla:
+ * cambiar entre estaciones (Rollos o Plancha), interactuar con los platillos mediante checkboxes,
+ * usar un teclado numérico en pantalla para buscar/finalizar órdenes, y consultar el historial de completados.
+ */
 @Component
 public class CocinaPantallaControlador {
 
     private static final Logger LOGGER = Logger.getLogger(CocinaPantallaControlador.class.getName());
     private static final String TXT_ORDEN_PREFIX = "Orden #";
 
+    // --- COMPONENTES DE LA VISTA (Inyectados desde FXML) ---
     @FXML
-    private Label lblEstacion;
+    private Label lblEstacion; // Etiqueta que muestra en qué estación estamos trabajando actualmente ("ROLLOS" o "PLANCHA").
 
     @FXML
-    private TilePane containerPendientes;
+    private TilePane containerPendientes; // Contenedor en forma de cuadrícula donde se dibujan las tarjetas con las órdenes pendientes.
 
     @FXML
-    private Label txtOrdenInput;
+    private Label txtOrdenInput; // Pantalla pequeña o texto donde se van acumulando los números que el cocinero tipea en el pad numérico.
 
+    // Estado interno para saber qué área de la cocina está activa por defecto al arrancar.
     private String estacionActual = "ROLLOS";
 
+    // Lista para almacenar y controlar los temporizadores activos en las tarjetas
+    private final List<Timeline> activeTimers = new ArrayList<>();
+
+    // --- SERVICIOS Y REPOSITORIOS (Inyección de dependencias de Spring) ---
     @Autowired
     private ServicioPedido servicioPedido;
 
@@ -57,6 +72,10 @@ public class CocinaPantallaControlador {
     @Lazy
     private ControlVisualizarOrden controlVisualizarOrden;
 
+    /**
+     * MÉTODO DE INICIALIZACIÓN:
+     * Se ejecuta automáticamente justo después de que JavaFX carga el archivo FXML.
+     */
     @FXML
     public void initialize() {
         if (txtOrdenInput != null) {
@@ -85,9 +104,6 @@ public class CocinaPantallaControlador {
         }
     }
 
-    /**
-     * Muestra la ventana modal con las órdenes completadas.
-     */
     @FXML
     private void handleMostrarCompletados() {
         Stage modalStage = new Stage();
@@ -163,7 +179,7 @@ public class CocinaPantallaControlador {
         }
     }
 
-    // --- ACCIONES DEL TECLADO NUMÉRICO ---
+    // --- ACCIONES DEL TECLADO NUMÉRICO EN PANTALLA ---
 
     @FXML
     private void handleKeypadNumber(ActionEvent event) {
@@ -227,12 +243,18 @@ public class CocinaPantallaControlador {
 
     public void mostrarPedidosPendientes(List<Pedido> pedidos) {
         if (containerPendientes == null) return;
+
+        // Limpiamos los temporizadores previos para evitar fugas de memoria o hilos huérfanos
+        for (Timeline t : activeTimers) {
+            t.stop();
+        }
+        activeTimers.clear();
+
         containerPendientes.getChildren().clear();
 
         for (Pedido pedido : pedidos) {
             List<DetallesPedido> detalles = servicioOrden.obtenerDetallesDePedido(pedido.getIdPedido());
             
-            // Filtramos únicamente los detalles que corresponden a la estación actual
             List<DetallesPedido> detallesEstacion = new ArrayList<>();
             if (detalles != null) {
                 for (DetallesPedido detalle : detalles) {
@@ -244,7 +266,6 @@ public class CocinaPantallaControlador {
                 }
             }
 
-            // Si la estación actual tiene platillos en este pedido, creamos la tarjeta interactiva
             if (!detallesEstacion.isEmpty()) {
                 crearTarjetaOrdenConCheckboxes(pedido.getIdPedido(), String.valueOf(pedido.getNumeroOrden()), detallesEstacion);
             }
@@ -256,17 +277,42 @@ public class CocinaPantallaControlador {
         card.setPrefWidth(240);
         card.setStyle("-fx-background-color: #2D1F21; -fx-background-radius: 8; -fx-border-color: #7B7374; -fx-border-radius: 8; -fx-border-width: 1; -fx-padding: 12px;");
 
+        // Cabecera con número de orden
         Label lblNum = new Label("#" + numeroOrden);
         lblNum.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
 
-        card.getChildren().add(lblNum);
+        // Etiqueta visual para el temporizador en tiempo real
+        Label lblTiempo = new Label("Tiempo: 00:00");
+        lblTiempo.setStyle("-fx-font-size: 12px; -fx-text-fill: #FFD700; -fx-font-weight: bold;");
 
-        // Botón Marcar como Terminado (Inicialmente deshabilitado por HU-06)
+        card.getChildren().addAll(lblNum, lblTiempo);
+
+        // Tomamos el momento actual como base para el conteo (puedes cambiarlo por pedido.getHoraCreacion() si tu entidad lo almacena)
+        java.time.LocalDateTime horaCreacion = java.time.LocalDateTime.now();
+
+        // Creamos el Timeline que actualizará el texto cada segundo
+        Timeline cardTimer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            long segundosTranscurridos = java.time.temporal.ChronoUnit.SECONDS.between(horaCreacion, java.time.LocalDateTime.now());
+            long minutos = segundosTranscurridos / 60;
+            long segundos = segundosTranscurridos % 60;
+
+            lblTiempo.setText(String.format("Tiempo: %02d:%02d", minutos, segundos));
+
+            // Alerta visual en rojo si la orden supera los 15 minutos
+            if (minutos >= 15) {
+                lblTiempo.setStyle("-fx-font-size: 12px; -fx-text-fill: #FF4444; -fx-font-weight: bold;");
+            }
+        }));
+        
+        cardTimer.setCycleCount(Timeline.INDEFINITE);
+        cardTimer.play();
+        activeTimers.add(cardTimer); // Registramos el timer
+
+        // Botón Marcar como Terminado
         Button btnFinalizar = new Button("MARCAR COMO TERMINADO");
         btnFinalizar.setDisable(true);
         btnFinalizar.setStyle("-fx-background-color: #E13131; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-font-size: 11px;");
 
-        // Creamos un CheckBox interactivo por cada platillo de la estación
         for (DetallesPedido detalle : detallesEstacion) {
             StringBuilder textoItem = new StringBuilder();
             textoItem.append(detalle.getCantidad()).append("x ").append(detalle.getPlatillo().getNombre());
@@ -278,31 +324,28 @@ public class CocinaPantallaControlador {
             CheckBox checkBox = new CheckBox(textoItem.toString());
             checkBox.setWrapText(true);
             checkBox.setStyle("-fx-text-fill: #FFFFFF; -fx-font-size: 13px;");
-            checkBox.setMinHeight(35); // Mejora la zona táctil para pantallas de cocina
+            checkBox.setMinHeight(35);
 
-            // Sincronizamos estado
             checkBox.setSelected(detalle.isCompletado());
 
-            // Evento al hacer clic en el checkbox
             checkBox.setOnAction(e -> {
                 detalle.setCompletado(checkBox.isSelected());
-                
-                // Evaluamos si todos los checkboxes de esta tarjeta están seleccionados
                 boolean todosListos = detallesEstacion.stream().allMatch(DetallesPedido::isCompletado);
-                
-                // Habilita o deshabilita el botón automáticamente
                 btnFinalizar.setDisable(!todosListos);
             });
 
             card.getChildren().add(checkBox);
         }
 
-        // Evaluar estado inicial por si la tarjeta se recarga con elementos listos
         boolean todosListosInicial = detallesEstacion.stream().allMatch(DetallesPedido::isCompletado);
         btnFinalizar.setDisable(!todosListosInicial);
 
-        // Acción al presionar finalizar
-        btnFinalizar.setOnAction(e -> finalizarOrden(idPedido));
+        // Al finalizar la orden, detenemos y removemos el temporizador específico de esta tarjeta
+        btnFinalizar.setOnAction(e -> {
+            cardTimer.stop();
+            activeTimers.remove(cardTimer);
+            finalizarOrden(idPedido);
+        });
 
         card.getChildren().add(btnFinalizar);
         containerPendientes.getChildren().add(card);
