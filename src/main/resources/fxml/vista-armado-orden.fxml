@@ -124,7 +124,7 @@
                         </Button>
                         <HBox alignment="CENTER_LEFT">
                            <children>
-                              <Label text="SUBTOTAL" textFill="#8c7a7a">
+                              <Label text="TOTAL" textFill="#8c7a7a">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
