@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ import mx.uam.ayd.proyecto.presentacion.armadoOrden.VistaArmadoOrden;
 public class ControlRegistroPedido {
 
     // --- PANES (Las diferentes "pantallas") ---
-    @FXML private Pane paneSeleccion;
+    @FXML private HBox paneSeleccion;
     @FXML private Pane paneDomicilio;
     @FXML private Pane paneLocal;
     @FXML private Pane paneRecoger;
