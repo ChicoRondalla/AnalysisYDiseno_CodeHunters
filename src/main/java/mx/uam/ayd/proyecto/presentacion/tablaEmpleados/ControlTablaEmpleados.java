@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import mx.uam.ayd.proyecto.negocio.ServicioEmpleado;
 import mx.uam.ayd.proyecto.negocio.modelo.Empleado;
+import mx.uam.ayd.proyecto.presentacion.agregarEmpleado.ControlAgregarEmpleado;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,16 +19,15 @@ import java.util.List;
 
 /**
  * Controlador de la vista de la tabla de empleados en JavaFX.
- * Muestra el listado de empleados registrados con un disenio oscuro moderno
- * que incluye avatares, roles dinamicos y acciones.
- * 
- * Cumple con DoD #5 (Documentacion de codigo).
  */
 @Component
 public class ControlTablaEmpleados {
 
     @Autowired
     private ServicioEmpleado servicioEmpleado;
+
+    @Autowired
+    private ControlAgregarEmpleado controlAgregarEmpleado;
 
     @FXML
     private TableView<Empleado> tablaEmpleados;
@@ -50,9 +50,9 @@ public class ControlTablaEmpleados {
     @FXML
     private TextField txtBuscar;
 
-    /**
-     * Inicializa los componentes de la tabla y configura las celdas personalizadas.
-     */
+    @FXML
+    private Button btnRegistrarEmpleado;
+
     @FXML
     public void initialize() {
         configurarColumnaNombre();
@@ -60,12 +60,17 @@ public class ControlTablaEmpleados {
         configurarColumnaRol();
         configurarColumnaAcciones();
 
+        if (btnRegistrarEmpleado != null) {
+            btnRegistrarEmpleado.setOnAction(event -> {
+                if (controlAgregarEmpleado != null) {
+                    controlAgregarEmpleado.muestra(this);
+                }
+            });
+        }
+
         actualizarTabla();
     }
 
-    /**
-     * Configura la columna Nombre Completo con Avatar (Iniciales) y formato visual.
-     */
     private void configurarColumnaNombre() {
         columnaNombre.setCellValueFactory(param -> new javafx.beans.property.SimpleObjectProperty<>(param.getValue()));
         columnaNombre.setCellFactory(column -> new TableCell<Empleado, Empleado>() {
@@ -78,7 +83,6 @@ public class ControlTablaEmpleados {
                     HBox contenedor = new HBox(12);
                     contenedor.setAlignment(Pos.CENTER_LEFT);
 
-                    // Avatar con Iniciales
                     String iniciales = obtenerIniciales(emp.getNombre());
                     Label lblAvatar = new Label(iniciales);
                     lblAvatar.setStyle(obtenerEstiloAvatar(emp.getRol()));
@@ -86,12 +90,11 @@ public class ControlTablaEmpleados {
                     lblAvatar.setMaxSize(36, 36);
                     lblAvatar.setAlignment(Pos.CENTER);
 
-                    // Nombre y Subtitulo
                     VBox textContainer = new VBox(2);
                     Label lblNombre = new Label(emp.getNombre());
                     lblNombre.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px;");
 
-                    Label lblSubtitulo = new Label("Asignado • Turno General");
+                    Label lblSubtitulo = new Label(obtenerSubtituloRol(emp.getRol()));
                     lblSubtitulo.setStyle("-fx-text-fill: #9ca3af; -fx-font-size: 11px;");
 
                     textContainer.getChildren().addAll(lblNombre, lblSubtitulo);
@@ -103,9 +106,6 @@ public class ControlTablaEmpleados {
         });
     }
 
-    /**
-     * Configura la columna de Nombre de Usuario antecedida por '@'.
-     */
     private void configurarColumnaUsuario() {
         columnaUsuario.setCellValueFactory(param -> new javafx.beans.property.SimpleStringProperty(param.getValue().getUsuario()));
         columnaUsuario.setCellFactory(column -> new TableCell<Empleado, String>() {
@@ -113,18 +113,18 @@ public class ControlTablaEmpleados {
             protected void updateItem(String usuario, boolean empty) {
                 super.updateItem(usuario, empty);
                 if (empty || usuario == null) {
+                    setGraphic(null);
                     setText(null);
                 } else {
-                    setText("@" + usuario);
-                    setStyle("-fx-text-fill: #e5e7eb; -fx-font-size: 13px; -fx-alignment: CENTER-LEFT;");
+                    Label lblUsuarioCapsula = new Label("@" + usuario);
+                    lblUsuarioCapsula.setStyle("-fx-text-fill: #e5e7eb; -fx-background-color: #22252b; -fx-background-radius: 8; -fx-padding: 4 10 4 10; -fx-font-size: 12px; -fx-font-weight: bold;");
+                    setGraphic(lblUsuarioCapsula);
+                    setText(null);
                 }
             }
         });
     }
 
-    /**
-     * Configura la columna de Rol con formato de pill badge y punto de color.
-     */
     private void configurarColumnaRol() {
         columnaRol.setCellValueFactory(param -> new javafx.beans.property.SimpleStringProperty(param.getValue().getRol()));
         columnaRol.setCellFactory(column -> new TableCell<Empleado, String>() {
@@ -149,9 +149,6 @@ public class ControlTablaEmpleados {
         });
     }
 
-    /**
-     * Configura la columna de acciones (Iconos de Editar / Desactivar).
-     */
     private void configurarColumnaAcciones() {
         columnaAcciones.setCellValueFactory(param -> new javafx.beans.property.SimpleObjectProperty<>(param.getValue()));
         columnaAcciones.setCellFactory(column -> new TableCell<Empleado, Empleado>() {
@@ -177,9 +174,6 @@ public class ControlTablaEmpleados {
         });
     }
 
-    /**
-     * Consulta el servicio de negocio y recarga los datos en la TableView.
-     */
     public void actualizarTabla() {
         if (servicioEmpleado != null && tablaEmpleados != null) {
             List<Empleado> lista = servicioEmpleado.recuperarEmpleados();
@@ -187,7 +181,7 @@ public class ControlTablaEmpleados {
             tablaEmpleados.setItems(datos);
 
             if (lblConteoEmpleados != null) {
-                lblConteoEmpleados.setText("Mostrando " + lista.size() + " empleados registrados");
+                lblConteoEmpleados.setText("Mostrando " + lista.size() + " de " + lista.size() + " empleados");
             }
         }
     }
@@ -199,6 +193,17 @@ public class ControlTablaEmpleados {
             return (partes[0].substring(0, 1) + partes[1].substring(0, 1)).toUpperCase();
         }
         return partes[0].substring(0, Math.min(2, partes[0].length())).toUpperCase();
+    }
+
+    private String obtenerSubtituloRol(String rol) {
+        if (rol == null) return "Asignado • Turno General";
+        switch (rol.toLowerCase()) {
+            case "cocinero": return "Estación Nigiri • Turno Noche";
+            case "administrador": return "Supervisión General • Bodega & Finanzas";
+            case "recepcionista": return "Mostrador Principal • Reservas Omakase";
+            case "repartidor": return "Rutas VIP & Envíos Refrigerados";
+            default: return "Asignado • Turno General";
+        }
     }
 
     private String obtenerEstiloAvatar(String rol) {

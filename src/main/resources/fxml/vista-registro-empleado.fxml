@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefWidth="420.0" spacing="18.0" styleClass="root-dark" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uam.ayd.proyecto.presentacion.agregarEmpleado.ControlAgregarEmpleado">
+   <stylesheets>
+      <URL value="@../styles/estilos-tabla.css" />
+   </stylesheets>
+   <padding>
+      <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+   </padding>
+   <children>
+      <!-- Título de la Ventana Modal -->
+      <VBox spacing="4.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+               <children>
+                  <Label text="👤" textFill="#ef4444">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Label text="Registrar Nuevo Empleado" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <Label text="Ingresa los datos para dar de alta al colaborador" textFill="#9ca3af">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+
+      <!-- Campo: Nombre Completo -->
+      <VBox spacing="6.0">
+         <children>
+            <Label text="Nombre Completo *" textFill="#e5e7eb">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtNombre" promptText="Ej. Juan Pérez López" styleClass="search-field" />
+         </children>
+      </VBox>
+
+      <!-- Campo: Nombre de Usuario -->
+      <VBox spacing="6.0">
+         <children>
+            <Label text="Nombre de Usuario *" textFill="#e5e7eb">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtUsuario" promptText="Ej. jperez" styleClass="search-field" />
+         </children>
+      </VBox>
+
+      <!-- Campo: Contraseña -->
+      <VBox spacing="6.0">
+         <children>
+            <Label text="Contraseña *" textFill="#e5e7eb">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <PasswordField fx:id="txtContrasena" promptText="Mínimo 8 chars, 1 mayús, 1 num, 1 símb" styleClass="search-field" />
+         </children>
+      </VBox>
+
+      <!-- Campo: Rol -->
+      <VBox spacing="6.0">
+         <children>
+            <Label text="Rol en el Sistema *" textFill="#e5e7eb">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="comboRol" maxWidth="1.7976931348623157E308" styleClass="search-field" />
+         </children>
+      </VBox>
+
+      <!-- Mensaje de Retroalimentación / Error -->
+      <Label fx:id="lblMensaje" textFill="#ef4444" wrapText="true">
+         <font>
+            <Font size="12.0" />
+         </font>
+      </Label>
+
+      <!-- Botones de Acción -->
+      <HBox alignment="CENTER_RIGHT" spacing="12.0">
+         <children>
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#actionCancelar" styleClass="btn-icon" text="Cancelar" />
+            <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#actionGuardar" styleClass="btn-primary-red" text="Guardar Empleado" />
+         </children>
+         <VBox.margin>
+            <Insets top="8.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>
