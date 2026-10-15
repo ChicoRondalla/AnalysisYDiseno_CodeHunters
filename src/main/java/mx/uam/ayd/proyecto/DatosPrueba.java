@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import mx.uam.ayd.proyecto.datos.MesaRepository;
 import mx.uam.ayd.proyecto.datos.PlatilloRepository;
+import mx.uam.ayd.proyecto.negocio.modelo.Mesa;
 import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
 
 /**
@@ -17,10 +19,13 @@ public class DatosPrueba implements CommandLineRunner {
     @Autowired
     private PlatilloRepository platilloRepository;
 
+    @Autowired
+    private MesaRepository mesaRepository;
+
     @Override
     public void run(String... args) throws Exception {
         
-        // Solo insertamos si la tabla está vacía
+        // Carga de platillos de prueba
         if (platilloRepository.count() == 0) {
             System.out.println("Iniciando carga de platillos de prueba en H2...");
 
@@ -53,6 +58,19 @@ public class DatosPrueba implements CommandLineRunner {
             platilloRepository.save(p4);
 
             System.out.println("¡Carga de platillos completada!");
+        }
+
+        // Carga de mesas de prueba (HU-05)
+        if (mesaRepository.count() == 0) {
+            System.out.println("Iniciando carga de mesas de prueba en H2...");
+
+            mesaRepository.save(new Mesa(1, 4, "LIBRE"));
+            mesaRepository.save(new Mesa(2, 4, "LIBRE"));
+            mesaRepository.save(new Mesa(3, 6, "LIBRE"));
+            mesaRepository.save(new Mesa(4, 4, "LIBRE"));
+            mesaRepository.save(new Mesa(5, 4, "LIBRE"));
+
+            System.out.println("¡Carga de mesas completada!");
         }
     }
 }
