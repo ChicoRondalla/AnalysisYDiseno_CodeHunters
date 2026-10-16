@@ -4,17 +4,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 /**
- * Entidad que representa una mesa física dentro del restaurante para la HU-05[cite: 5].
+ * Entidad que representa una mesa física dentro del restaurante para la HU-05.
  */
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Mesa {
 
     @Id
@@ -24,8 +18,14 @@ public class Mesa {
     private int numeroMesa;
     private int capacidad;
     
-    // Estado de la mesa: "LIBRE" u "OCUPADA"[cite: 5]
+    // Estado de la mesa: "LIBRE" u "OCUPADA"
     private String estado;
+
+    /**
+     * Constructor vacío requerido por JPA.
+     */
+    public Mesa() {
+    }
 
     /**
      * Constructor conveniente para inicializar mesas sin ID (autogenerado).
@@ -36,8 +36,41 @@ public class Mesa {
         this.estado = estado;
     }
 
+    // Getters y Setters explícitos para evitar conflictos con Java 24
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public int getNumeroMesa() {
+        return numeroMesa;
+    }
+
+    public void setNumeroMesa(int numeroMesa) {
+        this.numeroMesa = numeroMesa;
+    }
+
+    public int getCapacidad() {
+        return capacidad;
+    }
+
+    public void setCapacidad(int capacidad) {
+        this.capacidad = capacidad;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
     /**
-     * Verifica si la mesa se encuentra disponible[cite: 5].
+     * Verifica si la mesa se encuentra disponible.
      */
     public boolean isLibre() {
         return "LIBRE".equalsIgnoreCase(this.estado);
