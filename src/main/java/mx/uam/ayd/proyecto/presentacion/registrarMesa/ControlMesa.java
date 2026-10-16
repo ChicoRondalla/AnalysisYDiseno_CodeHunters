@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -48,6 +49,13 @@ public class ControlMesa {
     @FXML
     private Button btnRegresar;
 
+    // Botones de las mesas del FXML para actualizar su diseño dinámicamente
+    @FXML private Button btnMesa1;
+    @FXML private Button btnMesa2;
+    @FXML private Button btnMesa3;
+    @FXML private Button btnMesa4;
+    @FXML private Button btnMesa5;
+
     private int mesaSeleccionadaId = -1;
 
     /**
@@ -70,6 +78,43 @@ public class ControlMesa {
         }
     }
 
+    /**
+     * Se ejecuta automáticamente al cargar la vista para pintar las tarjetas con el estado real de la BD.
+     */
+    @FXML
+    public void initialize() {
+        actualizarVistaMesas();
+    }
+
+    private void actualizarVistaMesas() {
+        List<Mesa> mesas = servicioMesa.obtenerMesas();
+        for (Mesa m : mesas) {
+            Button btnTarget = obtenerBotonPorNumero(m.getNumeroMesa());
+            if (btnTarget != null) {
+                String estado = m.getEstado();
+                btnTarget.setText("MESA " + m.getNumeroMesa() + "\nCapacidad: " + m.getCapacidad() + " pers.\n" + estado);
+                
+                // Color rojo oscuro si está ocupada, gris oscuro si está libre
+                if ("OCUPADA".equalsIgnoreCase(estado)) {
+                    btnTarget.setStyle("-fx-background-color: #7f1d1d; -fx-background-radius: 12; -fx-border-color: rgba(255,255,255,0.15); -fx-border-radius: 12; -fx-text-fill: white;");
+                } else {
+                    btnTarget.setStyle("-fx-background-color: #212126; -fx-background-radius: 12; -fx-border-color: rgba(255,255,255,0.08); -fx-border-radius: 12; -fx-text-fill: white;");
+                }
+            }
+        }
+    }
+
+    private Button obtenerBotonPorNumero(int numero) {
+        switch (numero) {
+            case 1: return btnMesa1;
+            case 2: return btnMesa2;
+            case 3: return btnMesa3;
+            case 4: return btnMesa4;
+            case 5: return btnMesa5;
+            default: return null;
+        }
+    }
+
     @FXML
     public void handleSeleccionarMesa1() { seleccionarMesaLogica(1); }
     @FXML
@@ -87,7 +132,10 @@ public class ControlMesa {
         if(mesaOpt.isPresent()) {
             Mesa m = mesaOpt.get();
             if (lblEstadoSeleccion != null) {
-                lblEstadoSeleccion.setText("Mesa " + m.getNumeroMesa() + " · Estado: " + m.getEstado());
+                // Muestra la información detallada completa en la barra inferior
+                lblEstadoSeleccion.setText("Mesa " + m.getNumeroMesa() + 
+                    "  |  Capacidad: " + m.getCapacidad() + " personas" + 
+                    "  |  Estado: " + m.getEstado());
             }
         }
     }
@@ -108,6 +156,8 @@ public class ControlMesa {
                 servicioMesa.actualizarEstadoMesa(mesaSeleccionadaId, "OCUPADA");
                 Pedido nuevoPedido = servicioPedido.crearPedidoLocal(mesaSeleccionadaId);
                 
+                actualizarVistaMesas();
+                
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Mesa Registrada", 
                     "La Mesa " + mesaSeleccionadaId + " se ha seleccionado correctamente.");
                 
@@ -127,6 +177,7 @@ public class ControlMesa {
                 String nuevoEstado = m.isLibre() ? "OCUPADA" : "LIBRE";
                 servicioMesa.actualizarEstadoMesa(mesaSeleccionadaId, nuevoEstado);
                 seleccionarMesaLogica(mesaSeleccionadaId);
+                actualizarVistaMesas();
             });
         }
     }
@@ -134,7 +185,6 @@ public class ControlMesa {
     @FXML
     public void handleRegresar() {
         cerrarVentana();
-        // Volvemos a abrir la ventana principal de registro de pedido mediante Spring
         vistaRegistroPedido.muestra(applicationContext.getBean(mx.uam.ayd.proyecto.presentacion.registrarPedido.ControlRegistroPedido.class));
     }
 
