@@ -43,13 +43,13 @@ public class ControlMesa {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @FXML
-    private Label lblEstadoSeleccion;
+    @FXML private Label lblEstadoSeleccion;
+    @FXML private Button btnRegresar;
 
-    @FXML
-    private Button btnRegresar;
+    @FXML private Button btnRegistrarPedido;
+    @FXML private Button btnCambiarEstado;
 
-    // Botones de las mesas del FXML para actualizar su diseño dinámicamente
+    // Botones de las mesas del FXML
     @FXML private Button btnMesa1;
     @FXML private Button btnMesa2;
     @FXML private Button btnMesa3;
@@ -58,9 +58,6 @@ public class ControlMesa {
 
     private int mesaSeleccionadaId = -1;
 
-    /**
-     * Carga y muestra la ventana del plano de sala (`PlanoMesas.fxml`).
-     */
     public void inicia() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/PlanoMesas.fxml"));
@@ -78,12 +75,11 @@ public class ControlMesa {
         }
     }
 
-    /**
-     * Se ejecuta automáticamente al cargar la vista para pintar las tarjetas con el estado real de la BD.
-     */
     @FXML
     public void initialize() {
         actualizarVistaMesas();
+        if (btnRegistrarPedido != null) btnRegistrarPedido.setDisable(true);
+        if (btnCambiarEstado != null) btnCambiarEstado.setDisable(true);
     }
 
     private void actualizarVistaMesas() {
@@ -94,7 +90,6 @@ public class ControlMesa {
                 String estado = m.getEstado();
                 btnTarget.setText("MESA " + m.getNumeroMesa() + "\nCapacidad: " + m.getCapacidad() + " pers.\n" + estado);
                 
-                // Color rojo oscuro si está ocupada, gris oscuro si está libre
                 if ("OCUPADA".equalsIgnoreCase(estado)) {
                     btnTarget.setStyle("-fx-background-color: #7f1d1d; -fx-background-radius: 12; -fx-border-color: rgba(255,255,255,0.15); -fx-border-radius: 12; -fx-text-fill: white;");
                 } else {
@@ -115,16 +110,11 @@ public class ControlMesa {
         }
     }
 
-    @FXML
-    public void handleSeleccionarMesa1() { seleccionarMesaLogica(1); }
-    @FXML
-    public void handleSeleccionarMesa2() { seleccionarMesaLogica(2); }
-    @FXML
-    public void handleSeleccionarMesa3() { seleccionarMesaLogica(3); }
-    @FXML
-    public void handleSeleccionarMesa4() { seleccionarMesaLogica(4); }
-    @FXML
-    public void handleSeleccionarMesa5() { seleccionarMesaLogica(5); }
+    @FXML public void handleSeleccionarMesa1() { seleccionarMesaLogica(1); }
+    @FXML public void handleSeleccionarMesa2() { seleccionarMesaLogica(2); }
+    @FXML public void handleSeleccionarMesa3() { seleccionarMesaLogica(3); }
+    @FXML public void handleSeleccionarMesa4() { seleccionarMesaLogica(4); }
+    @FXML public void handleSeleccionarMesa5() { seleccionarMesaLogica(5); }
 
     private void seleccionarMesaLogica(int numeroMesa) {
         mesaSeleccionadaId = numeroMesa;
@@ -132,10 +122,15 @@ public class ControlMesa {
         if(mesaOpt.isPresent()) {
             Mesa m = mesaOpt.get();
             if (lblEstadoSeleccion != null) {
-                // Muestra la información detallada completa en la barra inferior
                 lblEstadoSeleccion.setText("Mesa " + m.getNumeroMesa() + 
                     "  |  Capacidad: " + m.getCapacidad() + " personas" + 
                     "  |  Estado: " + m.getEstado());
+            }
+
+            if (btnCambiarEstado != null) btnCambiarEstado.setDisable(false);
+
+            if (btnRegistrarPedido != null) {
+                btnRegistrarPedido.setDisable(!m.isLibre());
             }
         }
     }
@@ -161,7 +156,8 @@ public class ControlMesa {
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Mesa Registrada", 
                     "La Mesa " + mesaSeleccionadaId + " se ha seleccionado correctamente.");
                 
-                cerrarVentana();
+                // Nota: Ya no se llama a cerrarVentana() para que el plano de sala permanezca abierto
+                
                 vistaArmadoOrden.muestra(nuevoPedido);
             }
         } else {
