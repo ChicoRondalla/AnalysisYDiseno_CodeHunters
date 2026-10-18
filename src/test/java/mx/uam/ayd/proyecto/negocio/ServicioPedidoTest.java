@@ -72,7 +72,7 @@ class ServicioPedidoTest {
         when(pedidoRepository.findById(idPedido)).thenReturn(Optional.of(pedidoCancelado));
         // ESPERAMOS QUE FALLE
         Exception excepcion = assertThrows(IllegalStateException.class, () -> {
-            servicioPedido.procesarEnvioCocina(idPedido);
+            servicioPedido.procesarEnvioCocina(idPedido ,0.0);
         });
         // VERIFICA EL MENSAJE 
         assertEquals("Esta orden ha sido cancelada y no puede enviarse a cocina.", excepcion.getMessage());
@@ -88,7 +88,7 @@ class ServicioPedidoTest {
 
         when(pedidoRepository.findById(idPedido)).thenReturn(Optional.of(pedidoValido));
         // ENVIO A COSINA
-        boolean resultado = servicioPedido.procesarEnvioCocina(idPedido);
+        boolean resultado = servicioPedido.procesarEnvioCocina(idPedido, 0.0);
         // VERIFICA QUE TODO ESTE BIEN
         assertTrue(resultado, "El método debe devolver true si el envío fue exitoso.");
         assertEquals("En Preparación", pedidoValido.getEstado(), "El estado del pedido debió cambiar.");

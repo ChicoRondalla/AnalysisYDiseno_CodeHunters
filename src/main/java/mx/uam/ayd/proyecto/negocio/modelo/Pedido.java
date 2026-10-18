@@ -31,7 +31,9 @@ public class Pedido {
 	private String estado;
 	private String motivoCancelacion;
 	private int total;
- 
+    // NUEVO ATRIBUTO PARA EL COSTO DE ENVIO
+    private double costoEnvio;
+
     // --- RELACIONES DEL MODELO DE DOMINIO ---
 
    // 1 Pedido CONTIENE muchos DetallesPedido 
@@ -122,6 +124,15 @@ public class Pedido {
         this.total = total;
     }
 
+    // --- NUEVO: COSTO DE ENVÍO ---
+    public double getCostoEnvio() {
+        return costoEnvio;
+    }
+
+    public void setCostoEnvio(double costoEnvio) {
+        this.costoEnvio = costoEnvio;
+    }
+    
     // --- RELACIONES DEL MODELO DE DOMINIO GETTERS Y SETTERS ---
     public Cliente getCliente() { 
         return cliente; 

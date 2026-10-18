@@ -124,7 +124,7 @@ public class ServicioPedido {
 
     // PROCESA EL ENVIO A COSINA Y DIVIDE COMANDAS 
     @Transactional
-    public boolean procesarEnvioCocina(long idPedido) {
+    public boolean procesarEnvioCocina(long idPedido, double costoEnvio) {
         Optional<Pedido> pedidoOpt = pedidoRepository.findById(idPedido);
         
         if (pedidoOpt.isEmpty()) {
@@ -168,6 +168,10 @@ public class ServicioPedido {
         pedido.setEstado("En Preparación");
         pedidoRepository.save(pedido);
 
+        // NUEVO GUARDA EL COSTO DE ENVIO
+        pedido.setCostoEnvio(costoEnvio);
+        
+        pedidoRepository.save(pedido);
         return true; 
     }
     // SIMULA EL ENVIO DE PLATILLOS A PLANCHA 

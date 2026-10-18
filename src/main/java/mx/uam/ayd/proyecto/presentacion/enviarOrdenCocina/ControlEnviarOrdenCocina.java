@@ -17,6 +17,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+// NUEVAS HU-15
+import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
+import javafx.scene.layout.VBox;
+
 import mx.uam.ayd.proyecto.negocio.ServicioOrden;
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
@@ -69,12 +74,23 @@ public class ControlEnviarOrdenCocina {
 
     @FXML private Button btnEnviarCocina;
 
+    // --- NUEVOS ENLACES FXML PARA LA HU-15 ---
+    @FXML private TitledPane paneDetallesEnvio;
+    @FXML private VBox boxCostoEnvio;
+    @FXML private TextField txtCostoEnvio;
+    @FXML private Label lblDireccion;
+    @FXML private Label lblTelefono;
+    // NUEVO 
+    private double totalBase = 0.0;
+
     private long idPedidoActual;
     private Pedido pedidoActual;
 
     @FXML
     public void initialize() {
         configurarColumnas();
+        // NUEVO
+        configurarListenerEnvio(); // Inicializa el validador  
     }
 
     // EL METODO DICE COMO LEER LOS DATOS DE LA ENTIDAD DETALLESPEDIDO
@@ -102,6 +118,38 @@ public class ControlEnviarOrdenCocina {
         if (colSubtotal != null) {
             colSubtotal.setCellValueFactory(cellData -> 
                 new SimpleIntegerProperty(cellData.getValue().getSubtotal()).asObject());
+        }
+    }
+
+    // NUEVO MÉTODO: FILTRA CARACTERES (SOLO NÚMEROS Y PUNTO DECIMAL) Y SUMA AL INSTANTE
+    private void configurarListenerEnvio() {
+        if (txtCostoEnvio != null) {
+            txtCostoEnvio.textProperty().addListener((observable, oldValue, newValue) -> {
+                // EXPRESIÓN REGULAR QUE BLOQUEA LETRAS Y SÍMBOLOS
+                if (!newValue.matches("\\d*(\\.\\d*)?")) {
+                    txtCostoEnvio.setText(oldValue);
+                } else {
+                    // SI ES UN NÚMERO VÁLIDO, RECALCULA EL TOTAL
+                    actualizarTotalConEnvio();
+                }
+            });
+        }
+    }
+
+    // NUEVO MÉTODO: REALIZA LA SUMA MATEMÁTICA Y ACTUALIZA LA ETIQUETA DEL TOTAL
+    private void actualizarTotalConEnvio() {
+        double costoEnvio = 0.0;
+        try {
+            if (txtCostoEnvio.getText() != null && !txtCostoEnvio.getText().isEmpty()) {
+                costoEnvio = Double.parseDouble(txtCostoEnvio.getText());
+            }
+        } catch (NumberFormatException e) {
+            costoEnvio = 0.0;
+        }
+
+        double nuevoTotal = totalBase + costoEnvio;
+        if (lblTotal != null) {
+            lblTotal.setText(String.format("TOTAL: $%.2f", nuevoTotal));
         }
     }
     
@@ -145,12 +193,33 @@ public class ControlEnviarOrdenCocina {
             }
             // CALCULA EL IVA
             double total = servicioOrden.calcularSubtotalTotal(pedidoActual.getIdPedido());
+            this.totalBase = total;
             double subtotal = total / 1.16;
             double iva = total - subtotal;
             
             if (lblSubtotal != null) lblSubtotal.setText(String.format("Subtotal: $%.2f", subtotal));
             if (lblIva != null) lblIva.setText(String.format("IVA: $%.2f", iva));
             if (lblTotal != null) lblTotal.setText(String.format("TOTAL: $%.2f", total));
+
+            // --- NUEVO: LÓGICA PARA OCULTAR O MOSTRAR SECCIONES SEGÚN TIPO DE ORDEN ---
+            boolean esAdomicilio = pedidoActual.getTipoOrden() != null && 
+                                   pedidoActual.getTipoOrden().equalsIgnoreCase("Domicilio");
+            
+            if (paneDetallesEnvio != null) {
+                paneDetallesEnvio.setVisible(esAdomicilio);
+                paneDetallesEnvio.setManaged(esAdomicilio);
+            }
+            if (boxCostoEnvio != null) {
+                boxCostoEnvio.setVisible(esAdomicilio);
+                boxCostoEnvio.setManaged(esAdomicilio);
+            }
+            
+            // SI ES A DOMICILIO Y HAY UN CLIENTE ASIGNADO, INYECTA SU DIRECCIÓN Y TELÉFONO
+            if (esAdomicilio && pedidoActual.getCliente() != null) {
+                if (lblDireccion != null) lblDireccion.setText(pedidoActual.getCliente().getDireccion());
+                if (lblTelefono != null) lblTelefono.setText(pedidoActual.getCliente().getTelefono());
+            }
+
             // SE INYECTA LA LISTA DE PLATILLOS ALA TABLA
             if (tablaDetalle != null && detalles != null) {
                 tablaDetalle.setItems(FXCollections.observableArrayList(detalles));
@@ -158,11 +227,17 @@ public class ControlEnviarOrdenCocina {
             }
         }
     }
-
+    // MODIFICADO PARA HU-15
     @FXML
     void clickBotonEnviar(ActionEvent event) {
         try {
-            boolean exito = servicioPedido.procesarEnvioCocina(idPedidoActual);
+            // LO NUEVO EXTRE EL COSTO DE ENVIO
+            double costo = 0.0;
+            if (txtCostoEnvio != null && txtCostoEnvio.getText() != null && !txtCostoEnvio.getText().isEmpty()) {
+                costo = Double.parseDouble(txtCostoEnvio.getText());
+            }
+
+            boolean exito = servicioPedido.procesarEnvioCocina(idPedidoActual , costo);
             // CAMINO FELIZ
             if (exito) {
                 if (lblEstado != null) {
