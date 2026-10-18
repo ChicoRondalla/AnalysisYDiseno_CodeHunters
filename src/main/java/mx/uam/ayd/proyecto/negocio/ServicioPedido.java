@@ -278,6 +278,7 @@ public class ServicioPedido {
      * @return Regresa true si se logró guardar correctamente el cambio del estado, false en el caso contrario
      */
     public boolean marcarComoEntregado(Pedido pedido){
+        if(pedido == null) return false;
         System.out.println("Se intenta modificar el pedido "+pedido);
 
         if(pedidoRepository.existsById(pedido.getIdPedido())){ // Verificamos que el pedido exista en el repositorio

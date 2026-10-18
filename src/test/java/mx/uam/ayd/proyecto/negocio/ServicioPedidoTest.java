@@ -146,5 +146,38 @@ class ServicioPedidoTest {
         verify(pedidoRepository, times(1)).save(pedidoValido);
     }
 
+    // ---------------- marcarComoEntregadoTest ----------------
+    /**
+     * Test para verificar cuando un pedido en forma es ingresado a la función
+     * @author JLCB
+     */
+    @Test 
+    void testMarcarComoEntregadoEvento(){
+        Pedido pedido = new Pedido("Tipo", 0, 'a', null, "Completado", null, 0);
+        pedido.setIdPedido(1); // Suponemos que ya estaba en la base de datos
+        Pedido pedidoCambiado = new Pedido("Tipo", 0, 'a', null, "Entregado", null, 0);
+        pedidoCambiado.setIdPedido(1);
+
+        when(pedidoRepository.existsById(1l)).thenReturn(true);
+        when(pedidoRepository.save(pedido)).thenReturn(pedidoCambiado);
+
+        assertTrue(servicioPedido.marcarComoEntregado(pedido));
+    }
+    /**
+     * Test para verificar cuando un evento que no existe, ya sea por ser nulo o por no estar registrado en el repositorio
+     * @author JLCB
+     */
+    @Test
+    void testMarcarComoEntregadoEventoQueNoExiste(){
+        // Pedido nulo
+        Pedido p1 = null;
+        // Pedido que no existe en repositorio
+        Pedido p2 = new Pedido("Tipo", 0, 'a', null, "Completado", null, 0);
+        
+        when(pedidoRepository.existsById(p2.getIdPedido())).thenReturn(false);
+
+        assertFalse(servicioPedido.marcarComoEntregado(p1));
+        assertFalse(servicioPedido.marcarComoEntregado(p2));
+    }
 }
 
