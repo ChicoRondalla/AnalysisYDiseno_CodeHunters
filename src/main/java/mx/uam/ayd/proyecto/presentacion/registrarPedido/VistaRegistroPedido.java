@@ -94,6 +94,7 @@ public class VistaRegistroPedido {
                 // Carga a la plantilla de la tarjeta de los pedidos
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/plantilla-pedido-completado.fxml"));
                 ControlPlantillaPedidoCompletado tarjeta = new ControlPlantillaPedidoCompletado(); // Se asigna el controlador hecho a la tarjeta
+                tarjeta.setControl(control); // Se da que este controlador tiene el control sobre las tarjetas, para apoyar la comunicación con los servicios
                 loader.setController(tarjeta);
                 Node tarjetaVisual = loader.load(); // Se inicializa la tarjeta
                 tarjeta.configurarDatos(pedido); // Mediante el controlador se llama al método para ingresar la información

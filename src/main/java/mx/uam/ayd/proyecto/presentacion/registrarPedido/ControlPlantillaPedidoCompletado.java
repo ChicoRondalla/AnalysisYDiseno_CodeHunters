@@ -2,6 +2,7 @@ package mx.uam.ayd.proyecto.presentacion.registrarPedido;
 
 import java.util.List;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -45,7 +46,10 @@ public class ControlPlantillaPedidoCompletado {
     @FXML
     private VBox cajaProductos;
     @FXML 
-    private Button botonEntregado;
+    private Button botonMarcarEntregado;
+
+    // Control, conectado para poder llegar al servicio mediante él
+    private ControlRegistroPedido control;
 
     // Métodos
     /**
@@ -59,6 +63,14 @@ public class ControlPlantillaPedidoCompletado {
         // Se activa la disponbiilidad del hover
         pedidoCompletado.setOnMouseEntered(e -> cambiarVisibilidadHover(true));
         pedidoCompletado.setOnMouseExited(e -> cambiarVisibilidadHover(false));
+    }
+
+    /**
+     * Se da el control que controlará a esta tarjeta
+     * @param control Es específicamente el control que tendrá
+     */
+    public void setControl(ControlRegistroPedido control){
+        this.control = control;
     }
 
     /**
@@ -150,6 +162,25 @@ public class ControlPlantillaPedidoCompletado {
 
             fila.getChildren().addAll(cant, nombre, espacio, nota); // Se agregan los datos al HBox
             cajaProductos.getChildren().add(fila); // Se agrega el HBox al contenedor
+
+            // Se asigna el valor que guardará el botón para cuando sea presionado
+            botonMarcarEntregado.setUserData(pedido);
         }
+    }
+
+    /**
+     * Es la acción que se tomará en el caso de presionar al botón para Marcar como Entregado
+     * @param event
+     */
+    @FXML
+    private void onActionBotonMarcarEntregado(ActionEvent event){
+        // Se recupera la información guardada en el botón
+        Button botonPresionado = (Button) event.getSource();
+        Object dato = botonPresionado.getUserData();
+        if(dato == null) return;
+        if(dato instanceof Pedido pedido){ // Evalúamos para asegurarnos de que sea de tipo Pedido
+            control.marcarComoEntregado(pedido);
+        }
+        pedidoCompletado.setDisable(true); // Se deshabilita la tarjeta del pedido para evitar que se siga abriendo
     }
 }

@@ -40,13 +40,11 @@
                      </VBox.margin>
                   </HBox>
                   <Separator opacity="0.2" prefWidth="200.0" />
+                  <Label fx:id="noPedidosCompletos" alignment="CENTER" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-managed: false;" text="No existen pedidos completados :(" textAlignment="CENTER" textFill="WHITE" visible="false" wrapText="true" VBox.vgrow="ALWAYS" />
                   <VBox fx:id="cajaDePedidos" prefHeight="200.0" prefWidth="100.0" spacing="10.0" VBox.vgrow="ALWAYS">
                      <VBox.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </VBox.margin>
-                     <children>
-                        <Label fx:id="noPedidosCompletos" alignment="CENTER" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-managed: true;" text="No existen pedidos completados :(" textAlignment="CENTER" textFill="WHITE" visible="false" wrapText="true" VBox.vgrow="ALWAYS" />
-                     </children>
                   </VBox>
                </children>
             </VBox>

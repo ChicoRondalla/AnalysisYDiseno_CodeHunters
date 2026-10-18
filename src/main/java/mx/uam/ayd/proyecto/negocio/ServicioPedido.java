@@ -270,4 +270,21 @@ public class ServicioPedido {
         return false;
     }
 
+
+    /**
+     * Es un método encargado de cambiar el estado de un pedido como a Entregado
+     * @author JLCB
+     * @param pedido Es el pedido del que queremos cambiar su estado a Entregado
+     * @return Regresa true si se logró guardar correctamente el cambio del estado, false en el caso contrario
+     */
+    public boolean marcarComoEntregado(Pedido pedido){
+        System.out.println("Se intenta modificar el pedido "+pedido);
+
+        if(pedidoRepository.existsById(pedido.getIdPedido())){ // Verificamos que el pedido exista en el repositorio
+            pedido.setEstado("Entregado");
+            pedido = pedidoRepository.save(pedido);
+            System.out.println("Se guardó el pedido: "+pedido);
+            return pedido.getEstado() == "Entregado";
+        }else return false;
+    }
 }

@@ -257,6 +257,7 @@ public class ControlRegistroPedido {
                 // Carga a la plantilla de la tarjeta de los pedidos
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/plantilla-pedido-completado.fxml"));
                 ControlPlantillaPedidoCompletado tarjeta = new ControlPlantillaPedidoCompletado(); // Se asigna el controlador hecho a la tarjeta
+                tarjeta.setControl(this); // tarjeta.setControl(controlRegistroPedido); // Se da que este controlador tiene el control sobre las tarjetas, para apoyar la comunicación con los servicios
                 loader.setController(tarjeta);
                 Node tarjetaVisual = loader.load(); // Se inicializa la tarjeta
                 tarjeta.configurarDatos(pedido); // Mediante el controlador se llama al método para ingresar la información
@@ -280,5 +281,43 @@ public class ControlRegistroPedido {
         cajaDePedidos.setVisible(false);
         cajaDePedidos.setDisable(true);
     }
+    /**
+     * Pantalla emergente que se abre para informar que un pedido efectuó el cambio en su atributo de manera correcta
+     * @author JLCB
+     * @param pedido
+     */
+    public void alertaMarcadoComoEntregado(){
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle("Pedido entregado.");
+        alerta.setHeaderText(null);
+        alerta.setContentText("El pedido se ha marcado como entregado de manera exitosa.");
+        alerta.showAndWait();
+        System.out.println("Se mostró el mensaje de éxito al ser entregado");
+    }
+    /**
+     * Pantalla emergente que se abre para informar que ocurrió un error al momento de efectuar el cambio en el atributo
+     * @author JLCB
+     * @param pedido
+     */
+    public void alertaErrorAlEntregar(){
+        Alert alerta = new Alert(Alert.AlertType.WARNING);
+        alerta.setTitle("Error al marcar como entregado.");
+        alerta.setHeaderText(null);
+        alerta.setContentText("El pedido no se ha podido marcar como entregado.");
+        alerta.showAndWait();
+        System.out.println("Se mostró el mensaje de error al ser entregado");
+    }
     // FIN DE LA SECCIÓN
+
+    /**
+     * Método encargado de marcar como entregado cierto pedido específico comunicandose con el servicio
+     * @author JLCB
+     */
+    public void marcarComoEntregado(Pedido pedido){
+        if(servicioPedido.marcarComoEntregado(pedido)){
+            alertaMarcadoComoEntregado(); // ventana.alertaMarcadoComoEntregado();
+        }else{
+            alertaErrorAlEntregar(); // ventana.alertaErrorAlEntregar();
+        }
+    }
 }
