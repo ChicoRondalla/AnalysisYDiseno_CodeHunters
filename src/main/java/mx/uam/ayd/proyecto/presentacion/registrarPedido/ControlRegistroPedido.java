@@ -2,11 +2,18 @@ package mx.uam.ayd.proyecto.presentacion.registrarPedido;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +50,11 @@ public class ControlRegistroPedido {
     @Autowired
     private VistaArmadoOrden vistaArmadoOrden;
 
+
+    // Inyectamos la ventana que realmente debería tener el control
+    @Autowired 
+    private VistaRegistroPedido ventana;
+
     // --- MÉTODO AUXILIAR PARA NAVEGACIÓN ---
     /**
      * Oculta todos los paneles y muestra únicamente el que se pasa por parámetro.
@@ -53,6 +65,7 @@ public class ControlRegistroPedido {
         paneLocal.setVisible(false);
         paneRecoger.setVisible(false);
         
+        cargarPedidos(); // Se llama a la función encargada de mostrar a los pedidos cada que se muestre la pantalla
         pantallaActiva.setVisible(true);
     }
 
@@ -199,4 +212,73 @@ public class ControlRegistroPedido {
         Stage stage = (Stage) paneSeleccion.getScene().getWindow();
         stage.close();
     }
+
+    /**
+     * El método se encarga de pedir a Servicio los pedidos completados para mandárselos a la vista y que ella se encargue de mostrarlos, o en su defecto, informe que no hay pedidos
+     * @author JLCB
+     */
+    public void cargarPedidos(){
+        List<Pedido> pedidosCompletados = servicioPedido.recuperaPedidosCompletados();
+        
+        // Dependiendo de si existen o no pedidos completados, se manda a mostrar un mensaje o a mostrar los pedidos
+        if(pedidosCompletados.isEmpty()){
+            this.dibujarNingunaTarjetaPedido(); // ventana.dibujarNingunaTarjetaPedido();
+        }else{
+            this.dibujarTarjetasPedidos(pedidosCompletados); // ventana.dibujarNingunaTarjetaPedido();
+        }
+    }
+
+    // SECCIÓN DE CÓDIGO QUE DEBERÍA PERTENECER A LA VISTA. Debido a la arquitectura implementada se debe colocar aquí para evitar fallos
+    // Elementos de la tarjeta
+    @FXML
+    private VBox cajaDePedidos;
+    // Label no hay pedidos
+    @FXML
+    private Label noPedidosCompletos;
+    
+    /**
+     * Método que recibe la lista de pedidos dada por control y muestra a todos los pedidos que se encuentren con ayuda de ControlPlantillaPedidoCompletado para dar detalles a cada uno
+     * @author JLCB
+     * @param listaPedidos Es la lista de pedidos completados y, por lo tanto, pedidos que necesitamos mostrar
+     */
+    private void dibujarTarjetasPedidos(List<Pedido> listaPedidos){
+        // Oculta el mensaje que dice que no hay pedidos
+        noPedidosCompletos.setManaged(false);
+        noPedidosCompletos.setVisible(false);
+        noPedidosCompletos.setDisable(true);
+        // Muestra el contenedor que contiene a los mensajes
+        cajaDePedidos.setManaged(true);
+        cajaDePedidos.setVisible(true);
+        cajaDePedidos.setDisable(false);
+
+        cajaDePedidos.getChildren().clear(); // "Prepara" la caja en la que estarán las tarjetas
+        for(Pedido pedido : listaPedidos){
+            try{
+                // Carga a la plantilla de la tarjeta de los pedidos
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/plantilla-pedido-completado.fxml"));
+                ControlPlantillaPedidoCompletado tarjeta = new ControlPlantillaPedidoCompletado(); // Se asigna el controlador hecho a la tarjeta
+                loader.setController(tarjeta);
+                Node tarjetaVisual = loader.load(); // Se inicializa la tarjeta
+                tarjeta.configurarDatos(pedido); // Mediante el controlador se llama al método para ingresar la información
+                cajaDePedidos.getChildren().add(tarjetaVisual); // Se agrega la tarjeta al contenedor
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+    /**
+     * Método dado en caso de que la lista de pedido completados esté vacía. Se encarga de mostrar el mensaje que informa que no hay pedidos completados y oculta al contenedor de los pedidos para evitar errores
+     * @author JLCB
+     */
+    public void dibujarNingunaTarjetaPedido(){
+        // Muestra el mensaje de ningún pedido completado
+        noPedidosCompletos.setManaged(true);
+        noPedidosCompletos.setVisible(true);
+        noPedidosCompletos.setDisable(false);
+        // Oculta el contenedor de pedidos completados
+        cajaDePedidos.setManaged(false);
+        cajaDePedidos.setVisible(false);
+        cajaDePedidos.setDisable(true);
+    }
+    // FIN DE LA SECCIÓN
 }

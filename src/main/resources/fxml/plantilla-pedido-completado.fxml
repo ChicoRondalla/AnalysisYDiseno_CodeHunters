@@ -11,19 +11,18 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
 <VBox fx:id="pedidoCompletado" alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="5.0" style="-fx-border-color: transparent; -fx-background-color: #363636; -fx-border-radius: 2px; -fx-background-radius: 10px;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER_LEFT" fillHeight="false" maxWidth="1.7976931348623157E308">
          <children>
-            <Label contentDisplay="CENTER" text="Pedido #XXXX" textFill="WHITE">
+            <Label fx:id="numPedido" contentDisplay="CENTER" text="Pedido #XXXX" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
             <Region maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" HBox.hgrow="ALWAYS" />
-            <Label contentDisplay="CENTER" layoutX="10.0" layoutY="15.0" style="-fx-background-color: #243F70; -fx-text-fill: #1FACFF; -fx-border-color: #1FACFF; -fx-border-radius: 2px;" text="CONSUMO LOCAL" textFill="#1facff">
+            <Label fx:id="tipoPedido" contentDisplay="CENTER" layoutX="10.0" layoutY="15.0" style="-fx-background-color: #4A4A4A; -fx-text-fill: #ABABAB; -fx-border-color: #ABABAB; -fx-border-radius: 2px;" text="DESCONOCIDO">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
@@ -38,27 +37,17 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" fillHeight="false" opacity="0.4" spacing="7.0">
          <children>
-            <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../img/icons/reloj-plantilla-pedido-completado.png" />
-               </image>
-            </ImageView>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Hace X min">
-               <font>
-                  <Font size="11.0" />
-               </font>
-            </Text>
             <Circle fill="WHITE" radius="3.0" stroke="BLACK" strokeType="INSIDE" />
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Mesa X">
+            <Label fx:id="mesa" text="Mesa X" textFill="WHITE">
                <font>
                   <Font size="11.0" />
                </font>
-            </Text>
+            </Label>
          </children>
       </HBox>
       <HBox fx:id="instruccionPasaParaVer" maxWidth="1.7976931348623157E308" opacity="0.45" style="-fx-managed: true;">
          <children>
-            <Label text="X productos" textFill="WHITE">
+            <Label fx:id="cantProductos" text="X productos" textFill="WHITE">
                <font>
                   <Font size="11.0" />
                </font>
@@ -71,7 +60,7 @@
             </Label>
          </children>
       </HBox>
-      <VBox fx:id="detallesPedidoCompletado" disable="true" prefHeight="200.0" prefWidth="100.0" spacing="7.0" style="-fx-managed: false;" visible="false">
+      <VBox fx:id="detallesPedidoCompletado" disable="true" maxWidth="1.7976931348623157E308" spacing="7.0" style="-fx-managed: false;" visible="false">
          <children>
             <Separator maxWidth="1.7976931348623157E308" opacity="0.1" />
             <Label opacity="0.4" text="DESGLOSE DE COMANDA:" textFill="WHITE">
@@ -79,8 +68,8 @@
                   <Font name="System Bold" size="12.0" />
                </font>
             </Label>
-            <VBox fx:id="cajaProductos" maxWidth="1.7976931348623157E308" />
-            <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #23BA62; -fx-text-fill: white; -fx-border-radius: 7; -fx-background-radius: 7;" text="Marcar como Entregado" textAlignment="CENTER" wrapText="true">
+            <VBox fx:id="cajaProductos" maxWidth="1.7976931348623157E308" spacing="8.0" />
+            <Button fx:id="botónMarcarEntregado" alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #23BA62; -fx-text-fill: white; -fx-border-radius: 7; -fx-background-radius: 7;" text="Marcar como Entregado" textAlignment="CENTER" wrapText="true">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -91,6 +80,9 @@
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+               </VBox.margin>
             </Button>
          </children>
       </VBox>

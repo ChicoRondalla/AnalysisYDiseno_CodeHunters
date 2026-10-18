@@ -20,7 +20,7 @@
    <children>
       <HBox fx:id="paneSeleccion" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="350.0" minHeight="-Infinity" minWidth="200.0" style="-fx-background-color: #2b2b2b;">
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="350.0" minWidth="300.0" prefWidth="350.0" style="-fx-background-color: #2b2b2b;">
                <children>
                   <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                      <children>
@@ -44,6 +44,9 @@
                      <VBox.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </VBox.margin>
+                     <children>
+                        <Label fx:id="noPedidosCompletos" alignment="CENTER" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-managed: true;" text="No existen pedidos completados :(" textAlignment="CENTER" textFill="WHITE" visible="false" wrapText="true" VBox.vgrow="ALWAYS" />
+                     </children>
                   </VBox>
                </children>
             </VBox>
@@ -59,9 +62,11 @@
                      <children>
                         <Region maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                         <Button mnemonicParsing="false" onAction="#onConsumoLocalAction" prefHeight="160.0" prefWidth="160.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white;" text="CONSUMO LOCAL" />
+                        <Region layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="60.0" HBox.hgrow="ALWAYS" />
                         <Button mnemonicParsing="false" onAction="#onParaRecogerAction" prefHeight="160.0" prefWidth="160.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white;" text="PARA RECOGER" />
+                        <Region maxHeight="1.7976931348623157E308" maxWidth="60.0" HBox.hgrow="ALWAYS" />
                         <Button mnemonicParsing="false" onAction="#onDomicilioAction" prefHeight="160.0" prefWidth="160.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white;" text="A DOMICILIO" />
-                        <Region maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Region layoutX="460.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                   <Region maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />

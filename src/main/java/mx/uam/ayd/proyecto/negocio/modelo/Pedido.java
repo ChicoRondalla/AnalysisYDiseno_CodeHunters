@@ -31,13 +31,13 @@ public class Pedido {
 	private String estado;
 	private String motivoCancelacion;
 	private int total;
- 
+
     // --- RELACIONES DEL MODELO DE DOMINIO ---
 
    // 1 Pedido CONTIENE muchos DetallesPedido 
     @OneToMany(targetEntity = DetallesPedido.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_pedido")
-    private final List<DetallesPedido> detallesPedido = new ArrayList<>();
+    private List<DetallesPedido> detallesPedido = new ArrayList<>();
 
     // 1 Pedido TIENE muchos Cobros
     @OneToMany(targetEntity = Cobro.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -47,6 +47,25 @@ public class Pedido {
     // Muchos pedidos pueden ser de 1 cliente
     @ManyToOne(targetEntity = Cliente.class, fetch = FetchType.LAZY)
     private Cliente cliente;
+
+    // Constructores
+    /**
+     * Constructor cuyo propósito es ser generado y posteriormente settear sus atributos
+     */
+    public Pedido() {}
+    /**
+     * Constructor cuyo propósito es facilitar su generación para los datos de prueba
+     */
+    public Pedido(String tipoOrden, int numeroOrden, char vaPara, String servicios, String estado, String motivoCancelacion, int total) {
+        this.tipoOrden = tipoOrden;
+        this.numeroOrden = numeroOrden;
+        this.vaPara = vaPara;
+        this.servicios = servicios;
+        this.estado = estado;
+        this.motivoCancelacion = motivoCancelacion;
+        this.total = total;
+    }
+
 
     // --- GETTERS Y SETTERS ---
 	 // ID PEDIDO
@@ -127,14 +146,14 @@ public class Pedido {
         return cliente; 
     }
     public void setCliente(Cliente cliente) {
-         this.cliente = cliente; 
+        this.cliente = cliente; 
         }
 
     public List<DetallesPedido> getDetallesPedido() { 
         return detallesPedido; 
     }
     public List<Cobro> getCobros() {
-         return cobros; 
+        return cobros; 
         }
 
     // MÉTODO EQUALS COMPARA SI DOS OBJETOS SON IGUALES BASÁNDOSE EN EL ID DEL PEDIDO 
@@ -161,6 +180,10 @@ public class Pedido {
     @Override
     public String toString() {
         return "Pedido [idPedido=" + idPedido + ", numeroOrden=" + numeroOrden + ", estado=" + estado + ", total=" + total + "]";
+    }
+
+    public void setDetallesPedido(List<DetallesPedido> detalles){
+        this.detallesPedido = detalles;
     }
 	
 }
