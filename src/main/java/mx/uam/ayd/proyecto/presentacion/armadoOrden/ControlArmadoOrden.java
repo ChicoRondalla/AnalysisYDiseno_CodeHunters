@@ -69,6 +69,8 @@ public class ControlArmadoOrden {
         });
         
         cargarPlatillosMenu(null);
+        // recupera los platillos guardados 
+        actualizarVistaCarrito();
     }
     
     private void cargarPlatillosMenu(String categoria) {
@@ -260,15 +262,6 @@ public class ControlArmadoOrden {
             try {
                 // 1. PRIMERO abrimos la ventana de resumen con el pedido actual intacto (Estado: Pendiente)
                 controlEnviarOrdenCocina.inicia(pedidoActual);
-
-                // 2. SEGUNDO generamos automáticamente el nuevo ticket vacío para la pantalla principal (Pasa a Ticket #2, #3...)
-                this.pedidoActual = servicioPedido.crearPedidoLocal(1); 
-
-                // 3. Refrescamos la interfaz actual con el nuevo número y vaciamos el carrito
-                int siguienteNumero = pedidoActual.getNumeroOrden();
-                lblMesaTicket.setText("TICKET #" + siguienteNumero);
-                listResumenOrden.getItems().clear();
-                lblSubtotal.setText("$0.00");
 
             } catch (Exception e) {
                 System.err.println("Error al preparar la orden y avanzar el ticket: " + e.getMessage());

@@ -41,6 +41,9 @@ public class ControlRegistroPedido {
     // Inyectamos la nueva ventana de Armado de Orden
     @Autowired
     private VistaArmadoOrden vistaArmadoOrden;
+    //  NUEVO :Inyectamos la ventana de Registro de Pedido
+    @Autowired
+    private VistaRegistroPedido vistaRegistroPedido;
 
     // --- MÉTODO AUXILIAR PARA NAVEGACIÓN ---
     /**
@@ -198,4 +201,14 @@ public class ControlRegistroPedido {
         Stage stage = (Stage) paneSeleccion.getScene().getWindow();
         stage.close();
     }
+
+    // --- NUEVO MÉTODO PARA INICIAR LA PANTALLA DESDE OTRO CONTROLADOR ---
+    public void inicia() {
+        limpiarCampos();
+        mostrarPantalla(paneSeleccion);
+        if (vistaRegistroPedido != null) {
+            vistaRegistroPedido.muestra(this); // Si te marca error en 'this', cámbialo a vistaRegistroPedido.muestra();
+        }
+    }
+
 }

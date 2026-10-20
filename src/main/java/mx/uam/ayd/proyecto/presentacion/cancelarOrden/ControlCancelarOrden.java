@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina;
+import mx.uam.ayd.proyecto.presentacion.registrarPedido.ControlRegistroPedido; 
 
 @Component // EVITA HACER EL NEW
 public class ControlCancelarOrden {
@@ -20,6 +21,11 @@ public class ControlCancelarOrden {
     @Autowired
     @Lazy // NO CREA EL CONTROL DE INMEDIATO
     private ControlEnviarOrdenCocina controlEnviarOrdenCocina;
+
+    //CORECCION 
+    @Autowired
+    @Lazy
+    private ControlRegistroPedido controlRegistroPedido;
 
     // INICIA Y MUESTRA VENTANA 
     public void inicia(long idPedido) {
@@ -48,6 +54,11 @@ public class ControlCancelarOrden {
                 controlEnviarOrdenCocina.limpiarVistaDespuesDeCancelar();
                 
                 ventana.cierra();
+
+                // CORRECCION
+
+                controlEnviarOrdenCocina.cerrarTodoPorCancelacion();
+                controlRegistroPedido.inicia();
             }
             
         } catch (IllegalArgumentException | IllegalStateException e) {

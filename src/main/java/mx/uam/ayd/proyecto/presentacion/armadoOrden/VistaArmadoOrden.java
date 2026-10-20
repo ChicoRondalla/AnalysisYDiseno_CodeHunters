@@ -31,6 +31,11 @@ public class VistaArmadoOrden {
      */
     public void muestra(Pedido pedido) {
         try {
+           // SI YA EXISTÍA UNA VENTANA ABIERTA, LA CERRAMOS PARA EVITAR VENTANAS DUPLICADAS
+            if (stage != null) {
+                stage.close();
+            }  
+
             // CORRECCIÓN CLAVE: Usamos VistaArmadoOrden.class en lugar de getClass()
             URL url = VistaArmadoOrden.class.getResource("/fxml/vista-armado-orden.fxml");
             
@@ -67,6 +72,7 @@ public class VistaArmadoOrden {
     public void cierra() {
         if (stage != null) {
             stage.close();
+            stage = null; // Limpiamos la referencia para evitar problemas de memoria
         }
     }
 }

@@ -26,6 +26,7 @@ import mx.uam.ayd.proyecto.negocio.ServicioOrden;
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
+import mx.uam.ayd.proyecto.presentacion.armadoOrden.VistaArmadoOrden;
 import mx.uam.ayd.proyecto.presentacion.cancelarOrden.ControlCancelarOrden;
 import mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal;
 import mx.uam.ayd.proyecto.presentacion.visualizarOrden.ControlVisualizarOrden;
@@ -53,6 +54,10 @@ public class ControlEnviarOrdenCocina {
     @Autowired
     @Lazy
     private ControlCancelarOrden controlCancelarOrden;
+
+    @Autowired
+    @Lazy
+    private VistaArmadoOrden vistaArmadoOrden;
 
     // --- ENLACES FXML ESTA ENLAZADO DIRECTAMENTE CON LO VISUAL
     
@@ -230,6 +235,11 @@ public class ControlEnviarOrdenCocina {
     // MODIFICADO PARA HU-15
     @FXML
     void clickBotonEnviar(ActionEvent event) {
+        // VALIDACIÓN: Evita enviar la orden si no tiene ningún platillo cargado
+        if (tablaDetalle == null || tablaDetalle.getItems().isEmpty()) {
+            mostrarMensajeError("Orden Vacía", "No se puede enviar una orden sin platillos a la cocina.");
+            return;
+        }
         try {
             // LO NUEVO EXTRE EL COSTO DE ENVIO
             double costo = 0.0;
@@ -297,6 +307,10 @@ public class ControlEnviarOrdenCocina {
         if (btnCancelarOrden != null) {
             btnCancelarOrden.setDisable(true);
         }
+        // Cierra la ventana de armado de orden si está abierta
+        if (vistaArmadoOrden != null) {
+            vistaArmadoOrden.cierra();    
+        }
     }
     // ABRE LA NETANA DE CANCELAR
     @FXML
@@ -307,11 +321,36 @@ public class ControlEnviarOrdenCocina {
     }
 
     // REGRESA ALA VENTANA ANTERIOR 
+    // REGRESA A LA VENTANA DE MENÚ / ARMADO DE ORDEN RETENIENDO LA INFORMACIÓN
     @FXML
     public void clickBotonVolver(ActionEvent event) {
-        if (btnVolver != null && btnVolver.getScene() != null) {
-            javafx.stage.Stage stage = (javafx.stage.Stage) btnVolver.getScene().getWindow();
-            stage.close();
+        // 1. Reabrimos la pantalla de armado de orden pasándole el pedido actual intacto
+        if (vistaArmadoOrden != null && pedidoActual != null) {
+            vistaArmadoOrden.muestra(pedidoActual);
+        }
+
+        // 2. Cerramos la ventana de Resumen
+        cerrar();
+    }
+
+    // NUEVO MÉTODO: CIERRA LA VENTANA DE ENVIO A COCINA
+public void cerrar() {
+    if (btnCancelarOrden != null && btnCancelarOrden.getScene() != null) {
+        javafx.stage.Stage stage = (javafx.stage.Stage) btnCancelarOrden.getScene().getWindow();
+        stage.close();
+    } else if (btnVolver != null && btnVolver.getScene() != null) {
+        javafx.stage.Stage stage = (javafx.stage.Stage) btnVolver.getScene().getWindow();
+        stage.close();
+    }
+}
+    // MÉTODO QUE SE INVOCA AL CANCELAR PARA DESTRUIR LA VENTANA DEL TICKET ANTERIOR
+    public void cerrarTodoPorCancelacion() {
+        // 1. Cierra la ventana de Resumen / Enviar a cocina
+        cerrar();
+        
+        // 2. Cierra la ventana de Menú de Platillos (Ticket viejo)
+        if (vistaArmadoOrden != null) {
+            vistaArmadoOrden.cierra(); // O vistaArmadoOrden.oculta() según el método de tu clase
         }
     }
 }
