@@ -1,10 +1,14 @@
 package mx.uam.ayd.proyecto.negocio;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +17,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
+import mx.uam.ayd.proyecto.datos.DetallesPedidoRepository;
 import mx.uam.ayd.proyecto.datos.PedidoRepository;
 /**
  * Pruebas unitarias para validar las reglas de negocio de ServicioPedido.
@@ -26,6 +32,8 @@ class ServicioPedidoTest {
     // repositorio falso con @Mock
     @Mock
     private PedidoRepository pedidoRepository;
+    @Mock
+    private DetallesPedidoRepository detallesPedidoRepository;
 
     @BeforeEach
     void setUp() {
@@ -60,41 +68,52 @@ class ServicioPedidoTest {
     }
 
     
-    // PRUEBAS (HU-03: Envio a Cocina)
+    // PRUEBAS HU-15/HU-03: Envio a Cocina)
     // BLOQUE EL ENVIO SI LA ORDEN FUE CANCELADA
     @Test
     void testProcesarEnvioCocina_FallaCuandoPedidoEstaCancelado() {
         long idPedido = 1L;
-        // PEDIDO SIMULADO
+        
         Pedido pedidoCancelado = new Pedido();
+        pedidoCancelado.setIdPedido(idPedido);
         pedidoCancelado.setEstado("Cancelada");
-        // SIMULAMOS RESPUESTA DE MOCKITO
+        pedidoCancelado.setTipoOrden("Local");
+
         when(pedidoRepository.findById(idPedido)).thenReturn(Optional.of(pedidoCancelado));
-        // ESPERAMOS QUE FALLE
+
         Exception excepcion = assertThrows(IllegalStateException.class, () -> {
-            servicioPedido.procesarEnvioCocina(idPedido);
+            servicioPedido.procesarEnvioCocina(idPedido, 0.0);
         });
-        // VERIFICA EL MENSAJE 
+
         assertEquals("Esta orden ha sido cancelada y no puede enviarse a cocina.", excepcion.getMessage());
     }
-    
-    // VERIFICA EL CAMINO FELIZ
+
+    //Valida el flujo exitoso (camino feliz) de envío de un pedido local a cocina.
     @Test
     void testProcesarEnvioCocina_ExitoYCambioDeEstado() {
-        long idPedido = 2L;
-        //PEDIDO VALIDO
-        Pedido pedidoValido = new Pedido();
-        pedidoValido.setEstado("Pendiente"); 
+    long idPedido = 2L;
+    
+    // Configuración completa del pedido válido
+    Pedido pedidoValido = new Pedido();
+    pedidoValido.setIdPedido(idPedido);
+    pedidoValido.setEstado("Pendiente"); 
+    pedidoValido.setTipoOrden("Local");
 
-        when(pedidoRepository.findById(idPedido)).thenReturn(Optional.of(pedidoValido));
-        // ENVIO A COSINA
-        boolean resultado = servicioPedido.procesarEnvioCocina(idPedido);
-        // VERIFICA QUE TODO ESTE BIEN
-        assertTrue(resultado, "El método debe devolver true si el envío fue exitoso.");
-        assertEquals("En Preparación", pedidoValido.getEstado(), "El estado del pedido debió cambiar.");
-        // VERIFICAMOS QUE SE GUARDE EN LA BD
-        verify(pedidoRepository, times(1)).save(pedidoValido);
-    }
+    // Mocks para buscar y guardar el pedido en el repositorio
+    when(pedidoRepository.findById(idPedido)).thenReturn(Optional.of(pedidoValido));
+    when(pedidoRepository.save(any(Pedido.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // Ejecución
+    boolean resultado = servicioPedido.procesarEnvioCocina(idPedido, 0.0);
+
+    // Verificaciones
+    assertTrue(resultado, "El método debe devolver true si el envío fue exitoso.");
+    assertEquals("En Preparación", pedidoValido.getEstado(), "El estado del pedido debió cambiar.");
+    
+    // Permite que save() se haya ejecutado al menos una vez
+    verify(pedidoRepository, atLeastOnce()).save(pedidoValido);
+}
+  
 
     // PRUEBAS (HU-04: Cancela un Pedido)
     // PRUEBA JUSTIFICACION OBLIGATORIA 
@@ -125,7 +144,7 @@ class ServicioPedidoTest {
         assertEquals("No se encontró el pedido con ID: " + idFalso, excepcion.getMessage());
     }
 
-    // VRIFICA QUE EL ESTADO CAMBIE Y GUARDE EL FORMATO
+    // VERIFICA QUE EL ESTADO CAMBIE Y GUARDE EL FORMATO
     @Test
     void testCancelarPedido_ExitoYGuardaMotivoCorrectamente() {
         long idPedido = 2L;
@@ -144,6 +163,113 @@ class ServicioPedidoTest {
         assertEquals("Cliente se arrepintió (Cancelado por: Admin123)", pedidoValido.getMotivoCancelacion(), 
             "El motivo de cancelación no se guardó con el formato esperado.");
         verify(pedidoRepository, times(1)).save(pedidoValido);
+    }
+
+
+    // PRUEBA ESPECÍFICA HU-15: Procesar Envío a Cocina con Costo de Envío (Domicilio) 
+    @Test
+    void testProcesarEnvioCocina_ConCostoEnvioDomicilio_Exito() {
+        long idPedido = 3L;
+        double costoEnvio = 50.0;
+
+        Pedido pedidoDomicilio = new Pedido();
+        pedidoDomicilio.setIdPedido(idPedido);
+        pedidoDomicilio.setEstado("Pendiente");
+        pedidoDomicilio.setTipoOrden("Domicilio");
+
+        when(pedidoRepository.findById(idPedido)).thenReturn(Optional.of(pedidoDomicilio));
+        when(pedidoRepository.save(any(Pedido.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        boolean resultado = servicioPedido.procesarEnvioCocina(idPedido, costoEnvio);
+
+        assertTrue(resultado, "El envío a cocina con costo de flete debe ser exitoso.");
+        assertEquals("En Preparación", pedidoDomicilio.getEstado(), "El estado debió actualizarse a 'En Preparación'.");
+        
+        // Verifica que se haya persistido en el repositorio
+        verify(pedidoRepository, atLeastOnce()).save(pedidoDomicilio);
+    }
+
+
+    // ---------------- marcarComoEntregadoTest ----------------
+    /**
+     * Test para verificar cuando un pedido en forma es ingresado a la función
+     * @author JLCB
+     */
+    @Test 
+    void testMarcarComoEntregadoEvento(){
+        Pedido pedido = new Pedido("Tipo", 0, 'a', null, "Completado", null, 0);
+        pedido.setIdPedido(1); // Suponemos que ya estaba en la base de datos
+        Pedido pedidoCambiado = new Pedido("Tipo", 0, 'a', null, "Entregado", null, 0);
+        pedidoCambiado.setIdPedido(1);
+
+        when(pedidoRepository.existsById(1l)).thenReturn(true);
+        when(pedidoRepository.save(pedido)).thenReturn(pedidoCambiado);
+
+        assertTrue(servicioPedido.marcarComoEntregado(pedido));
+    }
+    /**
+     * Test para verificar cuando un evento que no existe, ya sea por ser nulo o por no estar registrado en el repositorio
+     * @author JLCB
+     */
+    @Test
+    void testMarcarComoEntregadoEventoQueNoExiste(){
+        // Pedido nulo
+        Pedido p1 = null;
+        // Pedido que no existe en repositorio
+        Pedido p2 = new Pedido("Tipo", 0, 'a', null, "Completado", null, 0);
+        
+        when(pedidoRepository.existsById(p2.getIdPedido())).thenReturn(false);
+
+        assertFalse(servicioPedido.marcarComoEntregado(p1));
+        assertFalse(servicioPedido.marcarComoEntregado(p2));
+    }
+
+    // ---------------- asignarDetallesAPedidoTest ----------------
+    /**
+     * Test para verificar que a un pedido nulo se regresa false
+     * @author JLCB
+     */
+    @Test
+    void testAsignarDetallesAPedidoNulo(){
+        Pedido p = null;
+        List<DetallesPedido> detalles = new ArrayList<>();
+        DetallesPedido detalle = new DetallesPedido();
+        detalles.add(detalle);
+
+        when(pedidoRepository.save(p)).thenReturn(null);
+
+        assertFalse(servicioPedido.asignarDetallesAPedido(p, null));
+    }
+    /**
+     * Test para verificar si regresa false al mandar unos detalles vacíos
+     * @author JLCB
+     */
+    @Test
+    void testAsignarDetallesVaciosAPedido(){
+        Pedido p = new Pedido();
+        List<DetallesPedido> detalles = new ArrayList<>();
+
+        when(pedidoRepository.save(p)).thenReturn(p);
+        assertFalse(servicioPedido.asignarDetallesAPedido(p, detalles));
+    }
+    /**
+     * Test para verificar que regrese verdadero al mandar un pedido y unos detalles correctos
+     * @author JLCB
+     */
+    @Test
+    void testAsignarDetallesConPedidoCorrecto(){
+        Pedido p = new Pedido();
+        List<DetallesPedido> detalles = new ArrayList<>();
+        DetallesPedido d1 = new DetallesPedido();
+        DetallesPedido d2 = new DetallesPedido();
+        detalles.add(d1);
+        detalles.add(d2);
+
+        when(pedidoRepository.save(p)).thenReturn(p);
+        when(detallesPedidoRepository.save(d1)).thenReturn(d1);
+        when(detallesPedidoRepository.save(d2)).thenReturn(d2);
+
+        assertTrue(servicioPedido.asignarDetallesAPedido(p, detalles));
     }
 
 }

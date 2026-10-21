@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import mx.uam.ayd.proyecto.datos.ClienteRepository;
+import mx.uam.ayd.proyecto.datos.DetallesPedidoRepository;
 import mx.uam.ayd.proyecto.datos.PedidoRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.Cliente;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
@@ -22,6 +23,8 @@ public class ServicioPedido {
 
     @Autowired
     private PedidoRepository pedidoRepository;
+    @Autowired
+    private DetallesPedidoRepository detallesPedidoRepositoty;
 
     @Autowired
     private ClienteRepository clienteRepository;
@@ -101,6 +104,7 @@ public class ServicioPedido {
         pedido.setTipoOrden("Local");
         pedido.setEstado("Pendiente");
         pedido.setNumeroOrden(generarSiguienteNumeroOrden()); // <--- Asigna el consecutivo automático aquí
+        pedido.setNumMesa(numeroMesa); // Se asigna el número de la mesa correspondiente
         pedido.setCliente(cliente);
 
         return pedidoRepository.save(pedido);
@@ -124,7 +128,7 @@ public class ServicioPedido {
 
     // PROCESA EL ENVIO A COSINA Y DIVIDE COMANDAS 
     @Transactional
-    public boolean procesarEnvioCocina(long idPedido) {
+    public boolean procesarEnvioCocina(long idPedido, double costoEnvio) {
         Optional<Pedido> pedidoOpt = pedidoRepository.findById(idPedido);
         
         if (pedidoOpt.isEmpty()) {
@@ -168,6 +172,10 @@ public class ServicioPedido {
         pedido.setEstado("En Preparación");
         pedidoRepository.save(pedido);
 
+        // NUEVO GUARDA EL COSTO DE ENVIO
+        pedido.setCostoEnvio(costoEnvio);
+        
+        pedidoRepository.save(pedido);
         return true; 
     }
     // SIMULA EL ENVIO DE PLATILLOS A PLANCHA 
@@ -270,4 +278,45 @@ public class ServicioPedido {
         return false;
     }
 
+
+    /**
+     * Es un método encargado de cambiar el estado de un pedido como a Entregado
+     * @author JLCB
+     * @param pedido Es el pedido del que queremos cambiar su estado a Entregado
+     * @return Regresa true si se logró guardar correctamente el cambio del estado, false en el caso contrario
+     */
+    public boolean marcarComoEntregado(Pedido pedido){
+        if(pedido == null) return false;
+        System.out.println("Se intenta modificar el pedido "+pedido);
+
+        if(pedidoRepository.existsById(pedido.getIdPedido())){ // Verificamos que el pedido exista en el repositorio
+            pedido.setEstado("Entregado");
+            pedido = pedidoRepository.save(pedido);
+            System.out.println("Se guardó el pedido: "+pedido);
+            return pedido.getEstado() == "Entregado";
+        }else return false;
+    }
+
+    /**
+     * Método encargado de asignar a un pedido una lista de detalles, en la base de datos y volver a guardar el pedido
+     * @author JLCB
+     * @param pedido
+     * @param detalles
+     */
+    public boolean asignarDetallesAPedido(Pedido pedido, List<DetallesPedido> detalles){
+        if(pedido == null || detalles.size() == 0 || detalles == null){
+            System.err.println("No fue posible enlazar el pedido con los detalles");
+            return false;
+        }
+
+        List<DetallesPedido> detallesActualzados = new ArrayList<>();
+        for(DetallesPedido detalle : detalles){
+            detalle.setPedido(pedido);
+            detalle = detallesPedidoRepositoty.save(detalle);
+            detallesActualzados.add(detalle);
+        }
+
+        pedido.setDetallesPedido(detallesActualzados);
+        return pedidoRepository.save(pedido) != null;
+    }
 }

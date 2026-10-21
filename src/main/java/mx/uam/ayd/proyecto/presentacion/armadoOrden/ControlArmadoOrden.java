@@ -69,6 +69,9 @@ public class ControlArmadoOrden {
         });
         
         cargarPlatillosMenu(null);
+        // MODIFICADO PARA HU-15
+        // RECUPERA EL ESTADO DE LOS PLATILLOS AGREGADOS PREVIAMENTE 
+        actualizarVistaCarrito();
     }
     
     private void cargarPlatillosMenu(String categoria) {
@@ -180,20 +183,21 @@ public class ControlArmadoOrden {
         List<DetallesPedido> detalles = servicioOrden.obtenerDetallesDePedido(pedidoActual.getIdPedido());
         
         for(DetallesPedido detalle : detalles) {
-             String notaGuardada = detalle.getNotas() == null ? "" : detalle.getNotas();
-             
-             VBox celda = crearCeldaDetalleCarrito(
+            String notaGuardada = detalle.getNotas() == null ? "" : detalle.getNotas();
+            
+            VBox celda = crearCeldaDetalleCarrito(
                 String.valueOf(detalle.getIdDetallePedido()), 
                 detalle.getPlatillo().getNombre(), 
                 detalle.getCantidad(), 
                 detalle.getPlatillo().getPrecio(),
                 notaGuardada
-             );
-             listResumenOrden.getItems().add(celda);
+            );
+            listResumenOrden.getItems().add(celda);
         }
         
         double total = servicioOrden.calcularSubtotalTotal(pedidoActual.getIdPedido());
         lblSubtotal.setText("$" + total);
+        servicioPedido.asignarDetallesAPedido(pedidoActual, detalles); // Asigna al pedido la lista de detalles que se está asignando al pedido
     }
 
     public void agregarPlatillo(String idPlatilloStr) {
@@ -254,21 +258,13 @@ public class ControlArmadoOrden {
         }
     }
 
+    // MODIFICADO PARA HU-15
+    //PASA EL PEDIDO ACTUAL A LA VENTANA DE RESUMEN DE ORDEN PARA ENVIARLO A COCINA
     @FXML
     public void confirmarOrdenAction() {
         if (pedidoActual != null) {
             try {
-                // 1. PRIMERO abrimos la ventana de resumen con el pedido actual intacto (Estado: Pendiente)
                 controlEnviarOrdenCocina.inicia(pedidoActual);
-
-                // 2. SEGUNDO generamos automáticamente el nuevo ticket vacío para la pantalla principal (Pasa a Ticket #2, #3...)
-                this.pedidoActual = servicioPedido.crearPedidoLocal(1); 
-
-                // 3. Refrescamos la interfaz actual con el nuevo número y vaciamos el carrito
-                int siguienteNumero = pedidoActual.getNumeroOrden();
-                lblMesaTicket.setText("TICKET #" + siguienteNumero);
-                listResumenOrden.getItems().clear();
-                lblSubtotal.setText("$0.00");
 
             } catch (Exception e) {
                 System.err.println("Error al preparar la orden y avanzar el ticket: " + e.getMessage());

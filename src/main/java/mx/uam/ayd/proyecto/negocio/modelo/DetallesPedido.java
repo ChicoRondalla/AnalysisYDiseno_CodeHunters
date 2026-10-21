@@ -29,6 +29,25 @@ public class DetallesPedido {
     @ManyToOne(targetEntity = Pedido.class)
     private Pedido pedido;
 
+    // Constructores
+    /**
+     * Constructor cuyo propósito es ser generado y posteriormente settear sus atributos
+     */
+    public DetallesPedido(){
+        this.completado = false;
+    }
+    /**
+     * Constructor cuyo propósito es facilitar su generación para los datos de prueba
+     */
+    public DetallesPedido(int cant, String notas, int sub, Platillo platillo, Pedido pedido){
+        this.cantidad = cant;
+        this.notas = notas;
+        this.subtotal = sub;
+        this.completado = false;
+        this.platillo = platillo;
+        this.pedido = pedido;
+    }
+
     // --- GETTERS Y SETTERS ---
 
     public long getIdDetallesPedido() {
