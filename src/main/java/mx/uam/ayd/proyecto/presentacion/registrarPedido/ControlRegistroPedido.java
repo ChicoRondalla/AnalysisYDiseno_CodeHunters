@@ -17,10 +17,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
 import mx.uam.ayd.proyecto.presentacion.armadoOrden.VistaArmadoOrden;
+import mx.uam.ayd.proyecto.presentacion.registrarMesa.ControlMesa;
 
 /**
  * Controlador para la Historia de Usuario HU-01: Registrar Pedido.
@@ -31,7 +31,6 @@ public class ControlRegistroPedido {
     // --- PANES (Las diferentes "pantallas") ---
     @FXML private HBox paneSeleccion;
     @FXML private Pane paneDomicilio;
-    @FXML private Pane paneLocal;
     @FXML private Pane paneRecoger;
 
     // --- CAMPOS DE TEXTO (Formularios) ---
@@ -42,9 +41,13 @@ public class ControlRegistroPedido {
     @FXML private TextField txtNombreRecoger;
     @FXML private TextField txtTelefonoRecoger;
 
-    // Inyectamos la capa de negocio para las validaciones
+    // Inyectamos la capa de negocio para los pedidos
     @Autowired
     private ServicioPedido servicioPedido;
+
+    // Inyectamos el controlador de mesas para abrir el plano de sala nuevo
+    @Autowired
+    private ControlMesa controlMesa;
 
     // Inyectamos la nueva ventana de Armado de Orden
     @Autowired
@@ -56,13 +59,9 @@ public class ControlRegistroPedido {
     private VistaRegistroPedido ventana;
 
     // --- MÉTODO AUXILIAR PARA NAVEGACIÓN ---
-    /**
-     * Oculta todos los paneles y muestra únicamente el que se pasa por parámetro.
-     */
-    private void mostrarPantalla(Pane pantallaActiva) {
+    public void mostrarPantalla(Pane pantallaActiva) {
         paneSeleccion.setVisible(false);
         paneDomicilio.setVisible(false);
-        paneLocal.setVisible(false);
         paneRecoger.setVisible(false);
         
         cargarPedidos(); // Se llama a la función encargada de mostrar a los pedidos cada que se muestre la pantalla
@@ -72,23 +71,24 @@ public class ControlRegistroPedido {
     // --- MÉTODOS DE NAVEGACIÓN (Botones principales) ---
 
     @FXML
-    void onConsumoLocalAction(ActionEvent event) {
-        mostrarPantalla(paneLocal);
+    public void onConsumoLocalAction(ActionEvent event) {
+        // Abre la nueva ventana moderna de mesas y cierra esta
+        controlMesa.inicia();
+        cerrarVentana();
     }
 
     @FXML
-    void onParaRecogerAction(ActionEvent event) {
+    public void onParaRecogerAction(ActionEvent event) {
         mostrarPantalla(paneRecoger);
     }
 
     @FXML
-    void onDomicilioAction(ActionEvent event) {
+    public void onDomicilioAction(ActionEvent event) {
         mostrarPantalla(paneDomicilio);
     }
 
     @FXML
-    void onRegresarAction(ActionEvent event) {
-        // Al regresar, limpiamos los campos por si el usuario había escrito algo
+    public void onRegresarAction(ActionEvent event) {
         limpiarCampos();
         mostrarPantalla(paneSeleccion);
     }
@@ -96,7 +96,7 @@ public class ControlRegistroPedido {
     // --- MÉTODOS DE VALIDACIÓN Y CONTINUACIÓN ---
 
     @FXML
-    void onContinuarDomicilioAction(ActionEvent event) {
+    public void onContinuarDomicilioAction(ActionEvent event) {
         String nombre = txtNombreDomicilio.getText();
         String telefono = txtTelefonoDomicilio.getText();
         String direccion = txtDireccionDomicilio.getText();
@@ -104,14 +104,12 @@ public class ControlRegistroPedido {
         boolean datosValidos = servicioPedido.validarDatosDomicilio(nombre, telefono, direccion);
 
         if (datosValidos) {
-            // Atrapamos el pedido recién creado
             Pedido nuevoPedido = servicioPedido.crearPedidoDomicilio(nombre, telefono, direccion);
             
             mostrarAlerta(Alert.AlertType.INFORMATION, "Pedido Registrado", "El pedido a domicilio se guardó correctamente en el sistema.");
             limpiarCampos();
             mostrarPantalla(paneSeleccion);
             
-            // ¡Abrimos la pantalla del menú y le pasamos el ticket!
             vistaArmadoOrden.muestra(nuevoPedido);
             cerrarVentana();
             
@@ -122,21 +120,19 @@ public class ControlRegistroPedido {
     }
 
     @FXML
-    void onContinuarRecogerAction(ActionEvent event) {
+    public void onContinuarRecogerAction(ActionEvent event) {
         String nombre = txtNombreRecoger.getText();
         String telefono = txtTelefonoRecoger.getText();
 
         if (nombre == null || nombre.trim().isEmpty()) {
             mostrarAlerta(Alert.AlertType.ERROR, "Falta información", "El nombre del cliente es obligatorio.");
         } else {
-            // Atrapamos el pedido recién creado
             Pedido nuevoPedido = servicioPedido.crearPedidoRecoger(nombre, telefono);
             
             mostrarAlerta(Alert.AlertType.INFORMATION, "Pedido Registrado", "El pedido para recoger se guardó correctamente en el sistema.");
             limpiarCampos();
             mostrarPantalla(paneSeleccion);
             
-            // ¡Abrimos la pantalla del menú y le pasamos el ticket!
             vistaArmadoOrden.muestra(nuevoPedido);
             cerrarVentana();
         }
@@ -160,55 +156,8 @@ public class ControlRegistroPedido {
         alerta.showAndWait();
     }
 
-    // --- MÉTODOS PARA CONSUMO LOCAL (Mesas) ---
-
-    /**
-     * Método auxiliar para registrar la mesa seleccionada, 
-     * mostrar la alerta y regresar al menú.
-     */
-    private void registrarPedidoMesa(int numeroMesa) {
-        // Atrapamos el pedido recién creado (AQUÍ ESTABA EL DETALLE)
-        Pedido nuevoPedido = servicioPedido.crearPedidoLocal(numeroMesa);
-        
-        mostrarAlerta(Alert.AlertType.INFORMATION, "Mesa registrada", 
-            "La Mesa " + numeroMesa + " se ha seleccionado correctamente.");
-            
-        mostrarPantalla(paneSeleccion);
-
-        // ¡Abrimos la pantalla del menú y le pasamos el ticket!
-            vistaArmadoOrden.muestra(nuevoPedido);
-            cerrarVentana();
-    }
-
-    @FXML
-    void onMesa1Action(ActionEvent event) {
-        registrarPedidoMesa(1);
-    }
-
-    @FXML
-    void onMesa2Action(ActionEvent event) {
-        registrarPedidoMesa(2);
-    }
-
-    @FXML
-    void onMesa3Action(ActionEvent event) {
-        registrarPedidoMesa(3);
-    }
-
-    @FXML
-    void onMesa4Action(ActionEvent event) {
-        registrarPedidoMesa(4);
-    }
-
-    @FXML
-    void onMesa5Action(ActionEvent event) {
-        registrarPedidoMesa(5);
-    }
-
-    /**
-     * Obtiene la ventana actual a través de uno de los paneles y la cierra.
-     */
     private void cerrarVentana() {
+        ventana.cierraVentana();
         Stage stage = (Stage) paneSeleccion.getScene().getWindow();
         stage.close();
     }

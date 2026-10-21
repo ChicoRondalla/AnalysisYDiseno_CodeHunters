@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 import mx.uam.ayd.proyecto.datos.ClienteRepository;
 import mx.uam.ayd.proyecto.datos.DetallesPedidoRepository;
 import mx.uam.ayd.proyecto.datos.PedidoRepository;
+import mx.uam.ayd.proyecto.datos.MesaRepository;
 import mx.uam.ayd.proyecto.datos.PlatilloRepository;
+import mx.uam.ayd.proyecto.negocio.modelo.Mesa;
 import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
 import mx.uam.ayd.proyecto.negocio.modelo.Cliente;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
@@ -32,6 +34,9 @@ public class DatosPrueba implements CommandLineRunner {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private MesaRepository mesaRepository;
+
     @Override
     public void run(String... args) throws Exception {
         // Se declaran las variables para utilizar el mismo nombre y no tener problema en caso de que se hayan inicializadoo o no en el primer if
@@ -40,7 +45,7 @@ public class DatosPrueba implements CommandLineRunner {
         Platillo p3 = null;
         Platillo p4 = null;
         
-        // Solo insertamos si la tabla está vacía
+        // Carga de platillos de prueba
         if (platilloRepository.count() == 0) {
             System.out.println("Iniciando carga de platillos de prueba en H2...");
 
@@ -180,6 +185,17 @@ public class DatosPrueba implements CommandLineRunner {
             pedido6 = pedidoRepository.save(pedido6);
 
             System.out.println("Se guardaron los clientes, pedidos y detalles pedidos");
+        // Carga de mesas de prueba (HU-05)
+        if (mesaRepository.count() == 0) {
+            System.out.println("Iniciando carga de mesas de prueba en H2...");
+
+            mesaRepository.save(new Mesa(1, 4, "LIBRE"));
+            mesaRepository.save(new Mesa(2, 4, "LIBRE"));
+            mesaRepository.save(new Mesa(3, 6, "LIBRE"));
+            mesaRepository.save(new Mesa(4, 4, "LIBRE"));
+            mesaRepository.save(new Mesa(5, 4, "LIBRE"));
+
+            System.out.println("¡Carga de mesas completada!");
         }
     }
-}
+}}

@@ -127,7 +127,7 @@ public class VistaRegistroPedido {
      */
     public void muestra(ControlRegistroPedido control) {
         this.control = control;
-        
+
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestra(control));
             return;
@@ -135,5 +135,16 @@ public class VistaRegistroPedido {
 
         initializeUI();
         stage.show();
+
+        // Funciones con el fin de que la regresar se queden en sí mismas sin necesidad de maximizarla uno mismo
+        stage.setMaximized(true);
+        stage.show();
+        stage.toFront();
+
+        control.cargarPedidos();
+    }
+
+    public void cierraVentana(){
+        stage.close();
     }
 }
