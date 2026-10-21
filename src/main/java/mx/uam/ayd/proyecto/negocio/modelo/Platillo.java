@@ -20,6 +20,21 @@ public class Platillo {
     private String tipoArea;
     private String descripcion;
 
+    // Constructores
+    /**
+     * Constructor cuyo propósito es ser generado y posteriormente settear sus atributos
+     */
+    public Platillo(){}
+    /**
+     * Constructor cuyo propósito es facilitar su generación para los datos de prueba
+     */
+    public Platillo(String nombre, int precio, String tipoArea, String descripcion){
+        this.nombre = nombre;
+        this.precio = precio;
+        this.tipoArea = tipoArea;
+        this.descripcion = descripcion;
+    }
+
     // --- GETTERS Y SETTERS ---
     public long getIdPlatillo() {
         return idPlatillo;
