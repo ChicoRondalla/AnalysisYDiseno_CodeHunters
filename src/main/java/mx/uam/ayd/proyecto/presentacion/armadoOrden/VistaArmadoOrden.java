@@ -31,6 +31,7 @@ public class VistaArmadoOrden {
      */
     public void muestra(Pedido pedido) {
         try {
+           // CAMBIO HU-15
            // SI YA EXISTÍA UNA VENTANA ABIERTA, LA CERRAMOS PARA EVITAR VENTANAS DUPLICADAS
             if (stage != null) {
                 stage.close();
@@ -69,10 +70,12 @@ public class VistaArmadoOrden {
         }
     }
     
+    // CAMBIO HU-15
+    // CIERRA LA VENTANA DE ARMADO DE ORDEN SI ESTÁ ABIERTA
     public void cierra() {
         if (stage != null) {
             stage.close();
-            stage = null; // Limpiamos la referencia para evitar problemas de memoria
+            stage = null; 
         }
     }
 }

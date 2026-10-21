@@ -10,19 +10,19 @@ import mx.uam.ayd.proyecto.presentacion.registrarPedido.ControlRegistroPedido;
 
 @Component // EVITA HACER EL NEW
 public class ControlCancelarOrden {
-
-    @Autowired // AUTO CABLEADO
+ 
+    // SERVICIOS DE NEGOCIO Y VENTANA
+    @Autowired 
     private ServicioPedido servicioPedido;
 
     @Autowired
     private VistaCancelarOrden ventana;
 
-    // INYECTA LA PANTALLA PRINCIPAL
+    // NAVEGACION ENTRE VENTANAS
     @Autowired
-    @Lazy // NO CREA EL CONTROL DE INMEDIATO
+    @Lazy 
     private ControlEnviarOrdenCocina controlEnviarOrdenCocina;
 
-    //CORECCION 
     @Autowired
     @Lazy
     private ControlRegistroPedido controlRegistroPedido;
@@ -44,7 +44,7 @@ public class ControlCancelarOrden {
             
             String usuarioActual = "Recepcionista en turno"; 
             
-            // LlAMA AL SERVICIO QUE YA TIENE (RN-06, RN-07)
+            // EJECUTA LA LOGICA DE NEGOCIO PARA CANCELAR EL PEDIDO
             boolean exito = servicioPedido.cancelarPedido(idPedido, motivo, usuarioActual);
             
             if (exito) {
@@ -52,11 +52,11 @@ public class ControlCancelarOrden {
                 
                 // LIMPIA LA TABLA 
                 controlEnviarOrdenCocina.limpiarVistaDespuesDeCancelar();
-                
+
+                // CIERRA LA VENTANA DE CANCELACION
                 ventana.cierra();
-
-                // CORRECCION
-
+                
+                // CIERRA TODAS LAS VENTANAS RELACIONADAS CON EL PEDIDO CANCELADO Y REGRESA A LA VENTANA DE REGISTRO DE PEDIDOS
                 controlEnviarOrdenCocina.cerrarTodoPorCancelacion();
                 controlRegistroPedido.inicia();
             }

@@ -69,7 +69,8 @@ public class ControlArmadoOrden {
         });
         
         cargarPlatillosMenu(null);
-        // recupera los platillos guardados 
+        // MODIFICADO PARA HU-15
+        // RECUPERA EL ESTADO DE LOS PLATILLOS AGREGADOS PREVIAMENTE 
         actualizarVistaCarrito();
     }
     
@@ -256,11 +257,12 @@ public class ControlArmadoOrden {
         }
     }
 
+    // MODIFICADO PARA HU-15
+    //PASA EL PEDIDO ACTUAL A LA VENTANA DE RESUMEN DE ORDEN PARA ENVIARLO A COCINA
     @FXML
     public void confirmarOrdenAction() {
         if (pedidoActual != null) {
             try {
-                // 1. PRIMERO abrimos la ventana de resumen con el pedido actual intacto (Estado: Pendiente)
                 controlEnviarOrdenCocina.inicia(pedidoActual);
 
             } catch (Exception e) {
