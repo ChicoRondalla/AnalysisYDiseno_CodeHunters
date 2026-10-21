@@ -97,7 +97,8 @@ public class ControlPlantillaPedidoCompletado {
 
         // Asignamos los datos del pedido
         numPedido.setText("Pedido #"+Integer.toString(pedido.getNumeroOrden()));
-        mesa.setText("Mesa "+pedido.getVaPara());
+        if(pedido.getNumMesa() == 0) mesa.setText("Cliente: "+ pedido.getCliente().getNombre());
+        else mesa.setText("Mesa "+pedido.getNumMesa());
         cantProductos.setText(Integer.toString(detalles.size())+" productos");
 
         // El tipo de pedido tiene un estilo específico dependiendo de cuál sea, aquí se decide cuál es el estilo que se le dará a esta tarjeta
@@ -112,6 +113,7 @@ public class ControlPlantillaPedidoCompletado {
                 );
             break;
             case "Consumo Local":
+            case "Local":
                 tipoPedido.setText("CONSUMO LOCAL");
                 tipoPedido.setStyle(
                     "-fx-background-color: #243F70;"+

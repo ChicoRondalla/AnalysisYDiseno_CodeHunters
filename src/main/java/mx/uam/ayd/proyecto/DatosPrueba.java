@@ -102,10 +102,10 @@ public class DatosPrueba implements CommandLineRunner {
 
             // Creamos pedidos
             Pedido pedido1 = new Pedido("A Domicilio", 12345, 'a', "Servicios", "Completado", null, 100);
-            Pedido pedido2 = new Pedido("Consumo Local", 12346, 'b', "Cocina", "Completado", null, 250);
+            Pedido pedido2 = new Pedido("Para Llevar", 12346, 'b', "Cocina", "Completado", null, 250);
             Pedido pedido3 = new Pedido("Para Llevar", 12347, 'a', "Servicios", "Completado", null, 150);
             Pedido pedido4 = new Pedido("A Domicilio", 12348, 'c', "Servicios", "Completado", null, 300);
-            Pedido pedido5 = new Pedido("Consumo Local", 12349, 'a', "Cocina", "En Proceso", null, 400);
+            Pedido pedido5 = new Pedido("A Domicilio", 12349, 'a', "Cocina", "En Proceso", null, 400);
             Pedido pedido6 = new Pedido("Para Llevar", 12350, 'b', "Servicios", "Cancelado", null, 200);
             
             // Damos clientes a los pedidos

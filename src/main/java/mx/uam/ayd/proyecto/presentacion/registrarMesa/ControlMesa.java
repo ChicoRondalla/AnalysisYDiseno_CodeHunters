@@ -13,7 +13,6 @@ import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Mesa;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
 import mx.uam.ayd.proyecto.presentacion.armadoOrden.VistaArmadoOrden;
-import mx.uam.ayd.proyecto.presentacion.registrarPedido.ControlRegistroPedido;
 import mx.uam.ayd.proyecto.presentacion.registrarPedido.VistaRegistroPedido;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

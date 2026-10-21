@@ -180,20 +180,21 @@ public class ControlArmadoOrden {
         List<DetallesPedido> detalles = servicioOrden.obtenerDetallesDePedido(pedidoActual.getIdPedido());
         
         for(DetallesPedido detalle : detalles) {
-             String notaGuardada = detalle.getNotas() == null ? "" : detalle.getNotas();
-             
-             VBox celda = crearCeldaDetalleCarrito(
+            String notaGuardada = detalle.getNotas() == null ? "" : detalle.getNotas();
+            
+            VBox celda = crearCeldaDetalleCarrito(
                 String.valueOf(detalle.getIdDetallePedido()), 
                 detalle.getPlatillo().getNombre(), 
                 detalle.getCantidad(), 
                 detalle.getPlatillo().getPrecio(),
                 notaGuardada
-             );
-             listResumenOrden.getItems().add(celda);
+            );
+            listResumenOrden.getItems().add(celda);
         }
         
         double total = servicioOrden.calcularSubtotalTotal(pedidoActual.getIdPedido());
         lblSubtotal.setText("$" + total);
+        servicioPedido.asignarDetallesAPedido(pedidoActual, detalles); // Asigna al pedido la lista de detalles que se está asignando al pedido
     }
 
     public void agregarPlatillo(String idPlatilloStr) {

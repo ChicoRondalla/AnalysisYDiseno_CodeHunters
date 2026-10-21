@@ -5,6 +5,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +15,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
+import mx.uam.ayd.proyecto.datos.DetallesPedidoRepository;
 import mx.uam.ayd.proyecto.datos.PedidoRepository;
 /**
  * Pruebas unitarias para validar las reglas de negocio de ServicioPedido.
@@ -26,6 +30,8 @@ class ServicioPedidoTest {
     // repositorio falso con @Mock
     @Mock
     private PedidoRepository pedidoRepository;
+    @Mock
+    private DetallesPedidoRepository detallesPedidoRepository;
 
     @BeforeEach
     void setUp() {
@@ -178,6 +184,42 @@ class ServicioPedidoTest {
 
         assertFalse(servicioPedido.marcarComoEntregado(p1));
         assertFalse(servicioPedido.marcarComoEntregado(p2));
+    }
+
+    // ---------------- asignarDetallesAPedidoTest ----------------
+    @Test 
+    void testAsignarDetallesAPedidoNulo(){
+        Pedido p = null;
+        List<DetallesPedido> detalles = new ArrayList<>();
+        DetallesPedido detalle = new DetallesPedido();
+        detalles.add(detalle);
+
+        when(pedidoRepository.save(p)).thenReturn(null);
+
+        assertFalse(servicioPedido.asignarDetallesAPedido(p, null));
+    }
+    @Test
+    void testAsignarDetallesVaciosAPedido(){
+        Pedido p = new Pedido();
+        List<DetallesPedido> detalles = new ArrayList<>();
+
+        when(pedidoRepository.save(p)).thenReturn(p);
+        assertFalse(servicioPedido.asignarDetallesAPedido(p, detalles));
+    }
+    @Test
+    void testAsignarDetallesConPedidoCorrecto(){
+        Pedido p = new Pedido();
+        List<DetallesPedido> detalles = new ArrayList<>();
+        DetallesPedido d1 = new DetallesPedido();
+        DetallesPedido d2 = new DetallesPedido();
+        detalles.add(d1);
+        detalles.add(d2);
+
+        when(pedidoRepository.save(p)).thenReturn(p);
+        when(detallesPedidoRepository.save(d1)).thenReturn(d1);
+        when(detallesPedidoRepository.save(d2)).thenReturn(d2);
+
+        assertTrue(servicioPedido.asignarDetallesAPedido(p, detalles));
     }
 }
 

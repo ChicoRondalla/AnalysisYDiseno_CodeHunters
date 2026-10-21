@@ -9,8 +9,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import mx.uam.ayd.proyecto.presentacion.principal.VentanaPrincipal;
-
 import mx.uam.ayd.proyecto.presentacion.registrarPedido.ControlRegistroPedido;
 import mx.uam.ayd.proyecto.presentacion.registrarPedido.VistaRegistroPedido;
 import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina;
@@ -86,14 +84,14 @@ public class ControlPrincipal {
 
 }
 
-@Autowired
+    @Autowired
     private VistaCancelarOrden vistaCancelarOrden; // Tu controlador de la HU-04
 
     // ARRANCA LA VENTANA PARA LA HU-04
     public void iniciaVentanaCancelarOrden() {
 
         try {
-           
+            
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Ventana-cancelar-Orden.fxml"));
             loader.setControllerFactory(applicationContext::getBean); 
             

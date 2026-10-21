@@ -31,6 +31,7 @@ public class Pedido {
 	private String estado;
 	private String motivoCancelacion;
 	private int total;
+    private int numMesa;
 
     // --- RELACIONES DEL MODELO DE DOMINIO ---
 
@@ -45,7 +46,7 @@ public class Pedido {
     private final List<Cobro> cobros = new ArrayList<>();
 
     // Muchos pedidos pueden ser de 1 cliente
-    @ManyToOne(targetEntity = Cliente.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Cliente.class, fetch = FetchType.EAGER)
     private Cliente cliente;
 
     // Constructores
@@ -139,6 +140,14 @@ public class Pedido {
 
     public void setTotal(int total) {
         this.total = total;
+    }
+
+    // Número de mesa
+    public int getNumMesa(){
+        return this.numMesa;
+    }
+    public void setNumMesa(int num){
+        this.numMesa = num;
     }
 
     // --- RELACIONES DEL MODELO DE DOMINIO GETTERS Y SETTERS ---
