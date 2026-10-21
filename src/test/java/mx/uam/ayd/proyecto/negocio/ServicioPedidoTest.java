@@ -187,7 +187,11 @@ class ServicioPedidoTest {
     }
 
     // ---------------- asignarDetallesAPedidoTest ----------------
-    @Test 
+    /**
+     * Test para verificar que a un pedido nulo se regresa false
+     * @author JLCB
+     */
+    @Test
     void testAsignarDetallesAPedidoNulo(){
         Pedido p = null;
         List<DetallesPedido> detalles = new ArrayList<>();
@@ -198,6 +202,10 @@ class ServicioPedidoTest {
 
         assertFalse(servicioPedido.asignarDetallesAPedido(p, null));
     }
+    /**
+     * Test para verificar si regresa false al mandar unos detalles vacíos
+     * @author JLCB
+     */
     @Test
     void testAsignarDetallesVaciosAPedido(){
         Pedido p = new Pedido();
@@ -206,6 +214,10 @@ class ServicioPedidoTest {
         when(pedidoRepository.save(p)).thenReturn(p);
         assertFalse(servicioPedido.asignarDetallesAPedido(p, detalles));
     }
+    /**
+     * Test para verificar que regrese verdadero al mandar un pedido y unos detalles correctos
+     * @author JLCB
+     */
     @Test
     void testAsignarDetallesConPedidoCorrecto(){
         Pedido p = new Pedido();
