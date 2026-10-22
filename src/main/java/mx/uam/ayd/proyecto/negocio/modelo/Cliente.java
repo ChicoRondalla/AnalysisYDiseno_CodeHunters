@@ -26,12 +26,26 @@ public class Cliente {
     private String telefono;
     private String direccion;
 
- 
+
     // --- RELACIONES DEL MODELO DE DOMINIO ---
     // 1 Cliente REALIZA muchos Pedidos
     @OneToMany(targetEntity = Pedido.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_cliente")
     private final List<Pedido> pedidos = new ArrayList<>();
+
+    // Constructores
+    /**
+     * Constructor cuyo propósito es ser generado y posteriormente settear sus atributos
+     */
+    public Cliente(){}
+    /**
+     * Constructor cuyo propósito es facilitar su generación para los datos de prueba
+     */
+    public Cliente(String nombre, String telefono, String direccion){
+        this.nombre = nombre;
+        this.telefono = telefono;
+        this.direccion = direccion;
+    }
 
 
     // --- GETTERS Y SETTERS ---

@@ -98,14 +98,14 @@ public class ControlPrincipal {
 
 }
 
-@Autowired
+    @Autowired
     private VistaCancelarOrden vistaCancelarOrden; // Tu controlador de la HU-04
 
     // ARRANCA LA VENTANA PARA LA HU-04
     public void iniciaVentanaCancelarOrden() {
 
         try {
-           
+            
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Ventana-cancelar-Orden.fxml"));
             loader.setControllerFactory(applicationContext::getBean); 
             
