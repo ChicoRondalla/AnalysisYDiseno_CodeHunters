@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Scope;
 
 /**
  * VistaCocinaPantalla: La encargada de construir y desplegar la ventana física.
@@ -21,13 +22,15 @@ import org.springframework.stereotype.Component;
  * y leer el archivo de diseño visual (.fxml) y conectar a Spring para que los controladores nazcan con todas sus dependencias listas.
  */
 @Component
+@Scope("prototype")
 public class VistaCocinaPantalla {
 
     private static final Logger LOGGER = Logger.getLogger(VistaCocinaPantalla.class.getName());
 
     private Stage stage; // La ventana principal de la cocina (el contenedor de alto nivel de JavaFX).
     private boolean initialized = false; // Bandera para saber si la ventana ya fue armada y evitar recrearla innecesariamente.
-    
+    private CocinaPantallaControlador controlador;
+
     // El contexto de Spring: nos sirve como "fábrica" para instanciar los controladores inyectando sus dependencias automáticamente.
     private final ApplicationContext context;
 
@@ -45,7 +48,40 @@ public class VistaCocinaPantalla {
      * ¿Cuándo se llama? Se ejecuta de manera interna la primera vez que se intenta mostrar la ventana.
      * Su trabajo es buscar el archivo FXML, cargarlo, aplicar el tamaño de la pantalla y enlazarlo con Spring.
      */
-    private void initializeUI() {
+    
+private void initializeUI() {
+        if (initialized && stage != null) { return; }
+        try {
+            stage = new Stage();
+            stage.setTitle("Ryuho Sushi - Comanda de Cocina");
+            URL fxmlUrl = getClass().getClassLoader().getResource("fxml/ventana-lista-ordenes.fxml");
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            loader.setControllerFactory(context::getBean);
+            
+            Scene scene = new Scene(loader.load(), 1080, 720);
+            stage.setScene(scene);
+            
+            // 2. Agrega esta línea justo debajo de loader.load()
+            this.controlador = loader.getController(); 
+            
+            initialized = true; 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 3. Agrega este NUEVO método (puedes borrar el método 'muestra' anterior si quieres)
+    public CocinaPantallaControlador muestraYDevuelveControlador() {
+        initializeUI(); 
+        if (stage != null) {
+            stage.show();        
+            stage.toFront();     
+        }
+        return this.controlador;
+    }
+
+    
+    /*private void initializeUI() {
         // Si la ventana ya fue inicializada previamente, no hacemos nada para optimizar recursos y mantener el estado.
         if (initialized && stage != null) {
             return;
@@ -56,11 +92,11 @@ public class VistaCocinaPantalla {
             stage.setTitle("Ryuho Sushi - Comanda de Cocina");
 
             // Intento 1: Buscar el diseño FXML usando el ClassLoader desde la carpeta raíz de resources.
-            URL fxmlUrl = getClass().getClassLoader().getResource("fxml/CocinaPantallaVista.fxml");
+            URL fxmlUrl = getClass().getClassLoader().getResource("fxml/ventana-lista-ordenes.fxml");
             
             // Intento 2: Si el primero falla, buscamos el archivo de forma relativa justo al lado del paquete de este controlador.
             if (fxmlUrl == null) {
-                fxmlUrl = getClass().getResource("CocinaPantallaVista.fxml");
+                fxmlUrl = getClass().getResource("ventana-lista-ordenes.fxml");
             }
 
             // Si de plano no se encuentra el archivo en ninguna ruta, lanzamos un error crítico para avisar que falta el diseño visual.
@@ -83,7 +119,10 @@ public class VistaCocinaPantalla {
             LOGGER.log(Level.SEVERE, "Error al cargar el FXML de pantalla de cocina", e);
             e.printStackTrace();
         }
-    }
+    }*/
+
+
+    
      //MUESTRA LA VENTANA EN LA PANTALLA:
     public void muestra(ControlVisualizarOrden control) {
         Runnable showTask = () -> {

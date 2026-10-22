@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
 import mx.uam.ayd.proyecto.presentacion.armadoOrden.VistaArmadoOrden;
+import mx.uam.ayd.proyecto.presentacion.visualizarOrden.ControlVisualizarOrden;
 
 /**
  * Controlador para la Historia de Usuario HU-01: Registrar Pedido.
@@ -42,6 +43,9 @@ public class ControlRegistroPedido {
     @Autowired
     private VistaArmadoOrden vistaArmadoOrden;
 
+    @Autowired
+    private ControlVisualizarOrden controlVisualizarOrden;
+
     // --- MÉTODO AUXILIAR PARA NAVEGACIÓN ---
     /**
      * Oculta todos los paneles y muestra únicamente el que se pasa por parámetro.
@@ -56,6 +60,11 @@ public class ControlRegistroPedido {
     }
 
     // --- MÉTODOS DE NAVEGACIÓN (Botones principales) ---
+
+    @FXML
+    private void abrirPantallaCocinero(){
+        controlVisualizarOrden.inicia();
+    }
 
     @FXML
     void onConsumoLocalAction(ActionEvent event) {
