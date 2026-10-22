@@ -64,8 +64,8 @@ public class ControlPrincipal {
 	}
 	
 	public void inicia() {
-        // Inicia el flujo directamente en la pantalla de Administración de Empleados
-        administrarPersonal();
+        // Inicia el flujo en el Menú Principal, desde donde se accede a todos los módulos
+        ventana.muestra();
     }
     
     public void administrarPersonal() {

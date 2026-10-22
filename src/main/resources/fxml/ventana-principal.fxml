@@ -5,15 +5,10 @@
 <?import javafx.geometry.Insets?>
 
 <VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" 
-      fx:controller="mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal"
       spacing="10" style="-fx-padding: 15px;">
     
     <Label text="Ryuho Sushi - Menú Principal" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
     
-    <!-- Botón para acceder al módulo de Personal (CYB-3) -->
-    <Button text="🪪 Gestionar Personal" onAction="#handleGestionarPersonal" 
-            style="-fx-min-width: 200px; -fx-min-height: 30px; -fx-background-color: #1f2937; -fx-text-fill: white; -fx-font-weight: bold;"/>
-
     <Button text="Registrar Pedido" onAction="#handleRegistrarPedido" 
             style="-fx-min-width: 200px; -fx-min-height: 30px; -fx-background-color: #e63946; -fx-text-fill: white; -fx-font-weight: bold;"/>
     
@@ -23,7 +18,7 @@
     <Button text="Cancelar Pedido" onAction="#handleCancelarPedido"
         style="-fx-min-width: 200px; -fx-min-height: 30px;"/>        
 
-    <Button text="Admisnistrar Personal" onAction="#handleAdministrarPersonal"
+    <Button text="Administrar Personal" onAction="#handleAdministrarPersonal"
         style="-fx-min-width: 200px; -fx-min-height: 30px; -fx-background-color: #2b2b2b; -fx-text-fill: white;"/>           
 
 </VBox>
