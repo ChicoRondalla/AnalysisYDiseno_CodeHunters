@@ -9,14 +9,16 @@ import org.springframework.stereotype.Component;
 
 import mx.uam.ayd.proyecto.datos.ClienteRepository;
 import mx.uam.ayd.proyecto.datos.DetallesPedidoRepository;
-import mx.uam.ayd.proyecto.datos.PedidoRepository;
+import mx.uam.ayd.proyecto.datos.EmpleadoRepository;
 import mx.uam.ayd.proyecto.datos.MesaRepository;
+import mx.uam.ayd.proyecto.datos.PedidoRepository;
 import mx.uam.ayd.proyecto.datos.PlatilloRepository;
-import mx.uam.ayd.proyecto.negocio.modelo.Mesa;
-import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
 import mx.uam.ayd.proyecto.negocio.modelo.Cliente;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
+import mx.uam.ayd.proyecto.negocio.modelo.Empleado;
+import mx.uam.ayd.proyecto.negocio.modelo.Mesa;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
+import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
 
 /**
  * Clase encargada de poblar la base de datos H2 en memoria con datos de prueba
@@ -36,6 +38,9 @@ public class DatosPrueba implements CommandLineRunner {
 
     @Autowired
     private MesaRepository mesaRepository;
+
+    @Autowired
+    private EmpleadoRepository empleadoRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -185,6 +190,8 @@ public class DatosPrueba implements CommandLineRunner {
             pedido6 = pedidoRepository.save(pedido6);
 
             System.out.println("Se guardaron los clientes, pedidos y detalles pedidos");
+        }
+
         // Carga de mesas de prueba (HU-05)
         if (mesaRepository.count() == 0) {
             System.out.println("Iniciando carga de mesas de prueba en H2...");
@@ -197,5 +204,17 @@ public class DatosPrueba implements CommandLineRunner {
 
             System.out.println("¡Carga de mesas completada!");
         }
+
+        // Carga de empleados de prueba
+        if (empleadoRepository.count() == 0) {
+            System.out.println("Iniciando carga de empleados de prueba en H2...");
+
+            empleadoRepository.save(new Empleado("Daiki Nakamura", "daiki.n", "ClaveSegura1!", "Cocinero"));
+            empleadoRepository.save(new Empleado("Aoi Tanaka", "aoi.tanaka", "ClaveSegura1!", "Administrador"));
+            empleadoRepository.save(new Empleado("Ren Takahashi", "ren.t", "ClaveSegura1!", "Recepcionista"));
+            empleadoRepository.save(new Empleado("Haruto Sato", "haruto.s", "ClaveSegura1!", "Repartidor"));
+
+            System.out.println("¡Carga de empleados completada!");
+        }
     }
-}}
+}

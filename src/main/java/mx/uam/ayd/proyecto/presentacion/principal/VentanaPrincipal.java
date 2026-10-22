@@ -104,4 +104,12 @@ public class VentanaPrincipal {
 		}
 	}
 
+	//BOTON VENTANA DE ADMINISTRAR PERSONAL HU-03
+	@FXML
+	private void handleAdministrarPersonal() {
+		if ( control != null ) {
+			control.administrarPersonal();
+		}
+	}
+
 }
