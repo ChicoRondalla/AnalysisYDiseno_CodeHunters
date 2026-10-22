@@ -2,14 +2,10 @@ package mx.uam.ayd.proyecto.presentacion.visualizarOrden;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -24,8 +20,6 @@ import org.springframework.context.annotation.Scope;
 @Component
 @Scope("prototype")
 public class VistaCocinaPantalla {
-
-    private static final Logger LOGGER = Logger.getLogger(VistaCocinaPantalla.class.getName());
 
     private Stage stage; // La ventana principal de la cocina (el contenedor de alto nivel de JavaFX).
     private boolean initialized = false; // Bandera para saber si la ventana ya fue armada y evitar recrearla innecesariamente.
