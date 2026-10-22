@@ -1,7 +1,6 @@
 package mx.uam.ayd.proyecto.negocio;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;
@@ -16,9 +15,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javafx.application.Platform;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.FlowPane;
 
-import mx.uam.ayd.proyecto.datos.PedidoRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
@@ -38,10 +36,6 @@ class CocinaPantallaControladorTest {
 
     @Mock
     private ServicioOrden servicioOrden;
-
-    // Repositorio falso con @Mock
-    @Mock
-    private PedidoRepository pedidoRepository;
 
     @Mock
     private ControlVisualizarOrden controlVisualizarOrden;
@@ -69,7 +63,7 @@ class CocinaPantallaControladorTest {
         try {
             Field field = CocinaPantallaControlador.class.getDeclaredField("containerPendientes");
             field.setAccessible(true);
-            field.set(cocinaPantallaControlador, new TilePane());
+            field.set(cocinaPantallaControlador, new FlowPane());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,14 +127,13 @@ class CocinaPantallaControladorTest {
     void testGuardarPedidoPorNumeroOrden_Exito() {
         long idPedido = 1L;
         when(servicioPedido.recuperaPedido(idPedido)).thenReturn(pedidoPrueba);
-        when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedidoPrueba);
 
         // EJECUTA LA FINALIZACIÓN
         cocinaPantallaControlador.finalizarOrden(idPedido, new java.util.ArrayList<>());
 
         // VERIFICA QUE EL ESTADO CAMBIÓ Y SE GUARDÓ
         assertEquals("Completado", pedidoPrueba.getEstado());
-        verify(pedidoRepository, times(1)).save(pedidoPrueba);
+        verify(servicioPedido, times(1)).guardarPedido(pedidoPrueba);
     }
 
     // PRUEBAS (GUARDAR DANDO CLIC EN EL BOTÓN DE LA COMANDA)
@@ -149,7 +142,6 @@ class CocinaPantallaControladorTest {
         long idPedido = 1L;
         
         when(servicioPedido.recuperaPedido(idPedido)).thenReturn(pedidoPrueba);
-        when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedidoPrueba);
 
         // EJECUTA LA FINALIZACIÓN DESDE LA VISTA
         cocinaPantallaControlador.finalizarOrden(idPedido, new java.util.ArrayList<>());
@@ -157,7 +149,7 @@ class CocinaPantallaControladorTest {
         // VERIFICA EL CAMBIO DE ESTADO Y LLAMADAS
         assertEquals("Completado", pedidoPrueba.getEstado(), "El estado del pedido debió cambiar a Completado.");
         verify(servicioPedido, times(1)).recuperaPedido(idPedido);
-        verify(pedidoRepository, times(1)).save(pedidoPrueba);
+        verify(servicioPedido, times(1)).guardarPedido(pedidoPrueba);
         verify(controlVisualizarOrden, times(1)).cargarPedidosPendientes();
     }
 
@@ -171,7 +163,6 @@ class CocinaPantallaControladorTest {
         List<DetallesPedido> detalles = Arrays.asList(detalleRollos, detallePlancha);
         when(servicioOrden.obtenerDetallesDePedido(1L)).thenReturn(detalles);
         when(servicioPedido.recuperaPedido(1L)).thenReturn(pedidoPrueba);
-        when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedidoPrueba);
 
         // VERIFICA QUE TODOS ESTÉN COMPLETADOS
         boolean todosCompletados = detalles.stream().allMatch(DetallesPedido::isCompletado);
