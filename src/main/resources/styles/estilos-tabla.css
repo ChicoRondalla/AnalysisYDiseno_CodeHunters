@@ -1,0 +1,185 @@
+/* Paleta de Colores Modo Oscuro */
+.root-dark {
+    -fx-background-color: #121316;
+}
+
+.card-container {
+    -fx-background-color: #191b1f;
+    -fx-background-radius: 12;
+    -fx-border-color: #2a2d34;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.badge-turno {
+    -fx-background-color: #24272d;
+    -fx-background-radius: 14;
+    -fx-padding: 3 10 3 10;
+}
+
+.btn-icon {
+    -fx-background-color: #191b1f;
+    -fx-text-fill: #9ca3af;
+    -fx-border-color: #2a2d34;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;
+    -fx-cursor: hand;
+}
+.btn-icon:hover {
+    -fx-background-color: #22252b;
+}
+
+.btn-primary-red {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(239, 68, 68, 0.4), 12, 0, 0, 4);
+}
+.btn-primary-red:hover {
+    -fx-background-color: #dc2626;
+}
+
+.search-field {
+    -fx-background-color: #121316;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #6b7280;
+    -fx-border-color: #2a2d34;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;
+}
+
+.filter-chip {
+    -fx-background-color: transparent;
+    -fx-text-fill: #9ca3af;
+    -fx-background-radius: 16;
+    -fx-padding: 4 12 4 12;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+.filter-chip:hover {
+    -fx-text-fill: white;
+}
+
+.filter-chip-active {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.toggle-container {
+    -fx-background-color: #121316;
+    -fx-background-radius: 16;
+    -fx-padding: 2;
+    -fx-border-color: #2a2d34;
+    -fx-border-radius: 16;
+}
+
+.toggle-chip-active {
+    -fx-background-color: #2a2d34;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Paginador */
+.btn-page {
+    -fx-background-color: #121316;
+    -fx-text-fill: #9ca3af;
+    -fx-border-color: #2a2d34;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 4 10 4 10;
+    -fx-font-size: 11px;
+    -fx-cursor: hand;
+}
+.btn-page:hover {
+    -fx-background-color: #22252b;
+    -fx-text-fill: white;
+}
+
+.btn-page-active {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+    -fx-border-color: #ef4444;
+    -fx-font-weight: bold;
+}
+
+/* Estilos de la TableView */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-base: #191b1f;
+    -fx-control-inner-background: #191b1f;
+    -fx-table-cell-border-color: #2a2d34;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #191b1f;
+}
+
+.table-view .column-header {
+    -fx-background-color: #191b1f;
+    -fx-border-color: transparent transparent #2a2d34 transparent;
+    -fx-size: 40px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #6b7280;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-alignment: CENTER-LEFT;
+}
+
+.table-row-cell {
+    -fx-background-color: #191b1f;
+    -fx-border-color: transparent transparent #22252b transparent;
+    -fx-cell-size: 64px;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #22252b;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #2a2d3d;
+}
+
+/* --- ESTILOS DE LA BARRA LATERAL (SIDEBAR) --- */
+.sidebar {
+    -fx-background-color: #16181d;
+    -fx-border-color: transparent #2a2d34 transparent transparent;
+    -fx-border-width: 1;
+}
+
+.sidebar-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #9ca3af;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 14 10 14;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.sidebar-btn:hover {
+    -fx-background-color: #1f2229;
+    -fx-text-fill: white;
+}
+
+.sidebar-btn-active {
+    -fx-background-color: #272a33;
+    -fx-text-fill: white;
+    -fx-border-color: transparent transparent transparent #ef4444;
+    -fx-border-width: 0 0 0 3;
+}
+
+.profile-card {
+    -fx-background-color: #101114;
+    -fx-background-radius: 10;
+    -fx-border-color: #22252c;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
