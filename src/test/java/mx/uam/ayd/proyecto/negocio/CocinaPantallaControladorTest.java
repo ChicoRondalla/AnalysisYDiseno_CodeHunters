@@ -136,7 +136,7 @@ class CocinaPantallaControladorTest {
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedidoPrueba);
 
         // EJECUTA LA FINALIZACIÓN
-        cocinaPantallaControlador.finalizarOrden(idPedido);
+        cocinaPantallaControlador.finalizarOrden(idPedido, new java.util.ArrayList<>());
 
         // VERIFICA QUE EL ESTADO CAMBIÓ Y SE GUARDÓ
         assertEquals("Completado", pedidoPrueba.getEstado());
@@ -152,7 +152,7 @@ class CocinaPantallaControladorTest {
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedidoPrueba);
 
         // EJECUTA LA FINALIZACIÓN DESDE LA VISTA
-        cocinaPantallaControlador.finalizarOrden(idPedido);
+        cocinaPantallaControlador.finalizarOrden(idPedido, new java.util.ArrayList<>());
 
         // VERIFICA EL CAMBIO DE ESTADO Y LLAMADAS
         assertEquals("Completado", pedidoPrueba.getEstado(), "El estado del pedido debió cambiar a Completado.");
@@ -177,7 +177,7 @@ class CocinaPantallaControladorTest {
         boolean todosCompletados = detalles.stream().allMatch(DetallesPedido::isCompletado);
         assertTrue(todosCompletados, "Todos los platillos deben estar completados (palomeados).");
 
-        cocinaPantallaControlador.finalizarOrden(1L);
+        cocinaPantallaControlador.finalizarOrden(1L, new java.util.ArrayList<>());
         assertEquals("Completado", pedidoPrueba.getEstado());
     }
 }

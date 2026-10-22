@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import mx.uam.ayd.proyecto.negocio.ServicioPedido;
 import mx.uam.ayd.proyecto.negocio.modelo.Pedido;
 import mx.uam.ayd.proyecto.presentacion.armadoOrden.VistaArmadoOrden;
+import mx.uam.ayd.proyecto.presentacion.visualizarOrden.ControlVisualizarOrden;
 import mx.uam.ayd.proyecto.presentacion.registrarMesa.ControlMesa;
 
 /**
@@ -61,6 +62,9 @@ public class ControlRegistroPedido {
     @Autowired 
     private VistaRegistroPedido ventana;
 
+    @Autowired
+    private ControlVisualizarOrden controlVisualizarOrden;
+
     // --- MÉTODO AUXILIAR PARA NAVEGACIÓN ---
     public void mostrarPantalla(Pane pantallaActiva) {
         paneSeleccion.setVisible(false);
@@ -72,6 +76,11 @@ public class ControlRegistroPedido {
     }
 
     // --- MÉTODOS DE NAVEGACIÓN (Botones principales) ---
+
+    @FXML
+    private void abrirPantallaCocinero(){
+        controlVisualizarOrden.inicia();
+    }
 
     @FXML
     public void onConsumoLocalAction(ActionEvent event) {

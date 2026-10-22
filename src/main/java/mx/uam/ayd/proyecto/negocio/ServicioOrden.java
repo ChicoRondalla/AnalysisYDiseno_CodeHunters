@@ -103,4 +103,11 @@ public class ServicioOrden {
         detalle.setNotas(nota);
         return detallesPedidoRepository.save(detalle);
     }
+
+    /**
+    * Guarda los cambios realizados en un detalle de pedido específico (Ej. cambiar su estado a completado).
+    */
+    public DetallesPedido actualizarDetalle(DetallesPedido detalle) {
+        return detallesPedidoRepository.save(detalle);
+    }
 }
