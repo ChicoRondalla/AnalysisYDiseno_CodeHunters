@@ -9,13 +9,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import mx.uam.ayd.proyecto.presentacion.principal.VentanaPrincipal;
-
 import mx.uam.ayd.proyecto.presentacion.registrarPedido.ControlRegistroPedido;
 import mx.uam.ayd.proyecto.presentacion.registrarPedido.VistaRegistroPedido;
 import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCocina;
 import mx.uam.ayd.proyecto.presentacion.cancelarOrden.ControlCancelarOrden;
 import mx.uam.ayd.proyecto.presentacion.cancelarOrden.VistaCancelarOrden;
+import mx.uam.ayd.proyecto.presentacion.tablaEmpleados.ControlTablaEmpleados;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 
 
 @Component
@@ -31,7 +32,7 @@ public class ControlPrincipal {
 			VentanaPrincipal ventana) {
 		this.ventana = ventana;
 	}
-	
+
 	@Autowired
     private VistaRegistroPedido vistaRegistroPedido;
 
@@ -62,14 +63,25 @@ public class ControlPrincipal {
 		ventana.setControlPrincipal(this);
 	}
 	
-	/**
-	 * Inicia el flujo de control de la ventana principal
-	 * 
-	 */
 	public void inicia() {
-		//Para que incie directamente con el menu de la HU-01 para seleccionar el tipo de pedido
-		registrarPedido();
-	}
+        // Inicia el flujo directamente en la pantalla de Administración de Empleados
+        administrarPersonal();
+    }
+    
+    public void administrarPersonal() {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/vista-tabla-empleados.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            
+            javafx.scene.Parent root = loader.load();
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("Directorio de Empleados - Ryuho Sushi");
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // 5. MÉTODO QUE ARRANCA LA HISTORIA DE USUARIO "ENVIAR ORDEN A COCINA" (HU-03)
         
@@ -104,6 +116,17 @@ public class ControlPrincipal {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+
+    @Autowired
+    private ControlTablaEmpleados controlTablaEmpleados;
+
+    @FXML
+    public void handleGestionarPersonal(ActionEvent event) {
+        if (controlTablaEmpleados != null) {
+            controlTablaEmpleados.muestra();
         }
     }
 }

@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import mx.uam.ayd.proyecto.datos.EmpleadoRepository;
 import mx.uam.ayd.proyecto.datos.PlatilloRepository;
+import mx.uam.ayd.proyecto.negocio.modelo.Empleado;
 import mx.uam.ayd.proyecto.negocio.modelo.Platillo;
 
 /**
@@ -17,10 +19,13 @@ public class DatosPrueba implements CommandLineRunner {
     @Autowired
     private PlatilloRepository platilloRepository;
 
+    @Autowired
+    private EmpleadoRepository empleadoRepository;
+
     @Override
     public void run(String... args) throws Exception {
         
-        // Solo insertamos si la tabla está vacía
+        // Carga de platillos de prueba
         if (platilloRepository.count() == 0) {
             System.out.println("Iniciando carga de platillos de prueba en H2...");
 
@@ -53,6 +58,18 @@ public class DatosPrueba implements CommandLineRunner {
             platilloRepository.save(p4);
 
             System.out.println("¡Carga de platillos completada!");
+        }
+
+        // Carga de empleados de prueba
+        if (empleadoRepository.count() == 0) {
+            System.out.println("Iniciando carga de empleados de prueba en H2...");
+
+            empleadoRepository.save(new Empleado("Daiki Nakamura", "daiki.n", "ClaveSegura1!", "Cocinero"));
+            empleadoRepository.save(new Empleado("Aoi Tanaka", "aoi.tanaka", "ClaveSegura1!", "Administrador"));
+            empleadoRepository.save(new Empleado("Ren Takahashi", "ren.t", "ClaveSegura1!", "Recepcionista"));
+            empleadoRepository.save(new Empleado("Haruto Sato", "haruto.s", "ClaveSegura1!", "Repartidor"));
+
+            System.out.println("¡Carga de empleados completada!");
         }
     }
 }

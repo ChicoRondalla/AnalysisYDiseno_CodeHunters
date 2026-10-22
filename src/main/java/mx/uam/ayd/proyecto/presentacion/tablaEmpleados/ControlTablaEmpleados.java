@@ -14,6 +14,12 @@ import mx.uam.ayd.proyecto.negocio.modelo.Empleado;
 import mx.uam.ayd.proyecto.presentacion.agregarEmpleado.ControlAgregarEmpleado;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import org.springframework.context.ApplicationContext;
+import java.io.IOException;
 
 import java.util.List;
 
@@ -28,6 +34,9 @@ public class ControlTablaEmpleados {
 
     @Autowired
     private ControlAgregarEmpleado controlAgregarEmpleado;
+
+    @Autowired
+    private ApplicationContext springContext;
 
     @FXML
     private TableView<Empleado> tablaEmpleados;
@@ -240,5 +249,23 @@ public class ControlTablaEmpleados {
 
     private String obtenerColorTextoRol(String rol) {
         return obtenerColorPuntoRol(rol);
+    }
+
+    /**
+     * Abre la ventana de Gestion de Personal.
+     */
+    public void muestra() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista-tabla-empleados.fxml"));
+            loader.setControllerFactory(springContext::getBean);
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Gestión de Personal - Ryuho Sushi");
+            stage.setScene(new Scene(root, 1180, 720));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
