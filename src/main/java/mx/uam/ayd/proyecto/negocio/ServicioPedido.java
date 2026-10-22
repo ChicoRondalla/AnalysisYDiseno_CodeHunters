@@ -36,6 +36,20 @@ public class ServicioPedido {
     }
 
     /**
+    * Guarda o actualiza un pedido en la base de datos.
+    */
+
+    public Pedido guardarPedido(Pedido pedido) {
+        try{
+            pedido = pedidoRepository.save(pedido);
+            return pedido;
+        } catch (Exception e){
+            System.out.println("El pedido es Nulo");
+            return null;
+        }
+    }
+
+    /**
      * Valida que los datos del formulario a domicilio no estén vacíos
      * y que el teléfono tenga la longitud correcta (RN-02).
      */
@@ -269,5 +283,6 @@ public class ServicioPedido {
         }
         return false;
     }
+
 
 }

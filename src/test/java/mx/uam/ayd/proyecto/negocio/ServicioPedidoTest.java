@@ -146,5 +146,31 @@ class ServicioPedidoTest {
         verify(pedidoRepository, times(1)).save(pedidoValido);
     }
 
+    @Test
+    void guardaPedidoValido() {
+        // Given
+        Pedido pedido = new Pedido();
+        pedido.setIdPedido(1L);
+        pedido.setNumeroOrden(10);
+        when(pedidoRepository.save(pedido)).thenReturn(pedido);
+        // When
+        Pedido resultado = servicioPedido.guardarPedido(pedido);
+        // Then
+        assertNotNull(resultado);
+        assertEquals(1L, resultado.getIdPedido());
+        verify(pedidoRepository, times(1)).save(pedido);
+    }
+
+    @Test
+    void guardaPedidoNulo() {
+        // Given
+        when(pedidoRepository.save(null)).thenThrow(IllegalArgumentException.class);
+
+        // When
+        Pedido resultado = servicioPedido.guardarPedido(null);
+
+        // Then
+        assertNull(resultado, "El método debe devolver null si el guardado falla");
+}
 }
 

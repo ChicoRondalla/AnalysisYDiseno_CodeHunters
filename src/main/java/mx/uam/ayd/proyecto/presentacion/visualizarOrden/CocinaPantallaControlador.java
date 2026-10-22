@@ -80,9 +80,6 @@ public class CocinaPantallaControlador {
     private ServicioOrden servicioOrden;
 
     @Autowired
-    private PedidoRepository pedidoRepository;
-
-    @Autowired
     @Lazy
     private ControlVisualizarOrden controlVisualizarOrden;
 
@@ -279,7 +276,7 @@ public class CocinaPantallaControlador {
                     pedido.setEstado("Completado");
                 }
                 // Guardamos el pedido para que la BD registre el progreso real de las estaciones
-                pedidoRepository.save(pedido);
+                servicioPedido.guardarPedido(pedido);
                 // Desaparecemos la tarjeta y aumentamos el contador en TODAS las pantallas solo cuando llegue al 100%
                 if (todoElPedidoEstaListo && controlVisualizarOrden != null) {
                     controlVisualizarOrden.cargarPedidosPendientes();
