@@ -11,6 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+/**
+* Representa la vista fisica de la pantalla de seleccion de estacion 
+* Se encarga de construir, mostrar y ocultar la ventana grafica  
+* donde el cocinero elige su area operativa (Rollos, Postres, Bebidas o Plancha)
+*/
+
 @Component
 public class VistaSeleccionEstacion {
 
@@ -18,10 +24,18 @@ public class VistaSeleccionEstacion {
     private boolean initialized = false; 
     private final ApplicationContext context;
 
+    /**
+    * Constructor principal de la vista de seleccion de estacion
+    */
+
     @Autowired
     public VistaSeleccionEstacion(ApplicationContext context) {
         this.context = context;
     }
+
+    /**
+    * Construye la interfaz grafica (UI) cargando el archivo FXML de la seleccion de estacion
+    */
 
     private void initializeUI() {
         if (initialized && stage != null) {
@@ -30,7 +44,7 @@ public class VistaSeleccionEstacion {
 
         try {
             stage = new Stage();
-            stage.setTitle("Ryuho Sushi - Selección de Estación"); // Título de la nueva ventana
+            stage.setTitle("Ryuho Sushi - Selección de Estación"); 
 
 
             URL fxmlUrl = getClass().getResource("/fxml/ventana-seleccion-estacion.fxml");
@@ -65,7 +79,8 @@ public class VistaSeleccionEstacion {
         }
     }
 
-    // NUEVO MÉTODO: Te servirá para ocultar esta pantalla cuando el cocinero elija su estación
+    //Metodo para ocultar la pantalla 
+
     public void oculta() {
         if (stage != null && stage.isShowing()) {
             Platform.runLater(() -> stage.hide());

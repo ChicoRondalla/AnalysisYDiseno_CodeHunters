@@ -14,12 +14,16 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+/**
+ * Controlador de presentacion para la tarjeta individual de cada orden en el tablero de cocina
+ */
+
 public class ItemOrdenControlador {
 
-    @FXML private Label lblNumeroOrden; // El que dice "#002"
-    @FXML private Label lblTemporizador; // El que dice "12:00:05"
+    @FXML private Label lblNumeroOrden; // Muestra el numero de orden
+    @FXML private Label lblTemporizador; // Muestra el tiempo de preparacion
     @FXML private FlowPane containerCheckboxes; // El FlowPane que contiene los CheckBox
-    @FXML private Button btnFinalizar;
+    @FXML private Button btnFinalizar; // Marca como terminada la orden en la estacion
 
     private Long idPedido;
     private List<DetallesPedido> detalles;
@@ -39,6 +43,10 @@ public class ItemOrdenControlador {
         crearCheckboxes();
         evaluarBotonFinalizar();
     }
+
+    /**
+     * Configura y arranca un cronometro reactivo que se actualiza cada segundo
+     */
 
     private void configurarTemporizador() {
         LocalDateTime horaCreacion = LocalDateTime.now(); // Idealmente: pedido.getHoraCreacion()
@@ -60,15 +68,17 @@ public class ItemOrdenControlador {
         cardTimer.play();
     }
 
+    /**
+     * Genera dinamicamente los componentes para cada platillo dentro de los detalles del pedido
+     */
+
     private void crearCheckboxes() {
         for (DetallesPedido detalle : detalles) {
             StringBuilder textoItem = new StringBuilder();
             textoItem.append(detalle.getCantidad()).append("x ").append(detalle.getPlatillo().getNombre());
             
-            // Lógica HU-10: Platillos Cancelados
+            // Logica: Platillos Cancelados
             boolean estaCancelado = false; 
-            // Si tienes un campo 'estado' en DetallesPedido: 
-            // estaCancelado = "Cancelado".equalsIgnoreCase(detalle.getEstado());
             
             if (estaCancelado) {
                 textoItem.append(" (Cancelado)");
@@ -93,19 +103,27 @@ public class ItemOrdenControlador {
         }
     }
 
+    /**
+     * Evalua si todos los platillos de la orden han sido completados (o cancelados)
+    */
+
     private void evaluarBotonFinalizar() {
-        boolean todosListos = detalles.stream().allMatch(d -> d.isCompletado() || /* Lógica Cancelado d.getEstado().equals("Cancelado")*/ false);
+        boolean todosListos = detalles.stream().allMatch(d -> d.isCompletado() || /* Logica Cancelado d.getEstado().equals("Cancelado")*/ false);
         btnFinalizar.setDisable(!todosListos);
     }
+
+    /**
+     * Maneja el evento de clic sobre el botón para finalizar la orden.
+     */
 
     @FXML
     private void handleFinalizarOrden() {
         if (cardTimer != null) cardTimer.stop();
-        controladorPrincipal.finalizarOrden(idPedido, detalles); // Llama al método de guardado en el controlador principal
+        controladorPrincipal.finalizarOrden(idPedido, detalles); // Llama al metodo de guardado en el controlador principal
         btnFinalizar.setDisable(true);
     }
     
-    // Método para detener el timer externamente si es necesario al limpiar
+    // Metodo para detener el timer externamente si es necesario al limpiar
     public void stopTimer() {
         if (cardTimer != null) cardTimer.stop();
     }

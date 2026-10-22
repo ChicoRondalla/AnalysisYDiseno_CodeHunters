@@ -49,7 +49,7 @@ public class VistaCocinaPantalla {
      * Su trabajo es buscar el archivo FXML, cargarlo, aplicar el tamaño de la pantalla y enlazarlo con Spring.
      */
     
-private void initializeUI() {
+    private void initializeUI() {
         if (initialized && stage != null) { return; }
         try {
             stage = new Stage();
@@ -61,7 +61,6 @@ private void initializeUI() {
             Scene scene = new Scene(loader.load(), 1080, 720);
             stage.setScene(scene);
             
-            // 2. Agrega esta línea justo debajo de loader.load()
             this.controlador = loader.getController(); 
             
             initialized = true; 
@@ -70,7 +69,10 @@ private void initializeUI() {
         }
     }
 
-    // 3. Agrega este NUEVO método (puedes borrar el método 'muestra' anterior si quieres)
+    /**
+    * Inicializa la interfaz grasfica, despliega la ventana y retorna su controlador asociado
+    */
+
     public CocinaPantallaControlador muestraYDevuelveControlador() {
         initializeUI(); 
         if (stage != null) {
@@ -79,49 +81,6 @@ private void initializeUI() {
         }
         return this.controlador;
     }
-
-    
-    /*private void initializeUI() {
-        // Si la ventana ya fue inicializada previamente, no hacemos nada para optimizar recursos y mantener el estado.
-        if (initialized && stage != null) {
-            return;
-        }
-
-        try {
-            stage = new Stage();
-            stage.setTitle("Ryuho Sushi - Comanda de Cocina");
-
-            // Intento 1: Buscar el diseño FXML usando el ClassLoader desde la carpeta raíz de resources.
-            URL fxmlUrl = getClass().getClassLoader().getResource("fxml/ventana-lista-ordenes.fxml");
-            
-            // Intento 2: Si el primero falla, buscamos el archivo de forma relativa justo al lado del paquete de este controlador.
-            if (fxmlUrl == null) {
-                fxmlUrl = getClass().getResource("ventana-lista-ordenes.fxml");
-            }
-
-            // Si de plano no se encuentra el archivo en ninguna ruta, lanzamos un error crítico para avisar que falta el diseño visual.
-            if (fxmlUrl == null) {
-                throw new IOException("No se pudo encontrar el archivo CocinaPantallaVista.fxml en ninguna ruta conocida.");
-            }
-
-            FXMLLoader loader = new FXMLLoader(fxmlUrl);
-            
-            // MAGIA DE SPRING + JAVAFX: Le decimos al cargador de FXML que use el contenedor de Spring 
-            // para crear los controladores, permitiendo que funcionen las anotaciones @Autowired dentro de ellos.
-            loader.setControllerFactory(context::getBean);
-
-            // Cargamos el diseño en una escena con un tamaño estándar de 1080x720 píxeles para pantallas de cocina.
-            Scene scene = new Scene(loader.load(), 1080, 720);
-            stage.setScene(scene);
-
-            initialized = true; // Marcamos que la interfaz ya quedó lista.
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error al cargar el FXML de pantalla de cocina", e);
-            e.printStackTrace();
-        }
-    }*/
-
-
     
      //MUESTRA LA VENTANA EN LA PANTALLA:
     public void muestra(ControlVisualizarOrden control) {
