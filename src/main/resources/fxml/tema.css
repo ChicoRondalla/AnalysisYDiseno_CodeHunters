@@ -1,0 +1,33 @@
+/* Barras superiores de Datos de la Orden y Resumen */
+.titled-pane > .title {
+    -fx-background-color: #120c0d;
+    -fx-background-insets: 0;
+    -fx-border-color: #3e262a;
+    -fx-border-width: 1px;
+}
+
+.titled-pane > .title .text {
+    -fx-fill: white;
+}
+
+/* Flechas de los paneles */
+.titled-pane > .title > .arrow-button .arrow {
+    -fx-background-color: white;
+}
+
+/* Fondo de los encabezados de la tabla */
+.table-view .column-header-background {
+    -fx-background-color: #120c0d;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: #120c0d;
+    -fx-border-color: #3e262a;
+}
+
+/* Texto de Categoría, Producto, Cantidad, Precio y Subtotal */
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
