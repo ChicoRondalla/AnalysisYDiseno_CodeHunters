@@ -49,6 +49,7 @@ public class DatosPrueba implements CommandLineRunner {
         Platillo p2 = null;
         Platillo p3 = null;
         Platillo p4 = null;
+        Platillo p5 = null;
         
         // Carga de platillos de prueba
         if (platilloRepository.count() == 0) {
@@ -81,6 +82,13 @@ public class DatosPrueba implements CommandLineRunner {
             p4.setTipoArea("Bebidas");
             p4.setDescripcion("Limonada fresca con agua mineral.");
             platilloRepository.save(p4);
+
+            p5 = new Platillo();
+            p5.setNombre("Pastel de Matcha");
+            p5.setPrecio(90);
+            p5.setTipoArea("Postres");
+            p5.setDescripcion("Delicioso pastel esponjoso de té verde japonés.");
+            platilloRepository.save(p5);
 
             System.out.println("¡Carga de platillos completada!");
         }
