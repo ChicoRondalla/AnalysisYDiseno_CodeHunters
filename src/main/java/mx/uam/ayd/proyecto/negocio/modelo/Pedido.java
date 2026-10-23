@@ -24,7 +24,7 @@ public class Pedido {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long idPedido;
 
-	private String tipoOrden;
+	private String tipoOrden; // Domicilio, Local, Recoger
 	private int numeroOrden;
 	private char vaPara;
 	private String servicios;
