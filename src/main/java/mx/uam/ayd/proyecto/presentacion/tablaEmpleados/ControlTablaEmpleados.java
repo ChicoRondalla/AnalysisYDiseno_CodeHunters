@@ -263,6 +263,9 @@ public class ControlTablaEmpleados {
             Stage stage = new Stage();
             stage.setTitle("Gestión de Personal - Ryuho Sushi");
             stage.setScene(new Scene(root, 1180, 720));
+            // Tamaño mínimo para que el contenido siga viéndose bien al reducir la ventana
+            stage.setMinWidth(900);
+            stage.setMinHeight(560);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

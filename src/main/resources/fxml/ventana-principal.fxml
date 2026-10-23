@@ -4,21 +4,26 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" 
-      spacing="10" style="-fx-padding: 15px;">
-    
-    <Label text="Ryuho Sushi - Menú Principal" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-    
-    <Button text="Registrar Pedido" onAction="#handleRegistrarPedido" 
-            style="-fx-min-width: 200px; -fx-min-height: 30px; -fx-background-color: #e63946; -fx-text-fill: white; -fx-font-weight: bold;"/>
-    
-    <Button text="Enviar Orden a Cocina" onAction="#handleEnviarOrdenCocina"
-        style="-fx-min-width: 200px; -fx-min-height: 30px;"/> 
-        
-    <Button text="Cancelar Pedido" onAction="#handleCancelarPedido"
-        style="-fx-min-width: 200px; -fx-min-height: 30px;"/>        
+<!-- Raíz StackPane: centra el contenido sin importar el tamaño de la ventana -->
+<StackPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+           prefWidth="450.0" prefHeight="300.0">
+    <padding>
+        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0" />
+    </padding>
 
-    <Button text="Administrar Personal" onAction="#handleAdministrarPersonal"
-        style="-fx-min-width: 200px; -fx-min-height: 30px; -fx-background-color: #2b2b2b; -fx-text-fill: white;"/>           
+    <VBox alignment="CENTER" spacing="14.0" maxWidth="320.0" maxHeight="-Infinity">
 
-</VBox>
+        <Label text="Ryuho Sushi - Menú Principal" maxWidth="1.7976931348623157E308"
+               alignment="CENTER" textAlignment="CENTER" wrapText="true"
+               style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+        <Button text="Registrar Pedido" onAction="#handleRegistrarPedido"
+                maxWidth="1.7976931348623157E308"
+                style="-fx-min-height: 34px; -fx-background-color: #e63946; -fx-text-fill: white; -fx-font-weight: bold;"/>
+
+        <Button text="Administrar Personal" onAction="#handleAdministrarPersonal"
+                maxWidth="1.7976931348623157E308"
+                style="-fx-min-height: 34px; -fx-background-color: #2b2b2b; -fx-text-fill: white;"/>
+
+    </VBox>
+</StackPane>

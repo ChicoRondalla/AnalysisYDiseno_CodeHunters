@@ -73,7 +73,10 @@ public class ControlAgregarEmpleado {
             stage.setTitle("Registrar Empleado - Ryuho Sushi");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
-            stage.setResizable(false);
+            // Ventana redimensionable: el formulario permanece centrado
+            stage.setResizable(true);
+            stage.setMinWidth(440);
+            stage.setMinHeight(540);
             
             limpiarCampos();
             stage.showAndWait();

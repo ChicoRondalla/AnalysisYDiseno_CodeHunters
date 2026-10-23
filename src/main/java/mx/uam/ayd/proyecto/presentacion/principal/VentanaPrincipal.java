@@ -51,6 +51,8 @@ public class VentanaPrincipal {
 			stage = new Stage();
 			stage.setTitle("Ryuho Sushi - Menú Principal");
 			stage.setScene(scene);
+			stage.setMinWidth(380);
+			stage.setMinHeight(260);
 			
 			initialized = true;
 		} catch (IOException e) {
