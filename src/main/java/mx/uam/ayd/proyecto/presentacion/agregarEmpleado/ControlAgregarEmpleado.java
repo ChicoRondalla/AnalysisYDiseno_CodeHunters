@@ -50,7 +50,6 @@ public class ControlAgregarEmpleado {
     public void initialize() {
         if (comboRol != null) {
             comboRol.setItems(FXCollections.observableArrayList(
-                "Administrador",
                 "Recepcionista",
                 "Cocinero",
                 "Repartidor"

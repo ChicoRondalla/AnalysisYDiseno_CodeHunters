@@ -91,7 +91,7 @@
                            </children>
                         </VBox>
                         <Region HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;" text="🚪" textFill="#9ca3af" />
+                        <Button mnemonicParsing="false" onAction="#actionCerrarSesion" style="-fx-background-color: transparent; -fx-cursor: hand;" text="🚪" textFill="#9ca3af" />
                      </children>
                   </HBox>
                </children>

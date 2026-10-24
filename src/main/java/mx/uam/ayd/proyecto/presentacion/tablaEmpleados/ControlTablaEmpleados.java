@@ -38,6 +38,9 @@ public class ControlTablaEmpleados {
     @Autowired
     private ApplicationContext springContext;
 
+    @Autowired
+    private mx.uam.ayd.proyecto.negocio.ServicioAutenticacion servicioAutenticacion;
+
     @FXML
     private TableView<Empleado> tablaEmpleados;
 
@@ -252,9 +255,13 @@ public class ControlTablaEmpleados {
     }
 
     /**
-     * Abre la ventana de Gestion de Personal.
+     * Abre la ventana de Gestion de Personal (solo si hay sesión de administrador).
      */
     public void muestra() {
+        // Protección: no abrir la tabla sin sesión de administrador
+        if (!servicioAutenticacion.isAdminAutenticado()) {
+            return;
+        }
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista-tabla-empleados.fxml"));
             loader.setControllerFactory(springContext::getBean);
@@ -266,9 +273,19 @@ public class ControlTablaEmpleados {
             // Tamaño mínimo para que el contenido siga viéndose bien al reducir la ventana
             stage.setMinWidth(900);
             stage.setMinHeight(560);
+            // Al cerrar la ventana (X o botón 🚪) se cierra la sesión de administrador
+            stage.setOnHidden(e -> servicioAutenticacion.cerrarSesion());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    public void actionCerrarSesion() {
+        // El setOnHidden se encarga de limpiar la sesión
+        ((Stage) tablaEmpleados.getScene().getWindow()).close();
+    }
+    
+    
 }

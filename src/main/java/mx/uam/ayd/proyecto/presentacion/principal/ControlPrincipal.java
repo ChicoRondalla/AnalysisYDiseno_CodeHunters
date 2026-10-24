@@ -15,6 +15,7 @@ import mx.uam.ayd.proyecto.presentacion.enviarOrdenCocina.ControlEnviarOrdenCoci
 import mx.uam.ayd.proyecto.presentacion.cancelarOrden.ControlCancelarOrden;
 import mx.uam.ayd.proyecto.presentacion.cancelarOrden.VistaCancelarOrden;
 import mx.uam.ayd.proyecto.presentacion.tablaEmpleados.ControlTablaEmpleados;
+import mx.uam.ayd.proyecto.presentacion.loginAdministrador.ControlLoginAdministrador;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
@@ -26,6 +27,9 @@ public class ControlPrincipal {
 
     @Autowired
     private ApplicationContext applicationContext;
+    
+    @Autowired
+    private ControlLoginAdministrador controlLoginAdministrador;
 	
 	@Autowired
 	public ControlPrincipal(
@@ -69,17 +73,9 @@ public class ControlPrincipal {
     }
     
     public void administrarPersonal() {
-        try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/vista-tabla-empleados.fxml"));
-            loader.setControllerFactory(applicationContext::getBean);
-            
-            javafx.scene.Parent root = loader.load();
-            javafx.stage.Stage stage = new javafx.stage.Stage();
-            stage.setTitle("Directorio de Empleados - Ryuho Sushi");
-            stage.setScene(new javafx.scene.Scene(root));
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
+        // HU-03 Escenario 0: primero login de administrador, luego la tabla
+        if (controlLoginAdministrador.muestra()) {
+            controlTablaEmpleados.muestra();
         }
     }
 
