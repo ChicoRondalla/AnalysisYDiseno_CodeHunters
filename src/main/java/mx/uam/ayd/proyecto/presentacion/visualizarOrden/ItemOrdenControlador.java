@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import mx.uam.ayd.proyecto.negocio.modelo.DetallesPedido;
 
@@ -22,7 +23,7 @@ public class ItemOrdenControlador {
 
     @FXML private Label lblNumeroOrden; // Muestra el numero de orden
     @FXML private Label lblTemporizador; // Muestra el tiempo de preparacion
-    @FXML private FlowPane containerCheckboxes; // El FlowPane que contiene los CheckBox
+    @FXML private VBox containerCheckboxes; // El VBox que contiene los CheckBox
     @FXML private Button btnFinalizar; // Marca como terminada la orden en la estacion
 
     private Long idPedido;
@@ -89,6 +90,9 @@ public class ItemOrdenControlador {
             CheckBox checkBox = new CheckBox(textoItem.toString());
             checkBox.setStyle("-fx-text-fill: #948b8b; -fx-padding: 5;");
             checkBox.setSelected(detalle.isCompletado());
+
+            checkBox.setWrapText(true); // Permite el salto de línea
+            checkBox.setPrefWidth(250); // Obliga a saltar de línea al llegar a los 250 pixeles
 
             if (estaCancelado) {
                 checkBox.setDisable(true);
