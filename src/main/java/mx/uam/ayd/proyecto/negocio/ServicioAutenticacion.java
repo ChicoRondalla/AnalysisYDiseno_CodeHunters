@@ -1,8 +1,6 @@
 package mx.uam.ayd.proyecto.negocio;
 
-import jakarta.annotation.PostConstruct;
 import mx.uam.ayd.proyecto.datos.EmpleadoRepository;
-import mx.uam.ayd.proyecto.negocio.modelo.Empleado;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,25 +12,12 @@ public class ServicioAutenticacion {
 
     public static final String ROL_ADMIN = "Administrador";
 
-    // Credenciales del administrador inicial (cámbialas si quieres)
-    private static final String ADMIN_USUARIO = "admin";
-    private static final String ADMIN_PASSWORD = "Admin123!";
-
     private final EmpleadoRepository empleadoRepository;
     private volatile boolean adminAutenticado = false;
 
     @Autowired
     public ServicioAutenticacion(EmpleadoRepository empleadoRepository) {
         this.empleadoRepository = empleadoRepository;
-    }
-
-    /** Crea el administrador inicial si no existe (la BD H2 se reinicia en cada ejecución). */
-    @PostConstruct
-    public void crearAdministradorInicial() {
-        if (!empleadoRepository.existsByUsuario(ADMIN_USUARIO)) {
-            empleadoRepository.save(
-                new Empleado("Administrador General", ADMIN_USUARIO, ADMIN_PASSWORD, ROL_ADMIN));
-        }
     }
 
     /**
