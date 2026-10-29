@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+// MANEJA LOS CLICKS DE LA VENTANA Y VALIDA QUE EL MOTIVO NO ESTE VACIO
 @Component
 public class VistaCancelarOrden {
 
@@ -23,19 +24,20 @@ public class VistaCancelarOrden {
     // INICIALIZA EL ID CON 1 
     private long idPedidoActual = 1L; 
 
-    // --- CONEXIÓN CON LOS fx:id DEL ARCHIVO FXML ---
+    // ELEMENTOS DE LA VENTANA VINCULADOS CON EL FXML 
     @FXML private Label mensajeOrdenLabel;
     @FXML private TextArea motivoArea;
     @FXML private Button volverBtn;
     @FXML private Button confirmarBtn;
     @FXML private Label charCountLabel; 
 
+    // INICIALIZA LA VENTANA Y LOS BOTONES DE VOLVER Y CONFIRMAR
     @FXML
     public void initialize() {
-        // BOTON VOLVER
+        // BOTON VOLVER: CIERRA LA VENTANA DE CANCELACION
         volverBtn.setOnAction(event -> cierra());
 
-        // BOTON CONFIRMAR
+        // BOTON CONFIRMAR: VALIDA EL MOTIVO 
         confirmarBtn.setOnAction(event -> {
             String motivo = motivoArea.getText();
             
@@ -57,7 +59,8 @@ public class VistaCancelarOrden {
             }
         });
     }
-
+    
+    // MUESTRA LA VENTANA DE CANCELACION Y EL ID DE LA ORDEN ACTUAL
     public void muestra(ControlCancelarOrden control, long idPedido) {
         this.control = control;
         this.idPedidoActual = idPedido;
@@ -70,7 +73,8 @@ public class VistaCancelarOrden {
             motivoArea.clear();
         }
     }
-    // MENSAJE DE EXITO AL CANCELAR
+
+    // MUESTRA UN MENSAJE DE EXITO AL CANCELAR LA ORDEN Y CIERRA LA VENTANA
     public void muestraMensajeExito(String mensaje) {
         Alert alerta = new Alert(AlertType.INFORMATION);
         alerta.setTitle("Cancelación Exitosa");
@@ -78,10 +82,10 @@ public class VistaCancelarOrden {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
         
-        // CIERRA LA VENTANA
         cierra();
     }
-    // MENSAJE DE ERROR AL NO PODER CANCELAR 
+
+    // MUESTRA UN MENSAJE DE ERROR AL NO PODER CANCELAR 
     public void muestraMensajeError(String mensaje) {
         Alert alerta = new Alert(AlertType.ERROR);
         alerta.setTitle("Error al cancelar");
@@ -89,7 +93,8 @@ public class VistaCancelarOrden {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
-    // CIERRA LA VENTANA DE CANCELACION
+
+    // CIERRA LA VENTANA DE CANCELACION AL PRESIONAR EL BOTON VOLVER
     public void cierra() {
         if (volverBtn != null && volverBtn.getScene() != null) {
             Stage stage = (Stage) volverBtn.getScene().getWindow();

@@ -104,7 +104,7 @@ public class ControlPlantillaPedidoCompletado {
         // El tipo de pedido tiene un estilo específico dependiendo de cuál sea, aquí se decide cuál es el estilo que se le dará a esta tarjeta
         tipoPedido.setStyle(null);
         switch(pedido.getTipoOrden()){
-            case "A Domicilio":
+            case "Domicilio":
                 tipoPedido.setText("A DOMICILIO");
                 tipoPedido.setStyle(
                     "-fx-background-color: #31006B;"+
@@ -112,7 +112,6 @@ public class ControlPlantillaPedidoCompletado {
                     "-fx-border-color: #7D20D4;"
                 );
             break;
-            case "Consumo Local":
             case "Local":
                 tipoPedido.setText("CONSUMO LOCAL");
                 tipoPedido.setStyle(
@@ -121,7 +120,7 @@ public class ControlPlantillaPedidoCompletado {
                     "-fx-border-color: #1FACFF;"
                 );
             break;
-            case "Para Llevar":
+            case "Recoger":
                 tipoPedido.setText("PARA RECOGER");
                 tipoPedido.setStyle(
                     "-fx-background-color: #543400;"+

@@ -43,17 +43,20 @@ public class VentanaPrincipal {
 		}
 		
 		try {
-			stage = new Stage();
-			stage.setTitle("Ryuho Sushi - Menú Principal");
-			
-			// Load FXML
+			// Load FXML primero: si falla, no se crea un Stage vacío
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-principal.fxml"));
 			loader.setController(this);
 			Scene scene = new Scene(loader.load(), 450, 300);
+
+			stage = new Stage();
+			stage.setTitle("Ryuho Sushi - Menú Principal");
 			stage.setScene(scene);
+			stage.setMinWidth(380);
+			stage.setMinHeight(260);
 			
 			initialized = true;
 		} catch (IOException e) {
+			System.err.println("ERROR al cargar ventana-principal.fxml: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -75,7 +78,9 @@ public class VentanaPrincipal {
 		}
 		
 		initializeUI();
-		stage.show();
+		if (stage != null) {
+			stage.show();
+		}
 	}
 	
 	// FXML Event Handlers

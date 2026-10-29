@@ -46,6 +46,7 @@ public class DatosPrueba implements CommandLineRunner {
         Platillo p2 = null;
         Platillo p3 = null;
         Platillo p4 = null;
+        Platillo p5 = null;
         
         // Carga de platillos de prueba
         if (platilloRepository.count() == 0) {
@@ -78,6 +79,13 @@ public class DatosPrueba implements CommandLineRunner {
             p4.setTipoArea("Bebidas");
             p4.setDescripcion("Limonada fresca con agua mineral.");
             platilloRepository.save(p4);
+
+            p5 = new Platillo();
+            p5.setNombre("Pastel de Matcha");
+            p5.setPrecio(90);
+            p5.setTipoArea("Postres");
+            p5.setDescripcion("Delicioso pastel esponjoso de té verde japonés.");
+            platilloRepository.save(p5);
 
             System.out.println("¡Carga de platillos completada!");
         }
@@ -112,12 +120,14 @@ public class DatosPrueba implements CommandLineRunner {
             clienteRepository.save(c1);
             clienteRepository.save(c2);
 
-            Pedido pedido1 = new Pedido("A Domicilio", 12345, 'a', "Servicios", "Completado", null, 100);
-            Pedido pedido2 = new Pedido("Para Llevar", 12346, 'b', "Cocina", "Completado", null, 250);
-            Pedido pedido3 = new Pedido("Para Llevar", 12347, 'a', "Servicios", "Completado", null, 150);
-            Pedido pedido4 = new Pedido("A Domicilio", 12348, 'c', "Servicios", "Completado", null, 300);
-            Pedido pedido5 = new Pedido("A Domicilio", 12349, 'a', "Cocina", "En Proceso", null, 400);
-            Pedido pedido6 = new Pedido("Para Llevar", 12350, 'b', "Servicios", "Cancelado", null, 200);
+            // Creamos pedidos
+            Pedido pedido1 = new Pedido("Domicilio", 12345, 'a', "Servicios", "Completado", null, 100);
+            Pedido pedido2 = new Pedido("Recoger", 12346, 'b', "Cocina", "Completado", null, 250);
+            Pedido pedido3 = new Pedido("Recoger", 12347, 'a', "Servicios", "Completado", null, 150);
+            Pedido pedido4 = new Pedido("Domicilio", 12348, 'c', "Servicios", "Completado", null, 300);
+            Pedido pedido5 = new Pedido("Domicilio", 12349, 'a', "Cocina", "En Proceso", null, 400);
+            Pedido pedido6 = new Pedido("Recoger", 12350, 'b', "Servicios", "Cancelado", null, 200);
+
             
             pedido1.setCliente(c1);
             pedido2.setCliente(c2);
@@ -193,7 +203,7 @@ public class DatosPrueba implements CommandLineRunner {
 
             System.out.println("Se guardaron los clientes, pedidos y detalles pedidos");
         }
-            
+
         // Carga de mesas de prueba (HU-05)
         if (mesaRepository.count() == 0) {
             System.out.println("Iniciando carga de mesas de prueba en H2...");
@@ -206,5 +216,18 @@ public class DatosPrueba implements CommandLineRunner {
 
             System.out.println("¡Carga de mesas completada!");
         }
+
+        // Carga de empleados de prueba
+        if (empleadoRepository.count() == 0) {
+            System.out.println("Iniciando carga de empleados de prueba en H2...");
+
+            empleadoRepository.save(new Empleado("Daiki Nakamura", "daiki.n", "ClaveSegura1!", "Cocinero"));
+            empleadoRepository.save(new Empleado("Aoi Tanaka", "aoi.tanaka", "ClaveSegura1!", "Administrador"));
+            empleadoRepository.save(new Empleado("Ren Takahashi", "ren.t", "ClaveSegura1!", "Recepcionista"));
+            empleadoRepository.save(new Empleado("Haruto Sato", "haruto.s", "ClaveSegura1!", "Repartidor"));
+
+            System.out.println("¡Carga de empleados completada!");
+        }
+
     }
 }

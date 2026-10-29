@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane prefWidth="460.0" prefHeight="380.0" styleClass="root-dark"
+           xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="mx.uam.ayd.proyecto.presentacion.loginAdministrador.ControlLoginAdministrador">
+   <stylesheets>
+      <URL value="@../styles/estilos-tabla.css" />
+   </stylesheets>
+   <padding>
+      <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+   </padding>
+   <children>
+      <VBox maxWidth="360.0" maxHeight="-Infinity" spacing="18.0">
+         <children>
+            <VBox spacing="4.0">
+               <children>
+                  <Label text="🔒 Acceso de Administrador" textFill="WHITE">
+                     <font><Font name="System Bold" size="18.0" /></font>
+                  </Label>
+                  <Label text="Inicia sesión para administrar el personal" textFill="#9ca3af">
+                     <font><Font size="12.0" /></font>
+                  </Label>
+               </children>
+            </VBox>
+
+            <VBox spacing="6.0">
+               <children>
+                  <Label text="Nombre de Usuario *" textFill="#e5e7eb">
+                     <font><Font name="System Bold" size="12.0" /></font>
+                  </Label>
+                  <TextField fx:id="txtUsuario" styleClass="search-field" />
+               </children>
+            </VBox>
+
+            <VBox spacing="6.0">
+               <children>
+                  <Label text="Contraseña *" textFill="#e5e7eb">
+                     <font><Font name="System Bold" size="12.0" /></font>
+                  </Label>
+                  <PasswordField fx:id="txtContrasena" styleClass="search-field" />
+               </children>
+            </VBox>
+
+            <Label fx:id="lblMensaje" textFill="#ef4444" wrapText="true">
+               <font><Font size="12.0" /></font>
+            </Label>
+
+            <HBox alignment="CENTER_RIGHT" spacing="12.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#actionCancelar" styleClass="btn-icon" text="Cancelar" />
+                  <Button mnemonicParsing="false" onAction="#actionIngresar" styleClass="btn-primary-red" text="Ingresar" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</StackPane>

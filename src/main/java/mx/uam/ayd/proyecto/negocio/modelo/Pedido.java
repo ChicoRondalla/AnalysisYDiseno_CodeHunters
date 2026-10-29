@@ -24,7 +24,7 @@ public class Pedido {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long idPedido;
 
-	private String tipoOrden;
+	private String tipoOrden; // Domicilio, Local, Recoger
 	private int numeroOrden;
 	private char vaPara;
 	private String servicios;
@@ -204,6 +204,23 @@ public class Pedido {
 
     public void setDetallesPedido(List<DetallesPedido> detalles){
         this.detallesPedido = detalles;
+    }
+
+
+    // Agrega un cobro a la lista de cobros del pedido
+    public void agregarCobro(Cobro cobro) {
+        if (cobro != null) {
+            this.cobros.add(cobro);
+        }
+    }
+
+    // Retorna true si el pedido ya tiene al menos un cobro registrado
+    public boolean esPagado() {
+        if (this.cobros != null && this.cobros.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 	
 }
